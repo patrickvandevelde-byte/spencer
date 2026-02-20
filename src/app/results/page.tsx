@@ -2,9 +2,24 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { ACTUATORS, FLUIDS, predict } from "@/lib/data";
+import { ACTUATORS, FLUIDS, predict, INDUSTRY_LABELS } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
+
+function RegimeBadge({ regime }: { regime: string }) {
+  const colors: Record<string, string> = {
+    Atomization: "var(--success)",
+    "Wind-stressed": "var(--accent)",
+    "Wind-induced": "var(--warning)",
+    Rayleigh: "var(--danger)",
+  };
+  const color = colors[regime] || "var(--muted)";
+  return (
+    <span className="rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[11px] font-bold" style={{ borderColor: color, color }}>
+      {regime}
+    </span>
+  );
+}
 
 function ResultsContent() {
   const params = useSearchParams();
@@ -18,17 +33,9 @@ function ResultsContent() {
   if (!actuator || !fluid) {
     return (
       <div className="glass-bright rounded-xl p-12 text-center">
-        <svg className="mx-auto mb-4 h-12 w-12 text-[var(--danger)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="15" y1="9" x2="9" y2="15"/>
-          <line x1="9" y1="9" x2="15" y2="15"/>
-        </svg>
         <p className="text-sm text-[var(--danger)]">
-          Missing or invalid parameters. Please run a prediction from the{" "}
-          <Link href="/configure" className="underline text-[var(--accent)]">
-            configurator
-          </Link>
-          .
+          Missing or invalid parameters.{" "}
+          <Link href="/configure" className="underline text-[var(--accent)]">Back to configurator</Link>.
         </p>
       </div>
     );
@@ -36,7 +43,6 @@ function ResultsContent() {
 
   const result = predict(actuator, fluid, pressure);
   const color = ACTUATOR_COLORS[actuator.type] || "#06b6d4";
-  const scoreClass = result.compatibilityScore >= 80 ? "score-excellent" : result.compatibilityScore >= 50 ? "score-good" : "score-poor";
   const scoreColor = result.compatibilityScore >= 80 ? "var(--success)" : result.compatibilityScore >= 50 ? "var(--warning)" : "var(--danger)";
 
   return (
@@ -48,9 +54,8 @@ function ResultsContent() {
             <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">PREDICTION DETAIL</span>
           </div>
           <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">{actuator.name}</h1>
-          <p className="mt-1 text-sm text-[var(--muted)]">
-            {fluid.name} @ {pressure} bar
-          </p>
+          <p className="mt-1 text-sm text-[var(--muted)]">{fluid.name} @ {pressure} bar</p>
+          <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{actuator.description}</p>
         </div>
         <div className="flex items-center gap-4">
           <ActuatorIllustration type={actuator.type} size={80} />
@@ -58,18 +63,26 @@ function ResultsContent() {
         </div>
       </div>
 
-      {/* Score Banner */}
+      {/* Score + Regime Banner */}
       <div className="glass-bright rounded-xl p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="mb-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
               Compatibility Score
             </p>
             <div className="flex items-end gap-3">
-              <span className={`text-5xl font-bold ${scoreClass}`} style={{ WebkitTextFillColor: scoreColor, textShadow: `0 0 30px ${scoreColor}40` }}>
+              <span className="text-5xl font-bold" style={{ color: scoreColor, textShadow: `0 0 30px ${scoreColor}40` }}>
                 {result.compatibilityScore}
               </span>
               <span className="mb-1 text-xl text-[var(--muted)]">/100</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="mb-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+                Atomization Regime
+              </p>
+              <RegimeBadge regime={result.atomizationRegime} />
             </div>
           </div>
           <div className="space-y-2 text-right">
@@ -93,7 +106,36 @@ function ResultsContent() {
         </div>
       </div>
 
-      {/* Spray Physics + Dimensionless Numbers */}
+      {/* Safety Warnings */}
+      {result.safetyWarnings.length > 0 && (
+        <div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/5 p-5">
+          <h2 className="mb-3 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--danger)]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            Safety Warnings
+          </h2>
+          <div className="space-y-2">
+            {result.safetyWarnings.map((w, i) => (
+              <p key={i} className="text-xs text-[var(--danger)]">{w}</p>
+            ))}
+          </div>
+          {fluid.ppeRequired.length > 0 && (
+            <div className="mt-3 border-t border-[var(--danger)]/20 pt-3">
+              <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--warning)]">Required PPE:</span>
+              <div className="mt-1 flex flex-wrap gap-1">
+                {fluid.ppeRequired.map((p) => (
+                  <span key={p} className="rounded-md border border-[var(--warning)]/30 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--warning)]">
+                    {p.replace("_", " ")}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Physics + Dimensionless Numbers */}
       <div className="grid gap-4 md:grid-cols-2">
         <div className="glass rounded-xl p-6">
           <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
@@ -108,6 +150,7 @@ function ResultsContent() {
               { label: "Droplet Size (Dv50)", value: `${result.dropletSizeDv50_um} µm` },
               { label: "Flow Rate", value: `${result.flowRate_mL_min} mL/min` },
               { label: "Spray Width @ 100mm", value: `${result.sprayWidth_mm_at_100mm} mm` },
+              { label: "Exit Velocity", value: `${result.velocityExit_m_s} m/s` },
             ].map((item, i, arr) => (
               <div key={item.label} className={`flex justify-between pb-3 ${i < arr.length - 1 ? "border-b border-[var(--border)]" : ""}`}>
                 <span className="text-[var(--muted)]">{item.label}</span>
@@ -128,8 +171,9 @@ function ResultsContent() {
             {[
               { label: "Reynolds Number (Re)", value: result.reynoldsNumber.toLocaleString() },
               { label: "Weber Number (We)", value: result.weberNumber.toLocaleString() },
+              { label: "Ohnesorge Number (Oh)", value: String(result.ohnesorgeNumber) },
+              { label: "Atomization Regime", value: result.atomizationRegime },
               { label: "Flow Regime", value: result.reynoldsNumber > 4000 ? "Turbulent" : result.reynoldsNumber > 2000 ? "Transitional" : "Laminar" },
-              { label: "Operating Pressure", value: `${pressure} bar` },
             ].map((item, i, arr) => (
               <div key={item.label} className={`flex justify-between pb-3 ${i < arr.length - 1 ? "border-b border-[var(--border)]" : ""}`}>
                 <span className="text-[var(--muted)]">{item.label}</span>
@@ -140,24 +184,20 @@ function ResultsContent() {
         </div>
       </div>
 
-      {/* Large Spray Visualization */}
+      {/* Spray Visualization */}
       <div className="glass rounded-xl p-6">
         <h2 className="mb-4 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
           <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-          Spray Visualization — {actuator.type.replace("_", " ")}
+          Spray Visualization — {actuator.type.replace(/_/g, " ")}
         </h2>
         <div className="flex items-center justify-center gap-12 py-6">
           <div className="text-center">
             <p className="mb-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Side View</p>
-            <div className="float">
-              <ActuatorIllustration type={actuator.type} size={160} />
-            </div>
+            <div className="float"><ActuatorIllustration type={actuator.type} size={160} /></div>
           </div>
           <div className="text-center">
             <p className="mb-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Top-Down Pattern</p>
-            <div className="float" style={{ animationDelay: "1s" }}>
-              <SprayPatternIllustration type={actuator.type} size={120} />
-            </div>
+            <div className="float" style={{ animationDelay: "1s" }}><SprayPatternIllustration type={actuator.type} size={120} /></div>
           </div>
         </div>
       </div>
@@ -170,7 +210,7 @@ function ResultsContent() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-xs md:grid-cols-4">
           {[
             { label: "SKU", value: actuator.sku },
-            { label: "Type", value: actuator.type.replace("_", " ") },
+            { label: "Type", value: actuator.type.replace(/_/g, " ") },
             { label: "Orifice", value: `${actuator.orificeDiameter_mm} mm` },
             { label: "Max Pressure", value: `${actuator.maxPressure_bar} bar` },
             { label: "Swirl Angle", value: `${actuator.swirlChamberAngle_deg}°` },
@@ -184,20 +224,28 @@ function ResultsContent() {
             </div>
           ))}
         </div>
+        {/* Industries */}
+        <div className="mt-4 border-t border-[var(--border)] pt-4">
+          <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Industries</span>
+          <div className="mt-2 flex flex-wrap gap-1">
+            {actuator.industries.map((ind) => (
+              <span key={ind} className="rounded-md bg-[var(--accent)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">
+                {INDUSTRY_LABELS[ind]}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-4">
-        <Link
-          href="/configure"
-          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
-        >
+      <div className="flex flex-wrap gap-4">
+        <Link href="/configure" className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
           ← Back to Configurator
         </Link>
-        <Link
-          href={`/procurement?actuator=${actuator.id}&qty=100`}
-          className="btn-primary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
-        >
+        <Link href={`/compare`} className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+          Compare Actuators
+        </Link>
+        <Link href={`/procurement?actuator=${actuator.id}&qty=100`} className="btn-primary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
           Procure This Actuator →
         </Link>
       </div>

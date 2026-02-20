@@ -37,6 +37,12 @@ function Nav() {
             Configure
           </Link>
           <Link
+            href="/compare"
+            className="rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide text-[var(--muted)] no-underline transition-all hover:bg-[var(--surface)] hover:text-[var(--accent)]"
+          >
+            Compare
+          </Link>
+          <Link
             href="/procurement"
             className="rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide text-[var(--muted)] no-underline transition-all hover:bg-[var(--surface)] hover:text-[var(--accent)]"
           >

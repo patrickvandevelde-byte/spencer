@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FLUIDS } from "@/lib/data";
-import type { Actuator, Fluid, PredictionResult } from "@/lib/data";
+import { FLUIDS, SOLVENT_CLASS_LABELS } from "@/lib/data";
+import type { Actuator, Fluid, PredictionResult, SolventClass } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
 
@@ -20,12 +20,34 @@ function ScoreBadge({ score }: { score: number }) {
   );
 }
 
+function RegimeBadge({ regime }: { regime: string }) {
+  const colors: Record<string, string> = {
+    Atomization: "var(--success)",
+    "Wind-stressed": "var(--accent)",
+    "Wind-induced": "var(--warning)",
+    Rayleigh: "var(--danger)",
+  };
+  const color = colors[regime] || "var(--muted)";
+  return (
+    <span className="rounded-md border px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold" style={{ borderColor: color, color }}>
+      {regime}
+    </span>
+  );
+}
+
+const ALL_SOLVENT_CLASSES = Object.keys(SOLVENT_CLASS_LABELS) as SolventClass[];
+
 export default function ConfigurePage() {
   const [fluidId, setFluidId] = useState(FLUIDS[0].id);
   const [pressure, setPressure] = useState(5);
   const [results, setResults] = useState<ResultRow[] | null>(null);
   const [selectedFluid, setSelectedFluid] = useState<Fluid | null>(null);
   const [loading, setLoading] = useState(false);
+  const [solventFilter, setSolventFilter] = useState<SolventClass | "all">("all");
+
+  const filteredFluids = FLUIDS.filter(
+    (f) => solventFilter === "all" || f.solventClass === solventFilter
+  );
 
   async function handlePredict() {
     setLoading(true);
@@ -51,14 +73,53 @@ export default function ConfigurePage() {
           Actuator Configuration
         </h1>
         <p className="mt-2 text-sm text-[var(--muted)]">
-          Select a fluid and pressure to predict optimal actuator performance
+          Select a fluid and pressure to predict optimal actuator performance across all 12 geometries
         </p>
       </div>
 
       {/* Input Form */}
       <div className="glass-bright rounded-xl p-6">
+        {/* Solvent class quick-filter */}
+        <div className="mb-4">
+          <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            Filter by Solvent Class
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => { setSolventFilter("all"); setFluidId(FLUIDS[0].id); }}
+              className={`rounded-lg border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+                solventFilter === "all"
+                  ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
+                  : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
+              }`}
+            >
+              All
+            </button>
+            {ALL_SOLVENT_CLASSES.map((sc) => {
+              const count = FLUIDS.filter((f) => f.solventClass === sc).length;
+              if (count === 0) return null;
+              return (
+                <button
+                  key={sc}
+                  onClick={() => {
+                    setSolventFilter(sc);
+                    const first = FLUIDS.find((f) => f.solventClass === sc);
+                    if (first) setFluidId(first.id);
+                  }}
+                  className={`rounded-lg border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+                    solventFilter === sc
+                      ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
+                      : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
+                  }`}
+                >
+                  {SOLVENT_CLASS_LABELS[sc]} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="grid gap-6 md:grid-cols-3">
-          {/* Fluid Selection */}
           <div>
             <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
               Select Fluid
@@ -68,15 +129,13 @@ export default function ConfigurePage() {
               onChange={(e) => setFluidId(e.target.value)}
               className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
             >
-              {FLUIDS.map((f) => (
+              {filteredFluids.map((f) => (
                 <option key={f.id} value={f.id}>
                   {f.name} — {f.viscosity_cP} cP
                 </option>
               ))}
             </select>
           </div>
-
-          {/* Pressure */}
           <div>
             <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
               Operating Pressure (bar)
@@ -92,8 +151,6 @@ export default function ConfigurePage() {
             />
             <p className="mt-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Range: 1–30 bar</p>
           </div>
-
-          {/* Submit */}
           <div className="flex items-end">
             <button
               onClick={handlePredict}
@@ -116,7 +173,7 @@ export default function ConfigurePage() {
         </div>
       </div>
 
-      {/* Fluid Properties Card */}
+      {/* Fluid Properties + Hazards */}
       {selectedFluid && (
         <div className="glass animate-in rounded-xl p-6">
           <h2 className="mb-4 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
@@ -134,6 +191,7 @@ export default function ConfigurePage() {
               { label: "pH", value: String(selectedFluid.pH) },
               { label: "CAS", value: selectedFluid.cas },
               { label: "Flash Point", value: selectedFluid.flashPoint_C !== null ? `${selectedFluid.flashPoint_C}°C` : "N/A" },
+              { label: "Category", value: selectedFluid.category },
             ].map((item) => (
               <div key={item.label}>
                 <span className="text-[var(--muted)]">{item.label}</span>
@@ -141,40 +199,66 @@ export default function ConfigurePage() {
               </div>
             ))}
           </div>
+          {/* Hazards & PPE */}
+          {(selectedFluid.hazards.length > 0 || selectedFluid.ppeRequired.length > 0) && (
+            <div className="mt-4 flex flex-wrap gap-4 border-t border-[var(--border)] pt-4">
+              {selectedFluid.hazards.length > 0 && (
+                <div>
+                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--danger)]">Hazards</span>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {selectedFluid.hazards.map((h) => (
+                      <span key={h} className="rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--danger)]">
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {selectedFluid.ppeRequired.length > 0 && (
+                <div>
+                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--warning)]">PPE Required</span>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {selectedFluid.ppeRequired.map((p) => (
+                      <span key={p} className="rounded-md border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--warning)]">
+                        {p.replace("_", " ")}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Results — Visual Cards */}
+      {/* Results */}
       {results && (
         <div className="animate-in">
           <h2 className="mb-6 text-xl font-bold text-[var(--fg-bright)]">
-            Predicted Configurations
+            Predicted Configurations ({results.length} actuators)
           </h2>
 
           <div className="space-y-4">
             {results.map((r, i) => {
               const color = ACTUATOR_COLORS[r.actuator.type] || "#06b6d4";
+              const hasWarnings = r.prediction.safetyWarnings.length > 0;
               return (
                 <div
                   key={r.actuator.id}
-                  className="glass group rounded-xl p-5 transition-all hover:border-[var(--border-bright)]"
-                  style={{ animationDelay: `${i * 0.1}s` }}
+                  className={`glass group rounded-xl p-5 transition-all hover:border-[var(--border-bright)] ${hasWarnings ? "border-l-2 border-l-[var(--danger)]" : ""}`}
+                  style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                    {/* Rank + Illustration */}
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)]">
-                        <span className="font-[family-name:var(--font-mono)] text-sm font-bold text-[var(--muted)]">
-                          #{i + 1}
-                        </span>
+                        <span className="font-[family-name:var(--font-mono)] text-sm font-bold text-[var(--muted)]">#{i + 1}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <ActuatorIllustration type={r.actuator.type} size={64} />
-                        <SprayPatternIllustration type={r.actuator.type} size={48} />
+                        <ActuatorIllustration type={r.actuator.type} size={56} />
+                        <SprayPatternIllustration type={r.actuator.type} size={40} />
                       </div>
                     </div>
 
-                    {/* Info */}
                     <div className="flex-1">
                       <div className="mb-1 flex items-center gap-2">
                         <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
@@ -182,18 +266,27 @@ export default function ConfigurePage() {
                           {r.actuator.sku}
                         </span>
                         <span className="text-xs text-[var(--muted)]">{r.actuator.name}</span>
+                        <RegimeBadge regime={r.prediction.atomizationRegime} />
                       </div>
                       <div className="mt-2 flex flex-wrap gap-4 font-[family-name:var(--font-mono)] text-[11px]">
                         <span><span className="text-[var(--muted)]">Cone:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.coneAngle_deg}°</strong></span>
                         <span><span className="text-[var(--muted)]">Dv50:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.dropletSizeDv50_um} µm</strong></span>
                         <span><span className="text-[var(--muted)]">Flow:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.flowRate_mL_min} mL/min</strong></span>
-                        <span><span className="text-[var(--muted)]">Width:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.sprayWidth_mm_at_100mm} mm</strong></span>
-                        <span><span className="text-[var(--muted)]">Re:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.reynoldsNumber.toLocaleString()}</strong></span>
-                        <span><span className="text-[var(--muted)]">We:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.weberNumber.toLocaleString()}</strong></span>
+                        <span><span className="text-[var(--muted)]">V:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.velocityExit_m_s} m/s</strong></span>
+                        <span><span className="text-[var(--muted)]">Oh:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.ohnesorgeNumber}</strong></span>
                       </div>
+                      {/* Safety warnings inline */}
+                      {hasWarnings && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {r.prediction.safetyWarnings.map((w, wi) => (
+                            <span key={wi} className="rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] text-[var(--danger)]">
+                              {w.split(":")[0]}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Score + Action */}
                     <div className="flex items-center gap-4">
                       <ScoreBadge score={r.prediction.compatibilityScore} />
                       <Link
