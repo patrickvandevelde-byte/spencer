@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { ACTUATORS, FLUIDS, predict } from "@/lib/data";
 import Link from "next/link";
+import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
 
 function ResultsContent() {
   const params = useSearchParams();
@@ -16,10 +17,15 @@ function ResultsContent() {
 
   if (!actuator || !fluid) {
     return (
-      <div className="border border-[var(--danger)] bg-[var(--surface)] p-8 text-center">
+      <div className="glass-bright rounded-xl p-12 text-center">
+        <svg className="mx-auto mb-4 h-12 w-12 text-[var(--danger)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
         <p className="text-sm text-[var(--danger)]">
           Missing or invalid parameters. Please run a prediction from the{" "}
-          <Link href="/configure" className="underline">
+          <Link href="/configure" className="underline text-[var(--accent)]">
             configurator
           </Link>
           .
@@ -29,141 +35,154 @@ function ResultsContent() {
   }
 
   const result = predict(actuator, fluid, pressure);
-  const scoreColor =
-    result.compatibilityScore >= 80
-      ? "var(--success)"
-      : result.compatibilityScore >= 50
-        ? "var(--warning)"
-        : "var(--danger)";
+  const color = ACTUATOR_COLORS[actuator.type] || "#06b6d4";
+  const scoreClass = result.compatibilityScore >= 80 ? "score-excellent" : result.compatibilityScore >= 50 ? "score-good" : "score-poor";
+  const scoreColor = result.compatibilityScore >= 80 ? "var(--success)" : result.compatibilityScore >= 50 ? "var(--warning)" : "var(--danger)";
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="mb-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">
-          Prediction Detail
-        </p>
-        <h1 className="text-xl font-bold">{actuator.name}</h1>
-        <p className="text-xs text-[var(--muted)]">
-          {fluid.name} @ {pressure} bar
-        </p>
+      {/* Header */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div>
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
+            <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">PREDICTION DETAIL</span>
+          </div>
+          <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">{actuator.name}</h1>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            {fluid.name} @ {pressure} bar
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <ActuatorIllustration type={actuator.type} size={80} />
+          <SprayPatternIllustration type={actuator.type} size={60} />
+        </div>
       </div>
 
       {/* Score Banner */}
-      <div
-        className="flex items-center justify-between border p-6"
-        style={{ borderColor: scoreColor }}
-      >
-        <div>
-          <p className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
-            Compatibility Score
-          </p>
-          <p className="text-4xl font-bold" style={{ color: scoreColor }}>
-            {result.compatibilityScore}/100
-          </p>
-        </div>
-        <div className="text-right text-xs text-[var(--muted)]">
-          <p>
-            Material:{" "}
-            {actuator.materialCompatibility.includes(fluid.solventClass)
-              ? "PASS"
-              : "FAIL"}
-          </p>
-          <p>
-            Pressure:{" "}
-            {pressure <= actuator.maxPressure_bar ? "SAFE" : "OVER-PRESSURE"}
-          </p>
-        </div>
-      </div>
-
-      {/* Spray Physics */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
-          <h2 className="mb-4 text-[10px] uppercase tracking-widest text-[var(--muted)]">
-            Spray Physics
-          </h2>
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between border-b border-[var(--border)] pb-2">
-              <span className="text-[var(--muted)]">Predicted Cone Angle</span>
-              <strong>{result.coneAngle_deg}°</strong>
+      <div className="glass-bright rounded-xl p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="mb-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              Compatibility Score
+            </p>
+            <div className="flex items-end gap-3">
+              <span className={`text-5xl font-bold ${scoreClass}`} style={{ WebkitTextFillColor: scoreColor, textShadow: `0 0 30px ${scoreColor}40` }}>
+                {result.compatibilityScore}
+              </span>
+              <span className="mb-1 text-xl text-[var(--muted)]">/100</span>
             </div>
-            <div className="flex justify-between border-b border-[var(--border)] pb-2">
-              <span className="text-[var(--muted)]">Droplet Size (Dv50)</span>
-              <strong>{result.dropletSizeDv50_um} µm</strong>
+          </div>
+          <div className="space-y-2 text-right">
+            <div className="flex items-center justify-end gap-2">
+              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">Material</span>
+              {actuator.materialCompatibility.includes(fluid.solventClass) ? (
+                <span className="rounded-md border border-[var(--success)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--success)]">PASS</span>
+              ) : (
+                <span className="rounded-md border border-[var(--danger)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--danger)]">FAIL</span>
+              )}
             </div>
-            <div className="flex justify-between border-b border-[var(--border)] pb-2">
-              <span className="text-[var(--muted)]">Flow Rate</span>
-              <strong>{result.flowRate_mL_min} mL/min</strong>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Spray Width @ 100mm</span>
-              <strong>{result.sprayWidth_mm_at_100mm} mm</strong>
+            <div className="flex items-center justify-end gap-2">
+              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">Pressure</span>
+              {pressure <= actuator.maxPressure_bar ? (
+                <span className="rounded-md border border-[var(--success)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--success)]">SAFE</span>
+              ) : (
+                <span className="rounded-md border border-[var(--danger)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--danger)]">OVER</span>
+              )}
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
-          <h2 className="mb-4 text-[10px] uppercase tracking-widest text-[var(--muted)]">
+      {/* Spray Physics + Dimensionless Numbers */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="glass rounded-xl p-6">
+          <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+            </svg>
+            Spray Physics
+          </h2>
+          <div className="space-y-4 text-xs">
+            {[
+              { label: "Predicted Cone Angle", value: `${result.coneAngle_deg}°` },
+              { label: "Droplet Size (Dv50)", value: `${result.dropletSizeDv50_um} µm` },
+              { label: "Flow Rate", value: `${result.flowRate_mL_min} mL/min` },
+              { label: "Spray Width @ 100mm", value: `${result.sprayWidth_mm_at_100mm} mm` },
+            ].map((item, i, arr) => (
+              <div key={item.label} className={`flex justify-between pb-3 ${i < arr.length - 1 ? "border-b border-[var(--border)]" : ""}`}>
+                <span className="text-[var(--muted)]">{item.label}</span>
+                <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{item.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass rounded-xl p-6">
+          <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+            </svg>
             Dimensionless Numbers
           </h2>
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between border-b border-[var(--border)] pb-2">
-              <span className="text-[var(--muted)]">Reynolds Number (Re)</span>
-              <strong>{result.reynoldsNumber.toLocaleString()}</strong>
+          <div className="space-y-4 text-xs">
+            {[
+              { label: "Reynolds Number (Re)", value: result.reynoldsNumber.toLocaleString() },
+              { label: "Weber Number (We)", value: result.weberNumber.toLocaleString() },
+              { label: "Flow Regime", value: result.reynoldsNumber > 4000 ? "Turbulent" : result.reynoldsNumber > 2000 ? "Transitional" : "Laminar" },
+              { label: "Operating Pressure", value: `${pressure} bar` },
+            ].map((item, i, arr) => (
+              <div key={item.label} className={`flex justify-between pb-3 ${i < arr.length - 1 ? "border-b border-[var(--border)]" : ""}`}>
+                <span className="text-[var(--muted)]">{item.label}</span>
+                <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{item.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Large Spray Visualization */}
+      <div className="glass rounded-xl p-6">
+        <h2 className="mb-4 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
+          Spray Visualization — {actuator.type.replace("_", " ")}
+        </h2>
+        <div className="flex items-center justify-center gap-12 py-6">
+          <div className="text-center">
+            <p className="mb-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Side View</p>
+            <div className="float">
+              <ActuatorIllustration type={actuator.type} size={160} />
             </div>
-            <div className="flex justify-between border-b border-[var(--border)] pb-2">
-              <span className="text-[var(--muted)]">Weber Number (We)</span>
-              <strong>{result.weberNumber.toLocaleString()}</strong>
-            </div>
-            <div className="flex justify-between border-b border-[var(--border)] pb-2">
-              <span className="text-[var(--muted)]">Flow Regime</span>
-              <strong>{result.reynoldsNumber > 4000 ? "Turbulent" : result.reynoldsNumber > 2000 ? "Transitional" : "Laminar"}</strong>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-[var(--muted)]">Operating Pressure</span>
-              <strong>{pressure} bar</strong>
+          </div>
+          <div className="text-center">
+            <p className="mb-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Top-Down Pattern</p>
+            <div className="float" style={{ animationDelay: "1s" }}>
+              <SprayPatternIllustration type={actuator.type} size={120} />
             </div>
           </div>
         </div>
       </div>
 
       {/* Actuator Specs */}
-      <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
-        <h2 className="mb-4 text-[10px] uppercase tracking-widest text-[var(--muted)]">
+      <div className="glass rounded-xl p-6">
+        <h2 className="mb-5 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
           Actuator Specifications
         </h2>
-        <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs md:grid-cols-4">
-          <div>
-            <span className="text-[var(--muted)]">SKU:</span>{" "}
-            <strong>{actuator.sku}</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Type:</span>{" "}
-            <strong>{actuator.type.replace("_", " ")}</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Orifice:</span>{" "}
-            <strong>{actuator.orificeDiameter_mm} mm</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Max Pressure:</span>{" "}
-            <strong>{actuator.maxPressure_bar} bar</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Swirl Angle:</span>{" "}
-            <strong>{actuator.swirlChamberAngle_deg}°</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Compatible With:</span>{" "}
-            <strong>{actuator.materialCompatibility.join(", ")}</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Applications:</span>{" "}
-            <strong>{actuator.typicalApplications.join(", ")}</strong>
-          </div>
-          <div>
-            <span className="text-[var(--muted)]">Unit Price:</span>{" "}
-            <strong>${actuator.price_usd.toFixed(2)}</strong>
-          </div>
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-xs md:grid-cols-4">
+          {[
+            { label: "SKU", value: actuator.sku },
+            { label: "Type", value: actuator.type.replace("_", " ") },
+            { label: "Orifice", value: `${actuator.orificeDiameter_mm} mm` },
+            { label: "Max Pressure", value: `${actuator.maxPressure_bar} bar` },
+            { label: "Swirl Angle", value: `${actuator.swirlChamberAngle_deg}°` },
+            { label: "Compatible With", value: actuator.materialCompatibility.join(", ") },
+            { label: "Applications", value: actuator.typicalApplications.join(", ") },
+            { label: "Unit Price", value: `$${actuator.price_usd.toFixed(2)}` },
+          ].map((item) => (
+            <div key={item.label}>
+              <span className="text-[var(--muted)]">{item.label}</span>
+              <p className="mt-0.5 font-semibold text-[var(--fg-bright)]">{item.value}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -171,15 +190,15 @@ function ResultsContent() {
       <div className="flex gap-4">
         <Link
           href="/configure"
-          className="border border-[var(--border)] px-6 py-2 text-xs uppercase tracking-widest text-[var(--muted)] no-underline hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
         >
-          &larr; Back to Configurator
+          ← Back to Configurator
         </Link>
         <Link
           href={`/procurement?actuator=${actuator.id}&qty=100`}
-          className="border border-[var(--accent)] bg-[var(--accent)] px-6 py-2 text-xs uppercase tracking-widest text-[var(--bg)] no-underline hover:bg-transparent hover:text-[var(--accent)]"
+          className="btn-primary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
         >
-          Procure This Actuator &rarr;
+          Procure This Actuator →
         </Link>
       </div>
     </div>
@@ -190,7 +209,12 @@ export default function ResultsPage() {
   return (
     <Suspense
       fallback={
-        <div className="py-12 text-center text-xs text-[var(--muted)]">Loading...</div>
+        <div className="flex items-center justify-center py-20">
+          <svg className="h-8 w-8 animate-spin text-[var(--accent)]" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
+            <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
       }
     >
       <ResultsContent />
