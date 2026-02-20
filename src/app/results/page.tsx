@@ -2,9 +2,10 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { ACTUATORS, FLUIDS, predict, INDUSTRY_LABELS } from "@/lib/data";
+import { ACTUATORS, FLUIDS, predict, INDUSTRY_LABELS, PRODUCT_CATEGORY_LABELS } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
+import { TechnicalDesignPanel } from "@/components/TechnicalDesign";
 
 function RegimeBadge({ regime }: { regime: string }) {
   const colors: Record<string, string> = {
@@ -209,6 +210,8 @@ function ResultsContent() {
         </h2>
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-xs md:grid-cols-4">
           {[
+            { label: "Manufacturer", value: actuator.manufacturer },
+            { label: "Category", value: PRODUCT_CATEGORY_LABELS[actuator.productCategory] },
             { label: "SKU", value: actuator.sku },
             { label: "Type", value: actuator.type.replace(/_/g, " ") },
             { label: "Orifice", value: `${actuator.orificeDiameter_mm} mm` },
@@ -235,6 +238,17 @@ function ResultsContent() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Technical Design */}
+      <div className="glass rounded-xl p-6">
+        <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+          </svg>
+          Technical Design
+        </h2>
+        <TechnicalDesignPanel actuator={actuator} />
       </div>
 
       {/* Actions */}

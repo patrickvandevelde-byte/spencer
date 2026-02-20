@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ACTUATORS, FLUIDS, INDUSTRY_LABELS, SOLVENT_CLASS_LABELS } from "@/lib/data";
-import type { Industry, SolventClass } from "@/lib/data";
+import { ACTUATORS, FLUIDS, INDUSTRY_LABELS, SOLVENT_CLASS_LABELS, PRODUCT_CATEGORY_LABELS } from "@/lib/data";
+import type { Industry, SolventClass, Manufacturer } from "@/lib/data";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
 
 const ALL_INDUSTRIES = Object.keys(INDUSTRY_LABELS) as Industry[];
@@ -12,9 +12,12 @@ const ALL_SOLVENT_CLASSES = Object.keys(SOLVENT_CLASS_LABELS) as SolventClass[];
 export default function Home() {
   const [industryFilter, setIndustryFilter] = useState<Industry | "all">("all");
   const [solventFilter, setSolventFilter] = useState<SolventClass | "all">("all");
+  const [mfrFilter, setMfrFilter] = useState<Manufacturer | "all">("all");
 
   const filteredActuators = ACTUATORS.filter(
-    (a) => industryFilter === "all" || a.industries.includes(industryFilter)
+    (a) =>
+      (industryFilter === "all" || a.industries.includes(industryFilter)) &&
+      (mfrFilter === "all" || a.manufacturer === mfrFilter)
   );
   const filteredFluids = FLUIDS.filter(
     (f) => solventFilter === "all" || f.solventClass === solventFilter
@@ -29,7 +32,7 @@ export default function Home() {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-4 py-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
             <span className="font-[family-name:var(--font-mono)] text-[11px] tracking-wider text-[var(--accent)]">
-              12 ACTUATORS &middot; 25 FLUIDS &middot; 9 SOLVENT CLASSES
+              SPENCER + COSTER &middot; {ACTUATORS.length} PRODUCTS &middot; 25 FLUIDS
             </span>
           </div>
           <h1 className="mb-6 text-5xl font-bold leading-[1.1] tracking-tight text-[var(--fg-bright)]">
@@ -102,6 +105,26 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Manufacturer filter */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {(["all", "Spencer", "Coster"] as const).map((m) => {
+            const count = m === "all" ? ACTUATORS.length : ACTUATORS.filter((a) => a.manufacturer === m).length;
+            return (
+              <button
+                key={m}
+                onClick={() => setMfrFilter(m)}
+                className={`rounded-lg border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+                  mfrFilter === m
+                    ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
+                    : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
+                }`}
+              >
+                {m === "all" ? "All Brands" : m === "Coster" ? "Coster Group" : "Spencer"} ({count})
+              </button>
+            );
+          })}
+        </div>
+
         {/* Industry filter chips */}
         <div className="mb-6 flex flex-wrap gap-2">
           <button
@@ -158,10 +181,16 @@ export default function Home() {
                   <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
                     {a.sku}
                   </span>
+                  <span className={`rounded-md border px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[8px] font-bold uppercase tracking-wider ${a.manufacturer === "Coster" ? "border-[#ec4899]/30 text-[#ec4899]" : "border-[#06b6d4]/30 text-[#06b6d4]"}`}>
+                    {a.manufacturer}
+                  </span>
                 </div>
                 <h3 className="mb-1 text-sm font-semibold text-[var(--fg-bright)]">
                   {a.name}
                 </h3>
+                <p className="mb-1 font-[family-name:var(--font-mono)] text-[9px] uppercase tracking-wider text-[var(--muted)]">
+                  {PRODUCT_CATEGORY_LABELS[a.productCategory]} &middot; {a.technicalDesign.bodyMaterial}
+                </p>
                 <p className="mb-3 text-[11px] leading-relaxed text-[var(--muted)]">
                   {a.description}
                 </p>
