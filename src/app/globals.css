@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f5f5f0;
+  --fg: #1a1a1a;
+  --accent: #0a0a0a;
+  --muted: #6b6b6b;
+  --border: #d4d4d0;
+  --surface: #ffffff;
+  --danger: #c0392b;
+  --success: #27ae60;
+  --warning: #e67e22;
+  --code-bg: #eaeae5;
+}
+
+@theme inline {
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", "Cascadia Code", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-mono);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
