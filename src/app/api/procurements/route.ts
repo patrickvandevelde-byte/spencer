@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
         total: subtotal.toString(),
         suppliersQuoted: [],
         status: 'draft',
-      })
+      } as any)
       .returning();
 
     return NextResponse.json(

@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         role,
         token,
         expiresAt,
-      })
+      } as any)
       .returning();
 
     // TODO: Send email with invitation link

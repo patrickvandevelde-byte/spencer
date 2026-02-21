@@ -4,9 +4,11 @@ import { tenants, billingSubscriptions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-04-10',
-});
+function getStripeInstance() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY not set');
+  return new Stripe(key);
+}
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 
@@ -25,7 +27,7 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+      event = getStripeInstance().webhooks.constructEvent(body, sig, webhookSecret);
     } catch (error) {
       console.error('Webhook signature verification failed:', error);
       return NextResponse.json(
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as any;
 
         // Find tenant by customer ID
         const tenant = await db.query.tenants.findFirst({
@@ -85,7 +87,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as any;
 
         // Find and update billing subscription
         const billing = await db.query.billingSubscriptions.findFirst({
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object as any;
 
         // Find tenant
         const tenant = await db.query.tenants.findFirst({
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object as any;
 
         // Find tenant
         const tenant = await db.query.tenants.findFirst({

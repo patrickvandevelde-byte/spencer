@@ -1309,36 +1309,217 @@ export const SOLVENT_CLASS_LABELS: Record<SolventClass, string> = {
 };
 
 // -----------------------------------------------------------
-// Prediction Engine (Enhanced Surrogate Model)
-// Uses simplified Navier-Stokes derived correlations
-// + Ohnesorge regime classification
+// Prediction Engine v2: Type-Specific Spray Physics
+//
+// Each actuator category has fundamentally different atomization
+// mechanisms. A swirl pressure nozzle, an air-atomizing nozzle,
+// an ultrasonic atomizer, and a metered-dose pump cannot share
+// the same model. This engine dispatches to the correct physics
+// based on actuator type and uses the actual internal geometry
+// (swirl channel count, channel width, chamber dimensions) from
+// the technical design specification.
+//
+// Key correlations:
+//   Swirl nozzles:  Lefebvre (1989), Rizk & Lefebvre (1985)
+//   Flat fan:       Dombrowski & Johns (1963) sheet breakup
+//   Air-atomizing:  Nukiyama & Tanasawa (1939) twin-fluid
+//   Ultrasonic:     Lang (1962) capillary wave
+//   Pumps/aerosols: Metered-dose spring-piston model
 // -----------------------------------------------------------
+
+// Discharge coefficient by actuator type (empirical)
+const DISCHARGE_COEFFICIENTS: Record<ActuatorType, number> = {
+  full_cone: 0.55,       // Swirl loss reduces Cd
+  hollow_cone: 0.45,     // High swirl = more loss, less Cd
+  flat_fan: 0.65,        // Elliptical slot, moderate loss
+  fine_mist: 0.40,       // Micro-orifice + high swirl = low Cd
+  jet_stream: 0.82,      // Straight bore, minimal loss
+  air_atomizing: 0.60,   // Moderate — liquid side only
+  spiral: 0.70,          // Open passage, low restriction
+  deflection: 0.75,      // Similar to jet but with deflection plate loss
+  ultrasonic: 0.30,      // Gravity-fed, very low pressure
+  multi_orifice: 0.50,   // Split flow across 8 holes
+  adjustable_cone: 0.50, // Needle valve partially restricts
+  impingement: 0.72,     // Two converging jets, good Cd per orifice
+};
+
+// Material interaction warnings: specific chemical attacks on specific materials
+const MATERIAL_ATTACKS: Array<{
+  solventClass: SolventClass;
+  material: string;
+  warning: string;
+}> = [
+  { solventClass: "ketone", material: "POM", warning: "MATERIAL: Ketones (acetone, MEK) attack POM/Delrin — causes swelling and cracking" },
+  { solventClass: "ketone", material: "Buna-N", warning: "MATERIAL: Ketones rapidly degrade Buna-N/nitrile seals" },
+  { solventClass: "ester", material: "Buna-N", warning: "MATERIAL: Esters degrade Buna-N seals — use FKM or PTFE" },
+  { solventClass: "hydrocarbon", material: "EPDM", warning: "MATERIAL: Hydrocarbons swell EPDM seals — use FKM or Buna-N" },
+  { solventClass: "silicone", material: "Silicone", warning: "MATERIAL: Silicone fluids dissolve silicone seals — use FKM or PTFE" },
+  { solventClass: "caustic", material: "Aluminium", warning: "MATERIAL: Caustic solutions corrode aluminium — use stainless steel" },
+  { solventClass: "caustic", material: "Buna-N", warning: "MATERIAL: Strong caustics degrade Buna-N over time — use EPDM" },
+];
+
+/**
+ * Calculate the geometric swirl number from internal dimensions.
+ * S = (π · D_chamber · n · w) / (4 · A_orifice)
+ * Higher S → wider cone angle, finer droplets, lower Cd.
+ */
+function computeSwirlNumber(td: TechnicalDesign, orificeDia_mm: number): number {
+  if (td.swirlChannels === 0 || !td.swirlChannelWidth_mm || !td.chamberDiameter_mm) {
+    return 0; // No swirl
+  }
+  const A_orifice = Math.PI * (orificeDia_mm / 2) ** 2; // mm²
+  const S =
+    (Math.PI * td.chamberDiameter_mm * td.swirlChannels * td.swirlChannelWidth_mm) /
+    (4 * A_orifice);
+  return S;
+}
+
+/**
+ * Cone angle from swirl number (Rizk & Lefebvre, 1985):
+ *   half-angle ≈ 6 · S^0.5 · (ΔP/ρ)^0.11
+ * Returns full cone angle in degrees.
+ */
+function swirlConeAngle(S: number, deltaP_Pa: number, rho: number, baseAngle_deg: number): number {
+  if (S < 0.1) {
+    // No meaningful swirl — return narrow jet angle
+    return Math.max(5, baseAngle_deg * 0.3);
+  }
+  const halfAngle_rad = 6 * Math.pow(S, 0.5) * Math.pow(deltaP_Pa / rho, 0.11) * (Math.PI / 180);
+  const fullAngle = 2 * halfAngle_rad * (180 / Math.PI);
+  // Blend with the nominal design angle (which represents the manufacturer's target)
+  return Math.min(150, Math.max(5, 0.4 * fullAngle + 0.6 * baseAngle_deg));
+}
+
+/**
+ * Swirl-nozzle SMD (Lefebvre, 1989):
+ *   SMD = 4.52 · (σ·μ²/(ρ²·ΔP))^0.25 · (t/d)^0.25 + 0.39 · (σ·ρ/(ΔP²))^0.25 · (t/d)^0.25
+ * Simplified to dominant first term for pressure atomizers.
+ * t = film thickness ≈ d/(2·S) for swirl nozzles.
+ */
+function swirlDropletSize(
+  d_m: number, sigma: number, mu: number, rho: number, deltaP: number, S: number
+): number {
+  const effectiveS = Math.max(S, 0.3); // Floor to avoid division by zero for low-swirl
+  const t = d_m / (2 * effectiveS); // Film thickness estimate
+  const term1 = 4.52 * Math.pow((sigma * mu * mu) / (rho * rho * deltaP), 0.25) * Math.pow(t / d_m, 0.25);
+  const term2 = 0.39 * Math.pow((sigma * rho) / (deltaP * deltaP), 0.25) * Math.pow(t / d_m, 0.25);
+  return term1 + term2; // meters
+}
+
+/**
+ * Flat fan sheet breakup (Dombrowski & Johns, 1963):
+ *   SMD ≈ 1.9 · (σ/(ρ·v²))^(1/3) · (μ·v/σ)^(1/6) · d^(2/3)
+ */
+function flatFanDropletSize(d_m: number, sigma: number, mu: number, rho: number, v: number): number {
+  return 1.9 * Math.pow(sigma / (rho * v * v), 1 / 3) * Math.pow((mu * v) / sigma, 1 / 6) * Math.pow(d_m, 2 / 3);
+}
+
+/**
+ * Air-atomizing nozzle (Nukiyama & Tanasawa, 1939):
+ *   SMD = 0.585·(σ/ρ)^0.5 / v_rel + 597·(μ/(σ·ρ)^0.5)^0.45 · (Q_L/Q_A)^1.5
+ * v_rel = relative velocity between air and liquid.
+ * Assumes ALR (air-to-liquid ratio) of 0.5 for external mix.
+ */
+function airAtomizingDropletSize(
+  sigma: number, mu: number, rho: number, v_liquid: number, ALR: number
+): number {
+  const v_air = 100; // Typical compressed air velocity (m/s) at 2-4 bar gauge
+  const v_rel = Math.abs(v_air - v_liquid);
+  const rho_air = 1.2; // kg/m³
+  const term1 = 0.585 * Math.sqrt(sigma / rho) / Math.max(v_rel, 1);
+  const term2 = 597 * Math.pow(mu / Math.sqrt(sigma * rho), 0.45) * Math.pow(1 / Math.max(ALR, 0.1), 1.5);
+  return term1 + term2; // meters
+}
+
+/**
+ * Ultrasonic atomizer (Lang, 1962):
+ *   D = 0.34 · (8·π·σ / (ρ·f²))^(1/3)
+ * f = excitation frequency (48 kHz for our ultrasonic nozzle).
+ */
+function ultrasonicDropletSize(sigma: number, rho: number, freq_Hz: number): number {
+  return 0.34 * Math.pow((8 * Math.PI * sigma) / (rho * freq_Hz * freq_Hz), 1 / 3);
+}
+
+/**
+ * Metered-dose pump model:
+ * Pumps don't spray continuously — they deliver a fixed volume per actuation.
+ * The spring drives the piston, which pre-compresses the fluid above the
+ * swirl insert's critical atomization pressure before releasing it.
+ * Flow rate is expressed as µL/actuation rather than mL/min.
+ */
+function pumpFlowModel(td: TechnicalDesign, pressure_bar: number): {
+  dosage_uL: number;
+  effectivePressure_bar: number;
+} {
+  const dosage = td.dosage_uL || 100;
+  // Pre-compression pumps have a built-in pressure (typically 2-4 bar)
+  // Operating pressure input is less relevant — the spring sets it
+  const springPressure = td.springMaterial ? 3.0 : 1.5; // Stainless spring → higher force
+  const effectivePressure = Math.max(springPressure, pressure_bar);
+  return { dosage_uL: dosage, effectivePressure_bar: effectivePressure };
+}
+
 export function predict(actuator: Actuator, fluid: Fluid, pressure_bar: number): PredictionResult {
-  const d = actuator.orificeDiameter_mm / 1000; // m
-  const mu = fluid.viscosity_cP / 1000; // Pa·s
-  const rho = fluid.density_kg_m3;
-  const sigma = fluid.surfaceTension_mN_m / 1000; // N/m
-  const P = pressure_bar * 1e5; // Pa
+  const td = actuator.technicalDesign;
+  const d = actuator.orificeDiameter_mm / 1000;          // m
+  const mu = fluid.viscosity_cP / 1000;                  // Pa·s
+  const rho = fluid.density_kg_m3;                        // kg/m³
+  const sigma = fluid.surfaceTension_mN_m / 1000;        // N/m
+  const P = pressure_bar * 1e5;                           // Pa
 
-  // Velocity from Bernoulli: v = Cd * sqrt(2*deltaP/rho)
-  const Cd = 0.62;
-  const v = Cd * Math.sqrt((2 * P) / rho);
+  // Type-specific discharge coefficient
+  const Cd = DISCHARGE_COEFFICIENTS[actuator.type];
 
-  // Flow rate Q = Cd * A * sqrt(2*deltaP/rho)
-  const A = Math.PI * (d / 2) ** 2;
-  const Q_m3_s = Cd * A * Math.sqrt((2 * P) / rho);
-  const flowRate_mL_min = Q_m3_s * 1e6 * 60;
+  // ---- Flow velocity & rate ----
+  let v: number;      // Exit velocity (m/s)
+  let flowRate_mL_min: number;
+  let effectivePressure_bar = pressure_bar;
 
-  // Reynolds Number
+  const isPump = actuator.productCategory === "spray_pump" ||
+                 actuator.productCategory === "perfumery_pump" ||
+                 actuator.productCategory === "dispenser";
+
+  if (isPump) {
+    // Pumps: spring-driven, metered dose
+    const pumpModel = pumpFlowModel(td, pressure_bar);
+    effectivePressure_bar = pumpModel.effectivePressure_bar;
+    const P_eff = effectivePressure_bar * 1e5;
+    v = Cd * Math.sqrt((2 * P_eff) / rho);
+    // Flow rate for pumps: dosage per actuation, assume ~1 actuation/sec for comparison
+    flowRate_mL_min = (pumpModel.dosage_uL / 1000) * 60; // µL/actuation × 60 actuations/min
+  } else if (actuator.type === "ultrasonic") {
+    // Ultrasonic: gravity-fed, very low velocity
+    v = Cd * Math.sqrt((2 * P) / rho);
+    // Ultrasonic nozzles have very low flow — limited by feed rate
+    const A = Math.PI * (d / 2) ** 2;
+    flowRate_mL_min = Cd * A * Math.sqrt((2 * P) / rho) * 1e6 * 60;
+    // Cap at typical ultrasonic max (~5 mL/min)
+    flowRate_mL_min = Math.min(flowRate_mL_min, 5.0);
+  } else if (actuator.type === "multi_orifice") {
+    // Multi-orifice: flow splits across N orifices
+    const n = td.orificeCount || 1;
+    const A_single = Math.PI * (d / 2) ** 2;
+    v = Cd * Math.sqrt((2 * P) / rho);
+    flowRate_mL_min = n * Cd * A_single * Math.sqrt((2 * P) / rho) * 1e6 * 60;
+  } else if (actuator.type === "impingement") {
+    // Impingement: two converging jets
+    const n = td.orificeCount || 2;
+    const A_single = Math.PI * (d / 2) ** 2;
+    v = Cd * Math.sqrt((2 * P) / rho);
+    flowRate_mL_min = n * Cd * A_single * Math.sqrt((2 * P) / rho) * 1e6 * 60;
+  } else {
+    // Standard pressure nozzle: Bernoulli
+    const A = Math.PI * (d / 2) ** 2;
+    v = Cd * Math.sqrt((2 * P) / rho);
+    flowRate_mL_min = Cd * A * Math.sqrt((2 * P) / rho) * 1e6 * 60;
+  }
+
+  // ---- Dimensionless numbers ----
   const Re = (rho * v * d) / mu;
-
-  // Weber Number
-  const We = (rho * v ** 2 * d) / sigma;
-
-  // Ohnesorge Number: Oh = mu / sqrt(rho * sigma * d) = sqrt(We) / Re
+  const We = (rho * v * v * d) / sigma;
   const Oh = mu / Math.sqrt(rho * sigma * d);
 
-  // Atomization regime classification
+  // ---- Atomization regime (Ohnesorge diagram) ----
   let atomizationRegime: AtomizationRegime;
   if (Oh > 1) {
     atomizationRegime = "Rayleigh";
@@ -1350,63 +1531,232 @@ export function predict(actuator: Actuator, fluid: Fluid, pressure_bar: number):
     atomizationRegime = "Atomization";
   }
 
-  // Cone angle model: base angle scaled by sqrt(We)/Re^0.1
-  const baseAngle = actuator.swirlChamberAngle_deg;
-  const coneAngle = Math.min(
-    150,
-    Math.max(5, baseAngle * 0.8 + 10 * Math.sqrt(We) / Math.pow(Re, 0.1))
-  );
+  // ---- Swirl number from actual geometry ----
+  const S = computeSwirlNumber(td, actuator.orificeDiameter_mm);
 
-  // Droplet size (Sauter Mean Diameter correlation)
-  // SMD ∝ d * Re^(-0.5) * We^(-0.25)
-  const Dv50_m = 2.5 * d * Math.pow(Re, -0.5) * Math.pow(We, -0.25);
-  const Dv50_um = Dv50_m * 1e6;
+  // ---- Cone angle: type-specific ----
+  let coneAngle: number;
+  switch (actuator.type) {
+    case "jet_stream":
+      // Jets have minimal spread — 3-8° divergence from turbulence
+      coneAngle = 3 + 5 * Math.pow(mu / 0.001, 0.3); // Viscosity slightly widens jet
+      break;
+    case "flat_fan":
+      // Flat fans: the "angle" is the fan width, controlled by slot aspect ratio
+      coneAngle = actuator.swirlChamberAngle_deg; // Manufacturer-specified fan angle
+      break;
+    case "deflection":
+      // Deflection nozzles: angle set by deflection plate geometry
+      coneAngle = actuator.swirlChamberAngle_deg;
+      break;
+    case "spiral":
+      // Spiral nozzles: full-cone set by helix geometry, typically wide
+      coneAngle = Math.min(170, actuator.swirlChamberAngle_deg * 0.9 + 20);
+      break;
+    case "ultrasonic":
+      // Ultrasonic: near-zero velocity → wide, gentle cloud
+      coneAngle = 15 + 10 * Math.random(); // Essentially a diffuse cloud, ~15-25°
+      break;
+    case "air_atomizing":
+      // Air cap geometry sets the angle
+      coneAngle = actuator.swirlChamberAngle_deg * 0.85;
+      break;
+    case "impingement":
+      // Impingement: sheet fans out from collision point
+      coneAngle = actuator.swirlChamberAngle_deg + 30 * Math.pow(We / 1000, 0.2);
+      coneAngle = Math.min(150, coneAngle);
+      break;
+    default:
+      // Swirl-type nozzles (full_cone, hollow_cone, fine_mist, adjustable_cone, multi_orifice)
+      coneAngle = swirlConeAngle(S, P, rho, actuator.swirlChamberAngle_deg);
+      break;
+  }
 
-  // Spray width at 100mm distance
+  // ---- Droplet size: type-specific correlations ----
+  let Dv50_um: number;
+  switch (actuator.type) {
+    case "jet_stream":
+      // Coherent jet — droplets only form at jet breakup (Rayleigh)
+      // Dv50 ≈ 1.89 × jet diameter for Rayleigh breakup
+      Dv50_um = 1.89 * actuator.orificeDiameter_mm * 1000 * Math.pow(Oh, 0.2);
+      break;
+
+    case "flat_fan":
+      Dv50_um = flatFanDropletSize(d, sigma, mu, rho, v) * 1e6;
+      break;
+
+    case "air_atomizing": {
+      const ALR = 0.5; // Air-to-liquid mass ratio (typical for external mix)
+      Dv50_um = airAtomizingDropletSize(sigma, mu, rho, v, ALR) * 1e6;
+      break;
+    }
+
+    case "ultrasonic":
+      Dv50_um = ultrasonicDropletSize(sigma, rho, 48000) * 1e6;
+      break;
+
+    case "spiral":
+      // Spiral nozzles produce coarse spray — larger drops
+      Dv50_um = 3.5 * d * Math.pow(Re, -0.4) * Math.pow(We, -0.2) * 1e6;
+      break;
+
+    case "deflection":
+      // Deflection plate shatters jet — sheet breakup model
+      Dv50_um = flatFanDropletSize(d, sigma, mu, rho, v) * 1.3 * 1e6; // ~30% coarser than flat fan
+      break;
+
+    case "impingement":
+      // Impingement: sheet from colliding jets, very fine
+      Dv50_um = flatFanDropletSize(d, sigma, mu, rho, v) * 0.7 * 1e6; // ~30% finer due to high-energy collision
+      break;
+
+    case "multi_orifice":
+      // Each orifice acts as a mini swirl nozzle
+      Dv50_um = swirlDropletSize(d, sigma, mu, rho, P, Math.max(S, 1)) * 1e6;
+      break;
+
+    default:
+      // Swirl pressure nozzles: full_cone, hollow_cone, fine_mist, adjustable_cone
+      Dv50_um = swirlDropletSize(d, sigma, mu, rho, P, Math.max(S, 0.5)) * 1e6;
+      // Hollow cone produces finer spray than full cone at same conditions
+      if (actuator.type === "hollow_cone") {
+        Dv50_um *= 0.75;
+      }
+      if (actuator.type === "fine_mist") {
+        Dv50_um *= 0.6; // Micro-orifice + high swirl → very fine
+      }
+      break;
+  }
+
+  // Clamp droplet size to physically reasonable range
+  Dv50_um = Math.max(1, Math.min(5000, Dv50_um));
+
+  // ---- Spray width at 100mm standoff ----
   const sprayWidth = 2 * 100 * Math.tan((coneAngle * Math.PI) / 360);
 
-  // --- Safety Warnings ---
+  // ---- Safety warnings (expanded with material-specific checks) ----
   const safetyWarnings: string[] = [];
+
+  // Flammability
   if (fluid.flashPoint_C !== null && fluid.flashPoint_C < 23) {
     safetyWarnings.push("FLAMMABLE: Flash point below 23°C — ensure ATEX/Ex-rated environment");
   }
   if (fluid.flashPoint_C !== null && fluid.flashPoint_C >= 23 && fluid.flashPoint_C < 60) {
     safetyWarnings.push("COMBUSTIBLE: Flash point below 60°C — avoid ignition sources");
   }
+
+  // Chemical hazards
   if (fluid.hazards.includes("corrosive")) {
     safetyWarnings.push("CORROSIVE: Ensure wetted parts are chemically resistant");
   }
   if (fluid.hazards.includes("oxidizer")) {
     safetyWarnings.push("OXIDIZER: Keep away from organics and reducing agents");
   }
+
+  // pH extremes
   if (fluid.pH < 3) {
     safetyWarnings.push("ACIDIC: pH below 3 — verify seal and body material compatibility");
   }
   if (fluid.pH > 12) {
     safetyWarnings.push("ALKALINE: pH above 12 — verify seal and body material compatibility");
   }
+
+  // Overpressure
   if (pressure_bar > actuator.maxPressure_bar) {
     safetyWarnings.push(`OVERPRESSURE: Operating at ${pressure_bar} bar exceeds rated ${actuator.maxPressure_bar} bar`);
   }
+
+  // Explosive mist formation
   if (Dv50_um < 30 && fluid.hazards.some(h => h.includes("flammable"))) {
     safetyWarnings.push("EXPLOSIVE MIST: Sub-30µm droplets of flammable liquid — explosive atmosphere risk");
   }
+
+  // Inhalation risk
   if (fluid.ppeRequired.includes("respirator")) {
     safetyWarnings.push("INHALATION: Respiratory protection required — use in ventilated area");
   }
+  if (Dv50_um < 10) {
+    safetyWarnings.push("RESPIRABLE: Sub-10µm droplets enter deep lung — assess inhalation toxicity");
+  }
 
-  // --- Compatibility score (enhanced) ---
+  // Material-specific chemical attack warnings
+  for (const attack of MATERIAL_ATTACKS) {
+    if (fluid.solventClass === attack.solventClass) {
+      const wetted = [td.bodyMaterial, td.sealMaterial, td.insertMaterial, td.springMaterial]
+        .filter(Boolean)
+        .join(" ");
+      if (wetted.includes(attack.material)) {
+        safetyWarnings.push(attack.warning);
+      }
+    }
+  }
+
+  // Viscosity warning for fine-mist actuators
+  if (fluid.viscosity_cP > 20 && (actuator.type === "fine_mist" || actuator.type === "ultrasonic")) {
+    safetyWarnings.push(`VISCOSITY: ${fluid.viscosity_cP} cP may exceed atomization threshold for this actuator — test at reduced viscosity first`);
+  }
+
+  // High-viscosity flow warning
+  if (fluid.viscosity_cP > 30 && actuator.orificeDiameter_mm < 0.5) {
+    safetyWarnings.push("BLOCKAGE RISK: High viscosity + small orifice — risk of clogging or insufficient flow");
+  }
+
+  // ---- Compatibility score (multi-factor weighted) ----
   const materialMatch = actuator.materialCompatibility.includes(fluid.solventClass);
-  const viscosityPenalty = fluid.viscosity_cP > 30 ? 35 : fluid.viscosity_cP > 10 ? 15 : fluid.viscosity_cP > 5 ? 5 : 0;
   const pressureSafe = pressure_bar <= actuator.maxPressure_bar;
-  const regimeBonus = atomizationRegime === "Atomization" ? 10 : atomizationRegime === "Wind-stressed" ? 5 : 0;
-  const compatibilityScore = Math.max(
-    0,
-    Math.min(
-      100,
-      (materialMatch ? 70 : 20) + (pressureSafe ? 20 : -10) - viscosityPenalty + regimeBonus
-    )
-  );
+
+  // Material compatibility is the gate (0 or 1)
+  let score = materialMatch ? 50 : 10;
+
+  // Pressure safety (0-20 points)
+  if (pressureSafe) {
+    // Bonus for operating at 40-80% of max pressure (optimal range)
+    const pressureRatio = pressure_bar / actuator.maxPressure_bar;
+    if (pressureRatio >= 0.4 && pressureRatio <= 0.8) {
+      score += 20; // Optimal operating window
+    } else if (pressureRatio < 0.4) {
+      score += 12; // Under-pressure — may not atomize well
+    } else {
+      score += 15; // High end but within spec
+    }
+  } else {
+    score -= 15; // Over pressure
+  }
+
+  // Atomization quality (0-15 points)
+  if (atomizationRegime === "Atomization") score += 15;
+  else if (atomizationRegime === "Wind-stressed") score += 10;
+  else if (atomizationRegime === "Wind-induced") score += 5;
+  else score += 0; // Rayleigh = dripping, poor atomization
+
+  // Viscosity suitability for actuator type (0-10 points)
+  const vis = fluid.viscosity_cP;
+  if (actuator.type === "jet_stream" || actuator.type === "spiral" || actuator.type === "deflection") {
+    // These handle high viscosity well
+    score += vis > 20 ? 8 : 10;
+  } else if (actuator.type === "fine_mist" || actuator.type === "ultrasonic") {
+    // These need low viscosity
+    score += vis < 5 ? 10 : vis < 15 ? 5 : 0;
+  } else {
+    // General nozzles
+    score += vis < 10 ? 10 : vis < 30 ? 5 : 0;
+  }
+
+  // Material attack penalty (-10 for each specific chemical incompatibility)
+  const materialAttackCount = MATERIAL_ATTACKS.filter((attack) => {
+    if (fluid.solventClass !== attack.solventClass) return false;
+    const wetted = [td.bodyMaterial, td.sealMaterial, td.insertMaterial, td.springMaterial]
+      .filter(Boolean).join(" ");
+    return wetted.includes(attack.material);
+  }).length;
+  score -= materialAttackCount * 10;
+
+  // Seal material bonus: PTFE and FKM are broadly compatible
+  if (td.sealMaterial.includes("PTFE") || td.sealMaterial.includes("FKM")) {
+    score += 5;
+  }
+
+  const compatibilityScore = Math.max(0, Math.min(100, Math.round(score)));
 
   return {
     actuatorId: actuator.id,
@@ -1415,8 +1765,8 @@ export function predict(actuator: Actuator, fluid: Fluid, pressure_bar: number):
     dropletSizeDv50_um: Math.round(Dv50_um * 10) / 10,
     flowRate_mL_min: Math.round(flowRate_mL_min * 10) / 10,
     sprayWidth_mm_at_100mm: Math.round(sprayWidth * 10) / 10,
-    compatibilityScore: Math.round(compatibilityScore),
-    pressureRequired_bar: pressure_bar,
+    compatibilityScore,
+    pressureRequired_bar: effectivePressure_bar,
     reynoldsNumber: Math.round(Re),
     weberNumber: Math.round(We),
     ohnesorgeNumber: Math.round(Oh * 10000) / 10000,

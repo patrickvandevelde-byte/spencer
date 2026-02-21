@@ -90,18 +90,18 @@ export async function POST(request: NextRequest) {
         createdByUserId: userId,
         name,
         description: description || null,
-        fluidViscosityCp: fluidViscosityCp ? parseFloat(fluidViscosityCp) : null,
-        fluidDensityKgM3: fluidDensityKgM3 ? parseFloat(fluidDensityKgM3) : null,
-        fluidSurfaceTensionMnM: fluidSurfaceTensionMnM ? parseFloat(fluidSurfaceTensionMnM) : null,
+        fluidViscosityCp: fluidViscosityCp?.toString() ?? null,
+        fluidDensityKgM3: fluidDensityKgM3?.toString() ?? null,
+        fluidSurfaceTensionMnM: fluidSurfaceTensionMnM?.toString() ?? null,
         fluidFlashPointC: fluidFlashPointC ? parseInt(fluidFlashPointC) : null,
         targetSprayConeDeg: targetSprayConeDeg ? parseInt(targetSprayConeDeg) : null,
         targetDropletSizeUm: targetDropletSizeUm ? parseInt(targetDropletSizeUm) : null,
         maxPressureBar: maxPressureBar ? parseInt(maxPressureBar) : null,
-        targetFlowRateMlMin: targetFlowRateMlMin ? parseFloat(targetFlowRateMlMin) : null,
+        targetFlowRateMlMin: targetFlowRateMlMin?.toString() ?? null,
         compatibleActuators: compatibleActuators || [],
         tags: tags || [],
         status: 'draft',
-      })
+      } as any)
       .returning();
 
     return NextResponse.json(

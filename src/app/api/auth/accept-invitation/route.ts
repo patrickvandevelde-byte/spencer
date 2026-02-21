@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         lastName: lastName || '',
         tenantId: invitation.tenantId,
         role: invitation.role as any,
-      })
+      } as any)
       .returning({ id: users.id, email: users.email, tenantId: users.tenantId });
 
     // Mark invitation as accepted

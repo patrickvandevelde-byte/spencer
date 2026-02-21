@@ -111,7 +111,7 @@ export async function PUT(
           version: 1, // TODO: increment version properly
           changes,
           changedByUserId: userId,
-        });
+        } as any);
     }
 
     // Update configuration

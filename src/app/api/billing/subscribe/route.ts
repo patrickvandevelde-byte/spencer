@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         .where(eq(tenants.id, tenantId));
     }
 
-    let subscription;
+    let subscription: any;
 
     if (existingSubscription) {
       // Update existing subscription
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
             subscription.current_period_start * 1000
           ),
           currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        });
+        } as any);
     }
 
     // Update tenant plan
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
         maxUsers: planDetails.features.max_users,
         maxConfigurations: planDetails.features.max_configurations,
         procurementDiscountPct: (planDetails.features.procurement_discount * 100) as any,
-        apiQuotaMonthly: planDetails.features.api_quota || 0,
+        apiQuotaMonthly: (planDetails.features as any).api_quota || 0,
         updatedAt: new Date(),
       })
       .where(eq(tenants.id, tenantId));

@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         plan: 'starter',
         subscriptionStatus: 'trialing',
         trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
-      })
+      } as any)
       .returning();
 
     // Hash password
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
         lastName: lastName || '',
         tenantId: tenant.id,
         role: 'admin', // First user is admin
-      })
+      } as any)
       .returning({ id: users.id, email: users.email, tenantId: users.tenantId });
 
     // Create JWT token

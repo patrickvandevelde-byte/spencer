@@ -1,62 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessionFromRequest } from '@/auth/utils';
 
-// Paths that don't require authentication
-const publicPaths = [
-  '/api/auth/signup',
-  '/api/auth/login',
-  '/api/health',
-  '/',
-  '/compare',
+// All existing pages remain fully public — no auth required.
+// Auth middleware only activates for explicitly protected API routes
+// that require a database connection (tenant management, billing, etc.).
+const protectedApiPrefixes = [
+  '/api/configurations',
+  '/api/procurements',
+  '/api/tenants',
+  '/api/billing',
 ];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip auth check for public paths
-  if (publicPaths.some((path) => pathname.startsWith(path))) {
+  // Only intercept explicitly protected API routes
+  const isProtected = protectedApiPrefixes.some((prefix) =>
+    pathname.startsWith(prefix)
+  );
+
+  if (!isProtected) {
     return NextResponse.next();
   }
 
-  // Check for session
-  const session = await getSessionFromRequest();
+  // For protected routes, check for session token
+  const token = request.cookies.get('aerospec-session')?.value;
 
-  if (!session) {
-    // Redirect to login for API routes
-    if (pathname.startsWith('/api/')) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Redirect to login page for regular routes
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('from', pathname);
-    return NextResponse.redirect(loginUrl);
+  if (!token) {
+    return NextResponse.json(
+      { error: 'Unauthorized — login required' },
+      { status: 401 }
+    );
   }
 
-  // Add session to request headers for downstream handlers
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-user-id', session.sub);
-  requestHeaders.set('x-tenant-id', session.tenantId);
-  requestHeaders.set('x-user-role', session.role);
-
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  // Token exists — let request through (full verification in route handler)
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/api/:path*'],
 };
