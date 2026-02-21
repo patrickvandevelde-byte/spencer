@@ -85,6 +85,23 @@ export interface TechnicalDesign {
 
   // Surface finish
   surfaceFinish_Ra_um: number | null; // Ra roughness of internal bore
+
+  // Valve/pump stem interface
+  stemProfile?: "male" | "female" | null;
+  stemExternalDiameter_mm?: number;
+  stemInternalDiameter_mm?: number;
+  engagementDepth_mm?: number;
+
+  // Kinematic limits
+  actuationForce_N?: number;          // Max actuation force (ergonomic compliance)
+  strokeLength_mm?: number;           // Piston/valve stroke
+  returnSpeed_mm_s?: number;          // Valve return speed
+  primeStrokes?: number;              // Required actuations to prime
+
+  // Regulatory context
+  childResistant?: boolean;           // CR mechanism present
+  fdaCompliant?: boolean;             // FDA-approved materials
+  cleanroomClass?: "ISO_5" | "ISO_6" | "ISO_7" | "ISO_8" | null;
 }
 
 export interface Actuator {
@@ -107,6 +124,8 @@ export interface Actuator {
   technicalDesign: TechnicalDesign;
 }
 
+export type RheologyType = "newtonian" | "power_law" | "bingham" | "herschel_bulkley";
+
 export interface Fluid {
   id: string;
   name: string;
@@ -120,6 +139,23 @@ export interface Fluid {
   category: string;
   hazards: string[];
   ppeRequired: string[];
+
+  // Rheological profile (Non-Newtonian support)
+  rheology: RheologyType;
+  powerLawK?: number;               // Consistency index (Pa·s^n) — for power_law / herschel_bulkley
+  powerLawN?: number;               // Flow behavior index (n<1 shear-thinning, n>1 shear-thickening)
+  yieldStress_Pa?: number;          // For bingham / herschel_bulkley
+
+  // Interfacial mechanics
+  contactAngle_deg?: number;        // Wetting behavior on common substrates
+
+  // Aerosol / volatile properties
+  vaporPressure_kPa?: number;       // At 20°C — critical for propellant interaction
+  boilingPoint_C?: number;
+
+  // Particulate / suspension profile
+  maxParticleSize_um?: number;      // Largest particle diameter — for clogging assessment
+  suspensionConcentration_pct?: number; // Solid content by weight (%)
 }
 
 export type AtomizationRegime =
@@ -128,14 +164,33 @@ export type AtomizationRegime =
   | "Wind-stressed"   // Oh < 1, high We — ligament formation
   | "Atomization";    // Oh < 1, very high We — full atomization
 
+export type ToolingRecommendation = "fdm_3d_print" | "soft_tool" | "hardened_steel";
+
+export interface DropletDistribution {
+  Dv10_um: number;   // 10% of volume below this size
+  Dv50_um: number;   // Median (SMD)
+  Dv90_um: number;   // 90% of volume below this size
+  span: number;       // (Dv90 - Dv10) / Dv50 — polydispersity
+}
+
+export interface ToolingSpec {
+  recommendation: ToolingRecommendation;
+  cavityCount: number;
+  estimatedLeadTime_days: number;
+  estimatedToolCost_usd: number;
+  costPerUnit_usd: number;
+}
+
 export interface PredictionResult {
   actuatorId: string;
   fluidId: string;
   coneAngle_deg: number;
   dropletSizeDv50_um: number;
+  dropletDistribution: DropletDistribution;
   flowRate_mL_min: number;
+  deliveryRate_g_s: number;       // Mass flow rate
   sprayWidth_mm_at_100mm: number;
-  compatibilityScore: number; // 0-100
+  compatibilityScore: number;     // 0-100
   pressureRequired_bar: number;
   reynoldsNumber: number;
   weberNumber: number;
@@ -143,6 +198,15 @@ export interface PredictionResult {
   atomizationRegime: AtomizationRegime;
   velocityExit_m_s: number;
   safetyWarnings: string[];
+
+  // Extended outputs from spec
+  cloggingRisk: "none" | "low" | "moderate" | "high";
+  apparentViscosity_cP: number;   // For non-Newtonian fluids at operating shear rate
+  materialStress: {
+    swellingRisk: boolean;
+    stressCrackingRisk: boolean;
+    leachingRisk: boolean;
+  };
 }
 
 // -----------------------------------------------------------
@@ -914,6 +978,10 @@ export const FLUIDS: Fluid[] = [
     category: "Base Solvent",
     hazards: [],
     ppeRequired: [],
+    rheology: "newtonian",
+    contactAngle_deg: 20,
+    vaporPressure_kPa: 2.34,
+    boilingPoint_C: 100,
   },
   {
     id: "FLD-004",
@@ -928,6 +996,7 @@ export const FLUIDS: Fluid[] = [
     category: "Humectant",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-009",
@@ -942,6 +1011,7 @@ export const FLUIDS: Fluid[] = [
     category: "Pharmaceutical",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-011",
@@ -956,6 +1026,7 @@ export const FLUIDS: Fluid[] = [
     category: "Oxidizer / Sanitizer",
     hazards: ["oxidizer", "irritant"],
     ppeRequired: ["gloves", "goggles"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-012",
@@ -970,6 +1041,7 @@ export const FLUIDS: Fluid[] = [
     category: "Wetting Agent",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-013",
@@ -984,6 +1056,7 @@ export const FLUIDS: Fluid[] = [
     category: "Pharmaceutical Coating",
     hazards: [],
     ppeRequired: ["gloves", "dust_mask"],
+    rheology: "newtonian",
   },
 
   // ---- Alcohol (3) ----
@@ -1000,6 +1073,7 @@ export const FLUIDS: Fluid[] = [
     category: "Solvent",
     hazards: ["flammable"],
     ppeRequired: ["goggles", "gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-003",
@@ -1014,6 +1088,7 @@ export const FLUIDS: Fluid[] = [
     category: "Sanitizer / Solvent",
     hazards: ["flammable"],
     ppeRequired: ["goggles", "gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-014",
@@ -1028,6 +1103,7 @@ export const FLUIDS: Fluid[] = [
     category: "Cosolvent",
     hazards: ["flammable", "irritant"],
     ppeRequired: ["goggles", "gloves", "fume_hood"],
+    rheology: "newtonian",
   },
 
   // ---- Glycol (3) ----
@@ -1044,6 +1120,7 @@ export const FLUIDS: Fluid[] = [
     category: "Humectant / Carrier",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-006",
@@ -1058,6 +1135,7 @@ export const FLUIDS: Fluid[] = [
     category: "Carrier / Antifreeze",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-010",
@@ -1072,6 +1150,7 @@ export const FLUIDS: Fluid[] = [
     category: "Coolant / Antifreeze",
     hazards: ["toxic_if_ingested"],
     ppeRequired: ["gloves", "goggles"],
+    rheology: "newtonian",
   },
 
   // ---- Hydrocarbon (3) ----
@@ -1088,6 +1167,7 @@ export const FLUIDS: Fluid[] = [
     category: "Lubricant",
     hazards: ["combustible"],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-015",
@@ -1102,6 +1182,7 @@ export const FLUIDS: Fluid[] = [
     category: "Cleaning Solvent",
     hazards: ["flammable", "vapors"],
     ppeRequired: ["goggles", "gloves", "fume_hood", "respirator"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-016",
@@ -1116,6 +1197,7 @@ export const FLUIDS: Fluid[] = [
     category: "Metalworking Fluid",
     hazards: ["irritant"],
     ppeRequired: ["gloves", "goggles"],
+    rheology: "newtonian",
   },
 
   // ---- Silicone (2) ----
@@ -1132,6 +1214,7 @@ export const FLUIDS: Fluid[] = [
     category: "Release Agent",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-017",
@@ -1146,6 +1229,7 @@ export const FLUIDS: Fluid[] = [
     category: "Damping / Coating",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
 
   // ---- Ketone (2) ----
@@ -1162,6 +1246,7 @@ export const FLUIDS: Fluid[] = [
     category: "Fast-Evaporating Solvent",
     hazards: ["highly_flammable", "vapors"],
     ppeRequired: ["goggles", "gloves", "fume_hood"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-019",
@@ -1176,6 +1261,7 @@ export const FLUIDS: Fluid[] = [
     category: "Industrial Solvent",
     hazards: ["highly_flammable", "vapors", "irritant"],
     ppeRequired: ["goggles", "gloves", "fume_hood", "respirator"],
+    rheology: "newtonian",
   },
 
   // ---- Ester (2) ----
@@ -1192,6 +1278,7 @@ export const FLUIDS: Fluid[] = [
     category: "Coating Solvent",
     hazards: ["highly_flammable", "vapors"],
     ppeRequired: ["goggles", "gloves", "fume_hood"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-021",
@@ -1206,6 +1293,7 @@ export const FLUIDS: Fluid[] = [
     category: "Cosmetic Emollient",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
 
   // ---- Emulsion (2) ----
@@ -1222,6 +1310,7 @@ export const FLUIDS: Fluid[] = [
     category: "Coating / Adhesive",
     hazards: ["irritant"],
     ppeRequired: ["gloves", "goggles"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-023",
@@ -1236,6 +1325,7 @@ export const FLUIDS: Fluid[] = [
     category: "Film-Forming Agent",
     hazards: [],
     ppeRequired: ["gloves"],
+    rheology: "newtonian",
   },
 
   // ---- Caustic (2) ----
@@ -1252,6 +1342,7 @@ export const FLUIDS: Fluid[] = [
     category: "CIP Cleaning Agent",
     hazards: ["corrosive"],
     ppeRequired: ["goggles", "gloves", "face_shield", "apron"],
+    rheology: "newtonian",
   },
   {
     id: "FLD-025",
@@ -1266,6 +1357,104 @@ export const FLUIDS: Fluid[] = [
     category: "Descaler / Food Acid",
     hazards: ["irritant"],
     ppeRequired: ["goggles", "gloves"],
+    rheology: "newtonian",
+  },
+
+  // ---- Non-Newtonian Fluids (5) ----
+  {
+    id: "FLD-026",
+    name: "Latex Paint (Acrylic, 50% solids)",
+    viscosity_cP: 120,
+    density_kg_m3: 1200,
+    surfaceTension_mN_m: 32.0,
+    pH: 8.5,
+    solventClass: "emulsion",
+    flashPoint_C: null,
+    cas: "9003-01-4",
+    category: "Coating",
+    hazards: ["irritant"],
+    ppeRequired: ["goggles", "gloves", "respirator"],
+    rheology: "power_law",
+    powerLawK: 3.5,
+    powerLawN: 0.45,
+    maxParticleSize_um: 50,
+    suspensionConcentration_pct: 50,
+    contactAngle_deg: 35,
+  },
+  {
+    id: "FLD-027",
+    name: "Carbomer Gel (0.5%)",
+    viscosity_cP: 5000,
+    density_kg_m3: 1005,
+    surfaceTension_mN_m: 65.0,
+    pH: 6.5,
+    solventClass: "aqueous",
+    flashPoint_C: null,
+    cas: "9003-01-4",
+    category: "Pharmaceutical Gel",
+    hazards: [],
+    ppeRequired: ["gloves"],
+    rheology: "herschel_bulkley",
+    powerLawK: 12.0,
+    powerLawN: 0.35,
+    yieldStress_Pa: 15.0,
+    contactAngle_deg: 25,
+  },
+  {
+    id: "FLD-028",
+    name: "Xanthan Gum Solution (1%)",
+    viscosity_cP: 800,
+    density_kg_m3: 1002,
+    surfaceTension_mN_m: 55.0,
+    pH: 7.0,
+    solventClass: "aqueous",
+    flashPoint_C: null,
+    cas: "11138-66-2",
+    category: "Food Thickener / Stabilizer",
+    hazards: [],
+    ppeRequired: ["gloves"],
+    rheology: "power_law",
+    powerLawK: 2.8,
+    powerLawN: 0.28,
+    contactAngle_deg: 30,
+  },
+  {
+    id: "FLD-029",
+    name: "Polyurethane Coating (2K)",
+    viscosity_cP: 200,
+    density_kg_m3: 1050,
+    surfaceTension_mN_m: 30.0,
+    pH: 7.0,
+    solventClass: "ester",
+    flashPoint_C: 27,
+    cas: "9009-54-5",
+    category: "Industrial Coating",
+    hazards: ["flammable", "irritant", "sensitizer"],
+    ppeRequired: ["goggles", "gloves", "respirator", "fume_hood"],
+    rheology: "power_law",
+    powerLawK: 1.2,
+    powerLawN: 0.7,
+    maxParticleSize_um: 20,
+    contactAngle_deg: 40,
+  },
+  {
+    id: "FLD-030",
+    name: "Toothpaste Base (Silica)",
+    viscosity_cP: 50000,
+    density_kg_m3: 1300,
+    surfaceTension_mN_m: 40.0,
+    pH: 7.0,
+    solventClass: "aqueous",
+    flashPoint_C: null,
+    cas: "14808-60-7",
+    category: "Oral Care Base",
+    hazards: [],
+    ppeRequired: ["gloves"],
+    rheology: "bingham",
+    yieldStress_Pa: 200,
+    maxParticleSize_um: 30,
+    suspensionConcentration_pct: 25,
+    contactAngle_deg: 50,
   },
 ];
 
@@ -1459,13 +1648,193 @@ function pumpFlowModel(td: TechnicalDesign, pressure_bar: number): {
   return { dosage_uL: dosage, effectivePressure_bar: effectivePressure };
 }
 
+/**
+ * Compute apparent viscosity for non-Newtonian fluids at a given shear rate.
+ * - Newtonian: constant viscosity
+ * - Power-law: μ_app = K · γ̇^(n-1)
+ * - Bingham: μ_app = τ_y/γ̇ + μ_p
+ * - Herschel-Bulkley: μ_app = τ_y/γ̇ + K · γ̇^(n-1)
+ */
+function apparentViscosity(fluid: Fluid, shearRate_s: number): number {
+  const gamma = Math.max(shearRate_s, 0.1); // Floor to avoid division by zero
+
+  switch (fluid.rheology) {
+    case "power_law": {
+      const K = fluid.powerLawK ?? fluid.viscosity_cP / 1000;
+      const n = fluid.powerLawN ?? 1;
+      return K * Math.pow(gamma, n - 1) * 1000; // Convert Pa·s to cP
+    }
+    case "bingham": {
+      const tau_y = fluid.yieldStress_Pa ?? 0;
+      const mu_p = fluid.viscosity_cP / 1000; // Pa·s
+      return (tau_y / gamma + mu_p) * 1000; // cP
+    }
+    case "herschel_bulkley": {
+      const tau_y = fluid.yieldStress_Pa ?? 0;
+      const K = fluid.powerLawK ?? fluid.viscosity_cP / 1000;
+      const n = fluid.powerLawN ?? 1;
+      return (tau_y / gamma + K * Math.pow(gamma, n - 1)) * 1000; // cP
+    }
+    default:
+      return fluid.viscosity_cP;
+  }
+}
+
+/**
+ * Estimate shear rate inside the actuator orifice.
+ * γ̇ ≈ 8·v / d for pipe flow (Newtonian approximation).
+ */
+function orificeShearRate(v_m_s: number, d_m: number): number {
+  return 8 * v_m_s / Math.max(d_m, 1e-6);
+}
+
+/**
+ * Compute droplet distribution from Dv50 using Rosin-Rammler spread parameter.
+ * Spread depends on actuator type and atomization quality.
+ */
+function computeDistribution(Dv50_um: number, actuatorType: ActuatorType, regime: AtomizationRegime): DropletDistribution {
+  // Typical spread (q) parameter by actuator category
+  let q: number;
+  switch (actuatorType) {
+    case "hollow_cone":
+    case "fine_mist":
+      q = 3.5; // Narrow distribution
+      break;
+    case "full_cone":
+    case "adjustable_cone":
+      q = 2.5;
+      break;
+    case "flat_fan":
+    case "deflection":
+      q = 2.0;
+      break;
+    case "air_atomizing":
+      q = 3.0;
+      break;
+    case "ultrasonic":
+      q = 4.0; // Very uniform
+      break;
+    case "jet_stream":
+      q = 1.5; // Wide variation
+      break;
+    default:
+      q = 2.5;
+  }
+
+  // Regime affects uniformity
+  if (regime === "Rayleigh") q *= 0.7; // Wider spread in dripping
+  if (regime === "Atomization") q *= 1.2; // Tighter in full atomization
+
+  // Rosin-Rammler: Dv_x = Dv50 * (-ln(1 - x/100))^(1/q) / (-ln(0.5))^(1/q)
+  const lnHalf = Math.pow(-Math.log(0.5), 1 / q);
+  const Dv10 = Dv50_um * Math.pow(-Math.log(0.9), 1 / q) / lnHalf;
+  const Dv90 = Dv50_um * Math.pow(-Math.log(0.1), 1 / q) / lnHalf;
+  const span = (Dv90 - Dv10) / Dv50_um;
+
+  return {
+    Dv10_um: Math.round(Dv10 * 10) / 10,
+    Dv50_um: Math.round(Dv50_um * 10) / 10,
+    Dv90_um: Math.round(Dv90 * 10) / 10,
+    span: Math.round(span * 100) / 100,
+  };
+}
+
+/**
+ * Assess clogging risk: compare max particle size to orifice diameter.
+ * Industry rule of thumb: particles should be < 1/3 of orifice.
+ */
+function assessCloggingRisk(fluid: Fluid, orificeDia_mm: number): "none" | "low" | "moderate" | "high" {
+  if (!fluid.maxParticleSize_um) return "none";
+  const orifice_um = orificeDia_mm * 1000;
+  const ratio = fluid.maxParticleSize_um / orifice_um;
+  if (ratio > 0.5) return "high";
+  if (ratio > 0.33) return "moderate";
+  if (ratio > 0.1) return "low";
+  return "none";
+}
+
+/**
+ * Assess material stress risks (swelling, stress cracking, leaching)
+ * based on solvent class and material combinations.
+ */
+function assessMaterialStress(fluid: Fluid, td: TechnicalDesign): {
+  swellingRisk: boolean;
+  stressCrackingRisk: boolean;
+  leachingRisk: boolean;
+} {
+  const body = td.bodyMaterial.toLowerCase();
+  const seal = td.sealMaterial.toLowerCase();
+  const sc = fluid.solventClass;
+
+  // Swelling: elastomers in aggressive solvents
+  const swellingRisk =
+    (sc === "hydrocarbon" && seal.includes("epdm")) ||
+    (sc === "ketone" && (seal.includes("buna") || body.includes("pom"))) ||
+    (sc === "ester" && seal.includes("buna")) ||
+    (sc === "silicone" && seal.includes("silicone"));
+
+  // Stress cracking: polymers in certain solvents
+  const stressCrackingRisk =
+    (sc === "ketone" && body.includes("pom")) ||
+    (sc === "ketone" && body.includes("pc")) || // Polycarbonate
+    (sc === "ester" && body.includes("abs")) ||
+    (sc === "alcohol" && body.includes("pc"));
+
+  // Leaching: plasticizers extracted by aggressive solvents
+  const leachingRisk =
+    (body.includes("pvc") || body.includes("pp")) &&
+    (sc === "ketone" || sc === "ester" || sc === "hydrocarbon");
+
+  return { swellingRisk, stressCrackingRisk, leachingRisk };
+}
+
+/**
+ * Recommend tooling based on production volume.
+ */
+export function recommendTooling(volume: number, actuator: Actuator): ToolingSpec {
+  if (volume <= 10) {
+    return {
+      recommendation: "fdm_3d_print",
+      cavityCount: 1,
+      estimatedLeadTime_days: 3,
+      estimatedToolCost_usd: 0,
+      costPerUnit_usd: actuator.price_usd * 2.5, // Premium for prototyping
+    };
+  }
+  if (volume <= 1000) {
+    return {
+      recommendation: "soft_tool",
+      cavityCount: volume <= 100 ? 1 : 2,
+      estimatedLeadTime_days: volume <= 100 ? 7 : 14,
+      estimatedToolCost_usd: volume <= 100 ? 800 : 2500,
+      costPerUnit_usd: actuator.price_usd * 0.8,
+    };
+  }
+  // 1000+ units: hardened steel
+  const cavities = volume <= 10000 ? 4 : volume <= 100000 ? 16 : 32;
+  return {
+    recommendation: "hardened_steel",
+    cavityCount: cavities,
+    estimatedLeadTime_days: cavities <= 4 ? 21 : 35,
+    estimatedToolCost_usd: cavities * 8000,
+    costPerUnit_usd: actuator.price_usd * 0.3,
+  };
+}
+
 export function predict(actuator: Actuator, fluid: Fluid, pressure_bar: number): PredictionResult {
   const td = actuator.technicalDesign;
   const d = actuator.orificeDiameter_mm / 1000;          // m
-  const mu = fluid.viscosity_cP / 1000;                  // Pa·s
   const rho = fluid.density_kg_m3;                        // kg/m³
   const sigma = fluid.surfaceTension_mN_m / 1000;        // N/m
   const P = pressure_bar * 1e5;                           // Pa
+
+  // Non-Newtonian: compute apparent viscosity at estimated orifice shear rate
+  // First pass: estimate velocity to get shear rate
+  const Cd_est = DISCHARGE_COEFFICIENTS[actuator.type];
+  const v_est = Cd_est * Math.sqrt((2 * P) / rho);
+  const shearRate = orificeShearRate(v_est, d);
+  const mu_app_cP = apparentViscosity(fluid, shearRate);
+  const mu = mu_app_cP / 1000;                           // Pa·s
 
   // Type-specific discharge coefficient
   const Cd = DISCHARGE_COEFFICIENTS[actuator.type];
@@ -1756,14 +2125,37 @@ export function predict(actuator: Actuator, fluid: Fluid, pressure_bar: number):
     score += 5;
   }
 
+  // Non-Newtonian penalty: yield stress fluids may not atomize
+  if (fluid.yieldStress_Pa && fluid.yieldStress_Pa > 50) {
+    score -= 15;
+    safetyWarnings.push(`YIELD STRESS: ${fluid.yieldStress_Pa} Pa yield stress may prevent atomization — verify breakup at operating shear rate`);
+  }
+
+  // Suspension clogging penalty
+  const cloggingRisk = assessCloggingRisk(fluid, actuator.orificeDiameter_mm);
+  if (cloggingRisk === "high") {
+    score -= 20;
+    safetyWarnings.push(`CLOGGING: Particle size (${fluid.maxParticleSize_um} µm) exceeds 50% of orifice diameter — high clogging risk`);
+  } else if (cloggingRisk === "moderate") {
+    score -= 10;
+    safetyWarnings.push(`CLOGGING: Particle size (${fluid.maxParticleSize_um} µm) near 33% of orifice — test with filtration`);
+  }
+
   const compatibilityScore = Math.max(0, Math.min(100, Math.round(score)));
+
+  // Compute extended outputs
+  const dropletDistribution = computeDistribution(Dv50_um, actuator.type, atomizationRegime);
+  const deliveryRate_g_s = (flowRate_mL_min / 60) * (rho / 1000); // mL/min → g/s
+  const materialStress = assessMaterialStress(fluid, td);
 
   return {
     actuatorId: actuator.id,
     fluidId: fluid.id,
     coneAngle_deg: Math.round(coneAngle * 10) / 10,
     dropletSizeDv50_um: Math.round(Dv50_um * 10) / 10,
+    dropletDistribution,
     flowRate_mL_min: Math.round(flowRate_mL_min * 10) / 10,
+    deliveryRate_g_s: Math.round(deliveryRate_g_s * 100) / 100,
     sprayWidth_mm_at_100mm: Math.round(sprayWidth * 10) / 10,
     compatibilityScore,
     pressureRequired_bar: effectivePressure_bar,
@@ -1773,5 +2165,8 @@ export function predict(actuator: Actuator, fluid: Fluid, pressure_bar: number):
     atomizationRegime,
     velocityExit_m_s: Math.round(v * 100) / 100,
     safetyWarnings,
+    cloggingRisk,
+    apparentViscosity_cP: Math.round(mu_app_cP * 10) / 10,
+    materialStress,
   };
 }

@@ -218,7 +218,7 @@ export default function ComparePage() {
                           key={actuator.id}
                           className={`px-5 py-3 text-center font-[family-name:var(--font-mono)] ${isBest ? "font-bold text-[var(--accent)]" : "text-[var(--fg-bright)]"}`}
                         >
-                          {typeof val === "number" ? val.toLocaleString() : val}
+                          {typeof val === "number" ? val.toLocaleString() : typeof val === "string" ? val : "—"}
                           {unit}
                         </td>
                       );
