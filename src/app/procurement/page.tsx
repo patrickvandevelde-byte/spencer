@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ACTUATORS } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
+import { getStockLevel, createOrder, addToCart } from "@/lib/store";
 
 function ProcurementContent() {
   const params = useSearchParams();
@@ -29,7 +30,20 @@ function ProcurementContent() {
         : actuator.price_usd;
   const total = unitPrice * (orderType === "sample" ? sampleQty : qty);
 
+  const stock = getStockLevel(selectedId);
+  const stockColor = stock.status === "in_stock" ? "var(--success)" : stock.status === "low_stock" ? "var(--warning)" : stock.status === "out_of_stock" ? "var(--danger)" : "var(--muted)";
+  const stockLabel = stock.status === "in_stock" ? `In Stock (${stock.inStock} units)` : stock.status === "low_stock" ? `Low Stock (${stock.inStock} left)` : stock.status === "out_of_stock" ? "Out of Stock" : "Made to Order";
+
   function handleSubmit() {
+    if (!actuator) return;
+    createOrder([{
+      actuatorId: selectedId,
+      sku: actuator.sku,
+      name: actuator.name,
+      quantity: orderType === "sample" ? sampleQty : qty,
+      unitPrice,
+      orderType,
+    }], total);
     setSubmitted(true);
   }
 
@@ -106,7 +120,7 @@ function ProcurementContent() {
             {/* Actuator preview */}
             <div className="flex items-center gap-4 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-4">
               <ActuatorIllustration type={actuator.type} size={64} />
-              <div>
+              <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
                   <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
@@ -114,6 +128,15 @@ function ProcurementContent() {
                   </span>
                 </div>
                 <p className="mt-0.5 text-sm text-[var(--fg-bright)]">{actuator.name}</p>
+              </div>
+              <div className="text-right">
+                <span className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] font-bold" style={{ borderColor: stockColor, color: stockColor }}>
+                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: stockColor }} />
+                  {stockLabel}
+                </span>
+                <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                  Lead: {actuator.leadTime_days} days
+                </p>
               </div>
             </div>
 
@@ -217,6 +240,23 @@ function ProcurementContent() {
             className="btn-primary mt-8 w-full rounded-lg px-6 py-3.5 font-[family-name:var(--font-mono)] text-xs tracking-wider"
           >
             {orderType === "sample" ? "Request Sample" : "Generate Purchase Order"}
+          </button>
+          <button
+            onClick={() => {
+              addToCart({
+                actuatorId: selectedId,
+                quantity: orderType === "sample" ? sampleQty : qty,
+                orderType,
+              });
+              alert(`Added ${actuator.sku} to cart`);
+            }}
+            className="btn-secondary mt-3 w-full rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center justify-center gap-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+            </svg>
+            Add to Cart Instead
           </button>
         </div>
       </div>

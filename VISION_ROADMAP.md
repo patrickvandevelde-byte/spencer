@@ -15,7 +15,7 @@ An **Automatic Actuator Configurator** that maps complex fluid formulations and 
 
 ---
 
-## Current Capabilities (MVP - Phase 1 ✅ COMPLETE)
+## Current Capabilities (Phases 1–3 ✅ COMPLETE)
 
 ### ✅ Fluid Properties
 | Parameter | Status | Notes |
@@ -26,56 +26,59 @@ An **Automatic Actuator Configurator** that maps complex fluid formulations and 
 | Flash point (°C) | ✅ | Safety classification |
 | Hazard/PPE data | ✅ | Flammable, health, environmental |
 | Solvent class | ✅ | 9 classes for compatibility |
-| **Shear behavior** | ❌ | Assumes Newtonian only |
-| **Yield stress** | ❌ | Not modeled |
-| **Contact angle** | ❌ | Not included |
-| **Vapor pressure** | ❌ | Not for aerosols yet |
-| **Particle size limits** | ❌ | No suspension/emulsion support |
+| **Shear behavior** | ✅ | Power-law, Bingham, Herschel-Bulkley |
+| **Yield stress** | ✅ | Bingham & Herschel-Bulkley |
+| **Contact angle** | ✅ | Schema ready, optional field |
+| **Vapor pressure** | ✅ | Schema ready for aerosols |
+| **Particle size limits** | ✅ | Clogging risk prediction |
 | **Thermal expansion** | ❌ | Constant properties assumed |
 
 ### ✅ Hardware & Mechanical Constraints
 | Parameter | Status | Notes |
 |-----------|--------|-------|
-| Operating pressure (bar) | ✅ | 1–350 bar range |
-| Spray angle (degrees) | ✅ | Predicted from physics |
-| Droplet size (μm) | ✅ | SMD calculated |
+| Operating pressure (bar) | ✅ | 0.5–350 bar range |
+| Spray angle (degrees) | ✅ | Type-specific physics (Lefebvre, Dombrowski, etc.) |
+| Droplet size (μm) | ✅ | Full distribution, not just SMD |
 | Spray pattern type | ✅ | 12 actuator types |
-| **Valve stem interface** | ❌ | No stem profiles stored |
-| **Actuation force (N)** | ❌ | No ergonomic limits |
-| **Stroke length** | ❌ | Not parameterized |
-| **Valve return speed** | ❌ | Not modeled |
-| **Droplet distribution** | ❌ | Only SMD, not Dv10/Dv50/Dv90 |
-| **Dead volume** | ❌ | Not calculated |
-| **Prime strokes** | ❌ | Not specified |
+| **Valve stem interface** | ✅ | Male/female, diameters, engagement depth |
+| **Actuation force (N)** | ✅ | With ADA compliance check |
+| **Stroke length** | ✅ | Parameterized in TechnicalDesign |
+| **Valve return speed** | ✅ | Stored per actuator |
+| **Droplet distribution** | ✅ | Dv10/Dv50/Dv90 + span |
+| **Dead volume** | ✅ | Calculated from internal volume |
+| **Prime strokes** | ✅ | Specified per pump/actuator |
 
 ### ✅ Material Compatibility
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Polymer compatibility matrix | ✅ | 9 material types × 9 solvent classes |
-| Chemical attack warnings | ✅ | Ketones on POM, etc. |
-| Seal material data | ✅ | EPDM, FKM, Buna-N, etc. |
-| **Stress cracking risk** | ❌ | Detected but not scored |
-| **Swelling/shrinkage** | ❌ | Qualitative only |
-| **Leaching potential** | ❌ | Not modeled |
+| Chemical attack warnings | ✅ | Ketones on POM, esters on Buna-N, etc. |
+| Seal material data | ✅ | EPDM, FKM, Buna-N, Silicone, PTFE |
+| **Stress cracking risk** | ✅ | Detected and displayed |
+| **Swelling/shrinkage** | ✅ | Polymer + solvent class analysis |
+| **Leaching potential** | ✅ | Plasticizer extraction detection |
 
-### ❌ Manufacturing & Procurement
+### ✅ Manufacturing & Procurement
 | Feature | Status | Notes |
 |---------|--------|-------|
-| **CAD generation** | ❌ | No STEP/IGES output |
-| **Tooling recommendations** | ❌ | No 3D print vs. hardened steel logic |
-| **Cavity count optimization** | ❌ | Not calculated |
-| **Lead time estimates** | ❌ | No supplier integration |
-| **Cost per unit** | ❌ | Static pricing only |
-| **Regulatory compliance** | ❌ | No CR/FDA/Pharma checks |
-| **Localized sourcing** | ❌ | No supply chain mapping |
-| **Automated procurement API** | ❌ | Manual ordering only |
+| **Tooling recommendations** | ✅ | FDM → SLA → SLS → Soft Tool → Hardened Steel |
+| **Cavity count optimization** | ✅ | Volume-based: 1–32 cavities |
+| **Lead time estimates** | ✅ | Per process, 2–35 days |
+| **Cost per unit** | ✅ | Volume-sensitive pricing across 7 tiers |
+| **Regulatory compliance** | ✅ | CR, FDA, cleanroom, flammability, chemical |
+| **Stock status** | ✅ | Simulated per-actuator inventory |
+| **Shopping cart** | ✅ | Persistent cart with checkout |
+| **Order tracking** | ✅ | Status progression + delivery estimates |
+| **PDF report export** | ✅ | Full technical report |
+| **CAD generation** | ❌ | No STEP/IGES output (Phase 4) |
+| **Live supplier API** | ❌ | Static data, not live integration |
 
-### ❌ Advanced Fluid Models
+### ✅ Advanced Fluid Models
 | Feature | Status | Notes |
 |---------|--------|-------|
-| **Non-Newtonian (power-law)** | ❌ | K and n parameters not used |
-| **Bingham plastic** | ❌ | Yield stress not modeled |
-| **Herschel-Bulkley** | ❌ | Complex rheology not supported |
+| **Non-Newtonian (power-law)** | ✅ | Apparent viscosity at orifice shear rate |
+| **Bingham plastic** | ✅ | Yield stress modeled |
+| **Herschel-Bulkley** | ✅ | Complex rheology supported |
 | **Propellant-liquid interaction** | ❌ | Critical for aerosol products |
 | **Temperature-dependent viscosity** | ❌ | Constant viscosity assumed |
 | **Solubility phase diagrams** | ❌ | Multi-component systems not mapped |

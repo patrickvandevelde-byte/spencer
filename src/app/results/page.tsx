@@ -7,6 +7,7 @@ import type { Actuator, Fluid, PredictionResult, ToolingSpec } from "@/lib/data"
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
 import { TechnicalDesignPanel } from "@/components/TechnicalDesign";
+import { addToCart, trackEvent } from "@/lib/store";
 import dynamic from "next/dynamic";
 
 const ActuatorViewer3D = dynamic(() => import("@/components/ActuatorViewer3D"), {
@@ -94,6 +95,238 @@ function exportCSV(actuator: Actuator, fluid: Fluid, result: PredictionResult, p
   a.download = `aerospec_${actuator.sku}_${fluid.id}_${pressure}bar.csv`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ---- PDF Export (Print-based) ----
+function exportPDF(actuator: Actuator, fluid: Fluid, result: PredictionResult, pressure: number) {
+  const dist = result.dropletDistribution;
+  const td = actuator.technicalDesign;
+  const scoreLabel = result.compatibilityScore >= 80 ? "Excellent" : result.compatibilityScore >= 50 ? "Good" : "Poor";
+
+  const html = `<!DOCTYPE html>
+<html><head><title>AeroSpec Report - ${actuator.sku}</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a1a;max-width:800px;margin:0 auto;padding:40px;font-size:12px;line-height:1.6}
+h1{font-size:22px;margin:0;color:#0e7490}
+h2{font-size:14px;color:#0e7490;border-bottom:1px solid #e5e7eb;padding-bottom:4px;margin-top:24px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #0e7490;padding-bottom:16px;margin-bottom:20px}
+.meta{color:#6b7280;font-size:11px}
+.score{font-size:48px;font-weight:bold;color:${result.compatibilityScore >= 80 ? '#16a34a' : result.compatibilityScore >= 50 ? '#d97706' : '#dc2626'}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 24px}
+.label{color:#6b7280;font-size:10px;text-transform:uppercase;letter-spacing:0.05em}
+.value{font-weight:600;font-size:13px}
+.warn{background:#fef3c7;border:1px solid #f59e0b;padding:6px 12px;border-radius:4px;margin:4px 0;color:#92400e}
+.danger{background:#fee2e2;border:1px solid #ef4444;padding:6px 12px;border-radius:4px;margin:4px 0;color:#991b1b}
+.pass{color:#16a34a}.fail{color:#dc2626}
+table{width:100%;border-collapse:collapse;margin:8px 0}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px}
+th{color:#6b7280;text-transform:uppercase;font-size:10px;letter-spacing:0.05em}
+.footer{margin-top:40px;border-top:2px solid #0e7490;padding-top:12px;color:#9ca3af;font-size:10px;text-align:center}
+@media print{body{padding:20px}}
+</style></head><body>
+<div class="header"><div>
+<h1>AeroSpec Technical Report</h1>
+<p class="meta">${actuator.sku} &mdash; ${actuator.name}</p>
+<p class="meta">${fluid.name} @ ${pressure} bar &bull; Generated ${new Date().toLocaleDateString()}</p>
+</div><div style="text-align:right">
+<div class="score">${result.compatibilityScore}</div>
+<div class="meta">/100 &mdash; ${scoreLabel}</div>
+</div></div>
+
+<h2>Spray Physics</h2>
+<div class="grid3">
+<div><div class="label">Cone Angle</div><div class="value">${result.coneAngle_deg}&deg;</div></div>
+<div><div class="label">Dv50</div><div class="value">${dist.Dv50_um} &micro;m</div></div>
+<div><div class="label">Flow Rate</div><div class="value">${result.flowRate_mL_min} mL/min</div></div>
+<div><div class="label">Exit Velocity</div><div class="value">${result.velocityExit_m_s} m/s</div></div>
+<div><div class="label">Delivery Rate</div><div class="value">${result.deliveryRate_g_s} g/s</div></div>
+<div><div class="label">Spray Width @100mm</div><div class="value">${result.sprayWidth_mm_at_100mm} mm</div></div>
+</div>
+
+<h2>Droplet Distribution</h2>
+<div class="grid3">
+<div><div class="label">Dv10</div><div class="value">${dist.Dv10_um} &micro;m</div></div>
+<div><div class="label">Dv50 (Median)</div><div class="value">${dist.Dv50_um} &micro;m</div></div>
+<div><div class="label">Dv90</div><div class="value">${dist.Dv90_um} &micro;m</div></div>
+<div><div class="label">Span</div><div class="value">${dist.span}</div></div>
+<div><div class="label">Regime</div><div class="value">${result.atomizationRegime}</div></div>
+<div><div class="label">Clogging Risk</div><div class="value">${result.cloggingRisk}</div></div>
+</div>
+
+<h2>Dimensionless Numbers</h2>
+<div class="grid3">
+<div><div class="label">Reynolds (Re)</div><div class="value">${result.reynoldsNumber.toLocaleString()}</div></div>
+<div><div class="label">Weber (We)</div><div class="value">${result.weberNumber.toLocaleString()}</div></div>
+<div><div class="label">Ohnesorge (Oh)</div><div class="value">${result.ohnesorgeNumber}</div></div>
+</div>
+
+<h2>Fluid Properties</h2>
+<div class="grid">
+<div><div class="label">Viscosity</div><div class="value">${fluid.viscosity_cP} cP</div></div>
+<div><div class="label">Density</div><div class="value">${fluid.density_kg_m3} kg/m&sup3;</div></div>
+<div><div class="label">Surface Tension</div><div class="value">${fluid.surfaceTension_mN_m} mN/m</div></div>
+<div><div class="label">Solvent Class</div><div class="value">${fluid.solventClass}</div></div>
+<div><div class="label">Rheology</div><div class="value">${fluid.rheology}</div></div>
+<div><div class="label">pH</div><div class="value">${fluid.pH}</div></div>
+${result.apparentViscosity_cP !== fluid.viscosity_cP ? `<div><div class="label">Apparent Viscosity</div><div class="value">${result.apparentViscosity_cP} cP</div></div>` : ''}
+</div>
+
+<h2>Actuator Specifications</h2>
+<div class="grid">
+<div><div class="label">Manufacturer</div><div class="value">${actuator.manufacturer}</div></div>
+<div><div class="label">Category</div><div class="value">${actuator.productCategory}</div></div>
+<div><div class="label">Orifice</div><div class="value">${actuator.orificeDiameter_mm} mm</div></div>
+<div><div class="label">Max Pressure</div><div class="value">${actuator.maxPressure_bar} bar</div></div>
+<div><div class="label">Body Material</div><div class="value">${td.bodyMaterial}</div></div>
+<div><div class="label">Seal Material</div><div class="value">${td.sealMaterial}</div></div>
+${td.stemProfile ? `<div><div class="label">Stem Profile</div><div class="value">${td.stemProfile} &mdash; &empty;${td.stemExternalDiameter_mm || '?'}mm</div></div>` : ''}
+${td.actuationForce_N ? `<div><div class="label">Actuation Force</div><div class="value">${td.actuationForce_N} N</div></div>` : ''}
+${td.strokeLength_mm ? `<div><div class="label">Stroke Length</div><div class="value">${td.strokeLength_mm} mm</div></div>` : ''}
+${td.primeStrokes ? `<div><div class="label">Prime Strokes</div><div class="value">${td.primeStrokes}</div></div>` : ''}
+</div>
+
+${result.safetyWarnings.length > 0 ? `<h2>Safety Warnings</h2>${result.safetyWarnings.map(w => `<div class="danger">${w}</div>`).join('')}` : ''}
+
+${(result.materialStress.swellingRisk || result.materialStress.stressCrackingRisk || result.materialStress.leachingRisk) ? `<h2>Material Stress Analysis</h2>
+${result.materialStress.swellingRisk ? '<div class="warn">Swelling Risk: Solvent may cause polymer swelling</div>' : ''}
+${result.materialStress.stressCrackingRisk ? '<div class="danger">Stress Cracking Risk: Environmental stress cracking possible</div>' : ''}
+${result.materialStress.leachingRisk ? '<div class="warn">Leaching Risk: Components may leach into product</div>' : ''}` : ''}
+
+<h2>Compliance</h2>
+<div class="grid">
+<div><div class="label">Material Compatible</div><div class="value ${actuator.materialCompatibility.includes(fluid.solventClass) ? 'pass' : 'fail'}">${actuator.materialCompatibility.includes(fluid.solventClass) ? 'PASS' : 'FAIL'}</div></div>
+<div><div class="label">Pressure Rating</div><div class="value ${pressure <= actuator.maxPressure_bar ? 'pass' : 'fail'}">${pressure <= actuator.maxPressure_bar ? 'SAFE' : 'OVER LIMIT'}</div></div>
+${td.childResistant ? '<div><div class="label">Child Resistant</div><div class="value pass">Yes</div></div>' : ''}
+${td.fdaCompliant ? '<div><div class="label">FDA Compliant</div><div class="value pass">Yes</div></div>' : ''}
+${td.cleanroomClass ? `<div><div class="label">Cleanroom</div><div class="value pass">${td.cleanroomClass}</div></div>` : ''}
+</div>
+
+<div class="footer">
+AeroSpec Predictive Actuator Configurator &bull; Confidential Technical Report &bull; ${new Date().toISOString().split('T')[0]}
+</div></body></html>`;
+
+  const win = window.open('', '_blank');
+  if (win) {
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => win.print(), 500);
+  }
+  trackEvent("export", { type: "pdf", actuatorId: actuator.id, fluidId: fluid.id });
+}
+
+// ---- Valve Stem & Ergonomic Section ----
+function StemErgonomicsSection({ actuator }: { actuator: Actuator }) {
+  const td = actuator.technicalDesign;
+  const hasStem = td.stemProfile || td.stemExternalDiameter_mm;
+  const hasErgonomics = td.actuationForce_N || td.strokeLength_mm || td.primeStrokes;
+
+  if (!hasStem && !hasErgonomics) return null;
+
+  // ADA compliance threshold
+  const adaLimit = 22.2; // 5 lbf ≈ 22.2 N, typical ADA max
+  const isAdaCompliant = td.actuationForce_N ? td.actuationForce_N <= adaLimit : null;
+
+  return (
+    <div className="glass rounded-xl p-6">
+      <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+        Valve Interface & Ergonomics
+      </h2>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Stem profile */}
+        {hasStem && (
+          <div>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Stem Profile</span>
+            <div className="mt-3 space-y-3 text-xs">
+              {td.stemProfile && (
+                <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">Type</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)] uppercase">{td.stemProfile}</strong>
+                </div>
+              )}
+              {td.stemExternalDiameter_mm && (
+                <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">External Diameter</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.stemExternalDiameter_mm} mm</strong>
+                </div>
+              )}
+              {td.stemInternalDiameter_mm && (
+                <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">Internal Diameter</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.stemInternalDiameter_mm} mm</strong>
+                </div>
+              )}
+              {td.engagementDepth_mm && (
+                <div className="flex justify-between pb-2">
+                  <span className="text-[var(--muted)]">Engagement Depth</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.engagementDepth_mm} mm</strong>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Ergonomics */}
+        {hasErgonomics && (
+          <div>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Ergonomic Data</span>
+            <div className="mt-3 space-y-3 text-xs">
+              {td.actuationForce_N && (
+                <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">Actuation Force</span>
+                  <span className="flex items-center gap-2">
+                    <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.actuationForce_N} N</strong>
+                    {isAdaCompliant !== null && (
+                      <span className={`rounded-md border px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[9px] font-bold ${
+                        isAdaCompliant ? "border-[var(--success)] text-[var(--success)]" : "border-[var(--warning)] text-[var(--warning)]"
+                      }`}>
+                        {isAdaCompliant ? "ADA OK" : "HIGH FORCE"}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
+              {td.strokeLength_mm && (
+                <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">Stroke Length</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.strokeLength_mm} mm</strong>
+                </div>
+              )}
+              {td.returnSpeed_mm_s && (
+                <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">Return Speed</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.returnSpeed_mm_s} mm/s</strong>
+                </div>
+              )}
+              {td.primeStrokes && (
+                <div className="flex justify-between pb-2">
+                  <span className="text-[var(--muted)]">Prime Strokes</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.primeStrokes} actuations</strong>
+                </div>
+              )}
+              {td.dosage_uL && (
+                <div className="flex justify-between pb-2">
+                  <span className="text-[var(--muted)]">Dose per Actuation</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.dosage_uL} µL</strong>
+                </div>
+              )}
+              {td.internalVolume_uL && (
+                <div className="flex justify-between pb-2">
+                  <span className="text-[var(--muted)]">Dead Volume</span>
+                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.internalVolume_uL} µL</strong>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ---- Mini SVG Performance Chart ----
@@ -715,6 +948,9 @@ function ResultsContent() {
         </div>
       </div>
 
+      {/* Valve Stem & Ergonomics */}
+      <StemErgonomicsSection actuator={actuator} />
+
       {/* Tooling Recommendation */}
       <ToolingSection actuator={actuator} />
 
@@ -780,14 +1016,36 @@ function ResultsContent() {
           </svg>
           Export CSV
         </button>
+        <button
+          onClick={() => exportPDF(actuator, fluid, result, pressure)}
+          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center gap-2"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" />
+          </svg>
+          Export PDF
+        </button>
+        <button
+          onClick={() => {
+            addToCart({ actuatorId: actuator.id, quantity: 10, orderType: "sample" });
+            alert(`Added ${actuator.sku} to cart`);
+          }}
+          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center gap-2"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+          </svg>
+          Add to Cart
+        </button>
         <Link href="/configure" className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
-          ← Back to Configurator
+          Back to Configurator
         </Link>
-        <Link href={`/compare`} className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href="/compare" className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
           Compare Actuators
         </Link>
         <Link href={`/procurement?actuator=${actuator.id}&qty=100`} className="btn-primary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
-          Procure This Actuator →
+          Procure This Actuator
         </Link>
       </div>
     </div>

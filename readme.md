@@ -92,58 +92,75 @@ The primary goal is to transform a historically physical trial-and-error R&D pro
 
 ## Architecture & Microservices (ADR)
 
-[Image of decoupled Next.js frontend deployed on Vercel communicating with Kubernetes backend microservices]
+> **Full technical architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md)
 
 **Frontend (Vercel Edge):**
-- Next.js 16 with SSR/SSG for sub-100ms response times
-- TailwindCSS "Clinical Brutalist" design system
-- Real-time data visualization (spray patterns, compatibility matrix)
+- Next.js 16.1.6 (App Router) with SSR/SSG for sub-100ms response times
+- Tailwind CSS 4 "Clinical Brutalist" design system
+- React Three Fiber for 3D actuator visualization
+- 8 pages: Home, Configure, Results, Compare, Procurement, Cart, Orders, Analytics
 
-**Backend Microservices (Kubernetes):**
-- `actuator-service`: Compatibility matrix computation (Neo4j traversal)
-- `ml-service`: Surrogate model inference (PyTorch/TensorFlow)
-- `procurement-service`: Supplier API orchestration (Spencer, Coster, FDG, Wessel)
-- `auth-service`: User & tenant management (OAuth2, SAML)
-- `feedback-service`: Telemetry ingestion & model retraining
+**Physics Engine (Deterministic):**
+- Lefebvre, Dombrowski & Johns, Nukiyama & Tanasawa, Lang atomization models
+- Non-Newtonian apparent viscosity at orifice shear rate
+- Ohnesorge/Weber regime classification
+- Full droplet distribution (Dv10/Dv50/Dv90)
+- Multi-factor compatibility scoring (0–100)
 
 **Data Layer:**
-- Neo4j Graph DB: Actuator geometries, material compatibility, industry constraints
-- PostgreSQL: User accounts, configurations, procurement orders, feedback
-- S3: File storage (MSDS documents, CAD exports, generated reports)
-- Redis: Session caching, rate limiting, real-time notifications
+- PostgreSQL via Drizzle ORM: Users, tenants, configurations, procurements, feedback
+- localStorage: Saved configs, shopping cart, orders, analytics events
+- 27 actuators × 25 fluids × 12 spray types in-memory
+
+**Commerce:**
+- Shopping cart with persistent state
+- Order tracking with status progression
+- Simulated stock levels per actuator
+- Volume pricing with discount tiers (15% at 500+, 25% at 1,000+)
+- Stripe SDK installed for future payment integration
 
 ---
 
 ## SaaS & E-commerce Features
 
-### Phase 1: MVP Essentials (Weeks 1–4) ✅ In Progress
-- ✅ Actuator catalog with visual illustrations
-- ✅ Fluid reference library with hazard data
+### Phase 1: MVP Essentials (Weeks 1–4) ✅ Complete
+- ✅ Actuator catalog with visual illustrations (27 actuators, 12 types)
+- ✅ Fluid reference library with hazard data (25 fluids, 9 solvent classes)
 - ✅ Real-time compatibility matrix generation
 - ✅ Ohnesorge regime classification & safety warnings
-- ⏳ User authentication & account management
-- ⏳ Configuration persistence (cloud storage)
-- ⏳ Basic feedback mechanism
+- ✅ Non-Newtonian fluid support (power-law, Bingham, Herschel-Bulkley)
+- ✅ Droplet distribution (Dv10/Dv50/Dv90 + span)
+- ✅ Material stress analysis (swelling, cracking, leaching)
+- ✅ 3D parametric actuator viewer (React Three Fiber)
+- ✅ Regulatory compliance checks (CR, FDA, cleanroom, flammability)
+- ✅ Tooling recommendations (FDM, SLA, SLS, soft tool, hardened steel)
+- ⏳ User authentication & account management (DB schema ready)
+- ⏳ Basic feedback mechanism (DB schema ready)
 
-### Phase 2: SaaS Foundation (Months 2–3) 🔄 Next
+### Phase 2: SaaS Foundation (Months 2–3) ✅ Complete
+- ✅ Saved configurations (localStorage save/load with project management)
+- ✅ Regulatory compliance flags (CR, FDA, cleanroom, flammability, chemical hazards, material compatibility)
+- ✅ PDF report export (full technical report with print-to-PDF)
+- ✅ CSV data export
+- ✅ Analytics dashboard (usage metrics, top actuators/fluids, activity timeline)
+- ✅ Advanced search & filters (solvent class, manufacturer, industry tags)
+- ✅ Valve stem interface profiles (male/female, diameters, engagement depth)
+- ✅ Ergonomic data display (actuation force, stroke length, prime strokes, ADA compliance)
 - ⏳ Multi-seat team collaboration
 - ⏳ MSDS file upload & automated hazard extraction
-- ⏳ Regulatory compliance flags (EPA, CPSIA, CE)
-- ⏳ Advanced search, filters, saved configurations
-- ⏳ PDF/CAD export with BOM generation
 - ⏳ Email/Slack notifications
-- ⏳ Analytics dashboard (adoption, most-used SKUs)
-- ⏳ Stripe payment integration
-- ⏳ Support ticketing system
+- ⏳ Stripe payment integration (dependency installed, not wired)
 
-### Phase 3: Procurement & Commerce (Months 4–5)
-- ⏳ Spencer/Coster pricing & inventory APIs
-- ⏳ Real-time stock status & lead times
-- ⏳ Shopping cart & checkout (sample ordering)
-- ⏳ Bulk PO generation for pilot/production quantities
-- ⏳ Order tracking & shipment notifications
+### Phase 3: Procurement & Commerce (Months 4–5) ✅ Complete
+- ✅ Simulated stock status & lead times per actuator
+- ✅ Shopping cart with persistent state (localStorage)
+- ✅ Checkout flow with order placement
+- ✅ Bulk PO generation for pilot/production quantities
+- ✅ Order tracking page with status progression
+- ✅ Procurement discount tiers (15% at 500+, 25% at 1,000+)
+- ✅ Volume pricing table per actuator
+- ⏳ Spencer/Coster live pricing & inventory APIs
 - ⏳ Invoicing & net-30 terms for Enterprise
-- ⏳ Procurement discount tiers (Starter: 10%, Pro: 15%, Enterprise: 20%+)
 
 ### Phase 4: ML & Continuous Learning (Months 6–7)
 - ⏳ Post-purchase feedback survey (spray performance, compatibility)

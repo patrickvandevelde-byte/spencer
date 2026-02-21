@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FLUIDS, SOLVENT_CLASS_LABELS } from "@/lib/data";
 import type { Actuator, Fluid, PredictionResult, SolventClass, RheologyType } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
+import { getSavedConfigs, saveConfig, deleteConfig, trackEvent } from "@/lib/store";
+import type { SavedConfiguration } from "@/lib/store";
 
 interface ResultRow {
   actuator: Actuator;
@@ -72,6 +74,66 @@ export default function ConfigurePage() {
   const [selectedFluid, setSelectedFluid] = useState<Fluid | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Saved configurations
+  const [savedConfigs, setSavedConfigs] = useState<SavedConfiguration[]>([]);
+  const [showSaved, setShowSaved] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+
+  useEffect(() => {
+    setSavedConfigs(getSavedConfigs());
+  }, []);
+
+  function handleSave() {
+    const cfg = saveConfig({
+      name: inputMode === "library"
+        ? `${FLUIDS.find((f) => f.id === fluidId)?.name || fluidId} @ ${pressure} bar`
+        : `Custom Fluid @ ${pressure} bar`,
+      inputMode,
+      fluidId,
+      customFluid: inputMode === "custom" ? {
+        viscosity: customViscosity,
+        density: customDensity,
+        surfaceTension: customSurfaceTension,
+        solventClass: customSolventClass,
+        rheology: customRheology,
+        powerLawN: customPowerLawN,
+        particleSize: customParticleSize,
+      } : undefined,
+      pressure,
+      topActuatorId: results?.[0]?.actuator.id,
+      topScore: results?.[0]?.prediction.compatibilityScore,
+    });
+    setSavedConfigs(getSavedConfigs());
+    setSaveMessage(`Saved as "${cfg.name}"`);
+    trackEvent("config_save", { configId: cfg.id });
+    setTimeout(() => setSaveMessage(""), 3000);
+  }
+
+  function handleLoadConfig(cfg: SavedConfiguration) {
+    if (cfg.inputMode === "custom" && cfg.customFluid) {
+      setInputMode("custom");
+      setCustomViscosity(cfg.customFluid.viscosity);
+      setCustomDensity(cfg.customFluid.density);
+      setCustomSurfaceTension(cfg.customFluid.surfaceTension);
+      setCustomSolventClass(cfg.customFluid.solventClass as SolventClass);
+      setCustomRheology(cfg.customFluid.rheology as RheologyType);
+      setCustomPowerLawN(cfg.customFluid.powerLawN);
+      setCustomParticleSize(cfg.customFluid.particleSize);
+    } else {
+      setInputMode("library");
+      setFluidId(cfg.fluidId);
+    }
+    setPressure(cfg.pressure);
+    setShowSaved(false);
+    setResults(null);
+    setSelectedFluid(null);
+  }
+
+  function handleDeleteConfig(id: string) {
+    deleteConfig(id);
+    setSavedConfigs(getSavedConfigs());
+  }
+
   const filteredFluids = FLUIDS.filter(
     (f) => solventFilter === "all" || f.solventClass === solventFilter
   );
@@ -107,6 +169,7 @@ export default function ConfigurePage() {
       predResults.sort((a, b) => b.prediction.compatibilityScore - a.prediction.compatibilityScore);
       setResults(predResults);
       setSelectedFluid(customFluid);
+      trackEvent("prediction", { fluidId: "CUSTOM", pressure });
     } else {
       const res = await fetch("/api/predict", {
         method: "POST",
@@ -116,6 +179,7 @@ export default function ConfigurePage() {
       const data = await res.json();
       setResults(data.results);
       setSelectedFluid(data.fluid);
+      trackEvent("prediction", { fluidId, pressure });
     }
     setLoading(false);
   }
@@ -123,14 +187,88 @@ export default function ConfigurePage() {
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-[var(--fg-bright)]">
-          Actuator Configurator
-        </h1>
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Define fluid properties and operating conditions. The engine predicts optimal actuator performance using type-specific atomization models.
-        </p>
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-[var(--fg-bright)]">
+            Actuator Configurator
+          </h1>
+          <p className="mt-2 text-sm text-[var(--muted)]">
+            Define fluid properties and operating conditions. The engine predicts optimal actuator performance using type-specific atomization models.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSave}
+            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" />
+            </svg>
+            Save
+          </button>
+          <button
+            onClick={() => setShowSaved(!showSaved)}
+            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
+            </svg>
+            Load ({savedConfigs.length})
+          </button>
+        </div>
       </div>
+
+      {saveMessage && (
+        <div className="animate-in rounded-lg border border-[var(--success)]/30 bg-[var(--success)]/5 px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] text-[var(--success)]">
+          {saveMessage}
+        </div>
+      )}
+
+      {/* Saved Configurations Panel */}
+      {showSaved && (
+        <div className="glass animate-in rounded-xl p-6">
+          <h2 className="mb-4 font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+            Saved Configurations
+          </h2>
+          {savedConfigs.length === 0 ? (
+            <p className="text-sm text-[var(--muted)]">No saved configurations. Run a prediction and click Save.</p>
+          ) : (
+            <div className="space-y-2">
+              {savedConfigs.map((cfg) => (
+                <div key={cfg.id} className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 py-3 transition-all hover:border-[var(--accent)]/50">
+                  <div className="flex-1">
+                    <span className="text-xs font-semibold text-[var(--fg-bright)]">{cfg.name}</span>
+                    <span className="ml-2 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                      {new Date(cfg.createdAt).toLocaleDateString()}
+                    </span>
+                    {cfg.topScore !== undefined && (
+                      <span className={`ml-2 rounded-md border px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[9px] font-bold ${
+                        cfg.topScore >= 80 ? "border-[var(--success)] text-[var(--success)]" : cfg.topScore >= 50 ? "border-[var(--warning)] text-[var(--warning)]" : "border-[var(--danger)] text-[var(--danger)]"
+                      }`}>
+                        Best: {cfg.topScore}/100
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleLoadConfig(cfg)}
+                    className="rounded-lg border border-[var(--accent)]/30 px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--accent)] transition-all hover:bg-[var(--accent)]/10"
+                  >
+                    Load
+                  </button>
+                  <button
+                    onClick={() => handleDeleteConfig(cfg.id)}
+                    className="rounded-lg p-1.5 text-[var(--muted)] hover:bg-[var(--danger)]/10 hover:text-[var(--danger)] transition-colors"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ===== STEP 1: FLUID INPUT ===== */}
       <div className="glass-bright rounded-xl p-6 space-y-5">
