@@ -164,7 +164,7 @@ export type AtomizationRegime =
   | "Wind-stressed"   // Oh < 1, high We — ligament formation
   | "Atomization";    // Oh < 1, very high We — full atomization
 
-export type ToolingRecommendation = "fdm_3d_print" | "soft_tool" | "hardened_steel";
+export type ToolingRecommendation = "fdm_3d_print" | "sla_resin" | "sls_nylon" | "soft_tool" | "hardened_steel";
 
 export interface DropletDistribution {
   Dv10_um: number;   // 10% of volume below this size
@@ -1792,25 +1792,47 @@ function assessMaterialStress(fluid: Fluid, td: TechnicalDesign): {
  * Recommend tooling based on production volume.
  */
 export function recommendTooling(volume: number, actuator: Actuator): ToolingSpec {
-  if (volume <= 10) {
+  if (volume <= 5) {
+    // Quick concept validation — FDM 3D print
     return {
       recommendation: "fdm_3d_print",
       cavityCount: 1,
+      estimatedLeadTime_days: 2,
+      estimatedToolCost_usd: 0,
+      costPerUnit_usd: actuator.price_usd * 3.0,
+    };
+  }
+  if (volume <= 25) {
+    // High-resolution prototyping — SLA resin
+    return {
+      recommendation: "sla_resin",
+      cavityCount: 1,
       estimatedLeadTime_days: 3,
       estimatedToolCost_usd: 0,
-      costPerUnit_usd: actuator.price_usd * 2.5, // Premium for prototyping
+      costPerUnit_usd: actuator.price_usd * 2.2,
+    };
+  }
+  if (volume <= 100) {
+    // Functional pilot batch — SLS nylon (mechanically strong)
+    return {
+      recommendation: "sls_nylon",
+      cavityCount: 1,
+      estimatedLeadTime_days: 5,
+      estimatedToolCost_usd: 150, // Build plate setup
+      costPerUnit_usd: actuator.price_usd * 1.6,
     };
   }
   if (volume <= 1000) {
+    // Pilot production — soft (silicone/aluminum) tooling
     return {
       recommendation: "soft_tool",
-      cavityCount: volume <= 100 ? 1 : 2,
-      estimatedLeadTime_days: volume <= 100 ? 7 : 14,
-      estimatedToolCost_usd: volume <= 100 ? 800 : 2500,
-      costPerUnit_usd: actuator.price_usd * 0.8,
+      cavityCount: volume <= 500 ? 1 : 2,
+      estimatedLeadTime_days: volume <= 500 ? 10 : 14,
+      estimatedToolCost_usd: volume <= 500 ? 1200 : 3000,
+      costPerUnit_usd: actuator.price_usd * 0.75,
     };
   }
-  // 1000+ units: hardened steel
+  // 1000+ units: hardened steel injection mold
   const cavities = volume <= 10000 ? 4 : volume <= 100000 ? 16 : 32;
   return {
     recommendation: "hardened_steel",

@@ -7,6 +7,22 @@ import type { Actuator, Fluid, PredictionResult, ToolingSpec } from "@/lib/data"
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
 import { TechnicalDesignPanel } from "@/components/TechnicalDesign";
+import dynamic from "next/dynamic";
+
+const ActuatorViewer3D = dynamic(() => import("@/components/ActuatorViewer3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="glass flex items-center justify-center rounded-xl" style={{ height: 400 }}>
+      <div className="text-center">
+        <svg className="mx-auto h-8 w-8 animate-spin text-[var(--accent)]" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.2" />
+          <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+        <p className="mt-2 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Loading 3D viewer...</p>
+      </div>
+    </div>
+  ),
+});
 
 function RegimeBadge({ regime }: { regime: string }) {
   const colors: Record<string, string> = {
@@ -161,12 +177,16 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
   const tooling = recommendTooling(volume, actuator);
 
   const labelMap: Record<string, string> = {
-    fdm_3d_print: "FDM 3D Print (Prototype)",
-    soft_tool: "Soft Tooling (Pilot)",
-    hardened_steel: "Hardened Steel (Production)",
+    fdm_3d_print: "FDM 3D Print (Concept)",
+    sla_resin: "SLA Resin (Hi-Res Prototype)",
+    sls_nylon: "SLS Nylon (Functional Pilot)",
+    soft_tool: "Soft Tooling (Pilot Production)",
+    hardened_steel: "Hardened Steel (Mass Production)",
   };
   const colorMap: Record<string, string> = {
-    fdm_3d_print: "var(--accent)",
+    fdm_3d_print: "var(--muted)",
+    sla_resin: "var(--accent)",
+    sls_nylon: "var(--accent-secondary)",
     soft_tool: "var(--warning)",
     hardened_steel: "var(--success)",
   };
@@ -245,7 +265,7 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
               </tr>
             </thead>
             <tbody>
-              {[5, 100, 1000, 10000, 100000].map((v) => {
+              {[3, 15, 50, 500, 1000, 10000, 100000].map((v) => {
                 const t = recommendTooling(v, actuator);
                 const total = t.estimatedToolCost_usd + t.costPerUnit_usd * v;
                 const isActive = v === volume;
@@ -674,11 +694,14 @@ function ResultsContent() {
       {/* Performance Chart */}
       <PressureChart actuator={actuator} fluid={fluid} />
 
-      {/* Spray Visualization */}
+      {/* 3D Parametric Viewer + CAD Export */}
+      <ActuatorViewer3D actuator={actuator} height={420} />
+
+      {/* Spray Pattern Visualization (2D) */}
       <div className="glass rounded-xl p-6">
         <h2 className="mb-4 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
           <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-          Spray Visualization — {actuator.type.replace(/_/g, " ")}
+          Spray Pattern — {actuator.type.replace(/_/g, " ")}
         </h2>
         <div className="flex items-center justify-center gap-12 py-6">
           <div className="text-center">
