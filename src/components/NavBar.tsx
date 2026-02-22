@@ -23,9 +23,9 @@ function getContext(pathname: string): NavContext {
 }
 
 const NAV_LINK =
-  "rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide no-underline transition-all";
-const NAV_DEFAULT = `${NAV_LINK} text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--accent)]`;
-const NAV_ACTIVE = `${NAV_LINK} text-[var(--accent)] bg-[var(--accent)]/10`;
+  "px-3 py-1.5 text-xs font-medium no-underline transition-colors rounded-full";
+const NAV_DEFAULT = `${NAV_LINK} text-[var(--muted)] hover:text-[var(--fg)]`;
+const NAV_ACTIVE = `${NAV_LINK} text-[var(--fg)] bg-[var(--bg-secondary)]`;
 
 function AeroSpecNav({ pathname }: { pathname: string }) {
   const items = [
@@ -35,7 +35,7 @@ function AeroSpecNav({ pathname }: { pathname: string }) {
     { href: "/procurement", label: "Procure" },
     { href: "/orders", label: "Orders" },
     { href: "/analytics", label: "Analytics" },
-    { href: "/cart", label: "Cart", icon: true },
+    { href: "/cart", label: "Cart" },
   ];
 
   return (
@@ -46,14 +46,8 @@ function AeroSpecNav({ pathname }: { pathname: string }) {
           <Link
             key={item.href}
             href={item.href}
-            className={`${active ? NAV_ACTIVE : NAV_DEFAULT} ${item.icon ? "flex items-center gap-1" : ""}`}
+            className={active ? NAV_ACTIVE : NAV_DEFAULT}
           >
-            {item.icon && (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
-              </svg>
-            )}
             {item.label}
           </Link>
         );
@@ -95,82 +89,59 @@ export function NavBar() {
   const context = getContext(pathname);
 
   return (
-    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        {/* Logo — always links home */}
-        <Link href="/" className="flex items-center gap-3 no-underline hover:opacity-80 transition-opacity">
-          <div className="relative flex h-8 w-8 items-center justify-center">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="14" stroke="#06b6d4" strokeWidth="1.5" opacity="0.3" />
-              <circle cx="16" cy="16" r="8" stroke="#06b6d4" strokeWidth="1" opacity="0.5" />
-              <circle cx="16" cy="16" r="3" fill="#06b6d4" />
-              <line x1="16" y1="2" x2="16" y2="8" stroke="#06b6d4" strokeWidth="1" opacity="0.4" />
-              <line x1="16" y1="24" x2="16" y2="30" stroke="#06b6d4" strokeWidth="1" opacity="0.4" />
-              <line x1="2" y1="16" x2="8" y2="16" stroke="#06b6d4" strokeWidth="1" opacity="0.4" />
-              <line x1="24" y1="16" x2="30" y2="16" stroke="#06b6d4" strokeWidth="1" opacity="0.4" />
-            </svg>
-          </div>
-          <div className="flex items-center gap-2">
-            {context === "spenser" ? (
-              <span className="font-[family-name:var(--font-mono)] text-sm font-bold tracking-wider text-[var(--fg-bright)]">
-                SPENSER
-              </span>
-            ) : context === "aerospec" ? (
-              <span className="font-[family-name:var(--font-mono)] text-sm font-bold tracking-wider text-[var(--fg-bright)]">
-                AEROSPEC
-              </span>
-            ) : (
-              <span className="font-[family-name:var(--font-mono)] text-sm font-bold tracking-wider text-[var(--fg-bright)]">
-                AEROSPEC
-              </span>
-            )}
-            {context !== "home" && (
-              <span className="rounded border border-[var(--border)] px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[8px] tracking-wider text-[var(--muted)]">
-                {context === "spenser" ? "SFP" : "ACTUATOR"}
-              </span>
-            )}
-          </div>
+    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.72)] backdrop-blur-xl backdrop-saturate-150">
+      <div className="mx-auto flex max-w-[980px] items-center justify-between px-6 h-12">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 no-underline transition-opacity hover:opacity-60">
+          <span className="text-sm font-semibold tracking-tight text-[var(--fg-bright)]">
+            {context === "spenser" ? "Spenser" : context === "aerospec" ? "AeroSpec" : "AeroSpec"}
+          </span>
+          {context !== "home" && (
+            <span className="rounded-full bg-[var(--bg-secondary)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted)]">
+              {context === "spenser" ? "SFP" : "Actuator"}
+            </span>
+          )}
         </Link>
 
         {/* Context-aware navigation */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           {context === "aerospec" && <AeroSpecNav pathname={pathname} />}
           {context === "spenser" && <SpenserNav pathname={pathname} />}
 
-          {/* Product switcher — always visible */}
+          {/* Product switcher */}
           {context !== "home" && (
             <>
-              <span className="mx-1.5 h-4 w-px bg-[var(--border)]" />
+              <span className="mx-2 h-4 w-px bg-[var(--border)]" />
               {context === "aerospec" ? (
                 <Link
                   href="/spenser"
-                  className={`${NAV_LINK} text-[var(--accent-secondary)] border border-[var(--accent-secondary)]/30 hover:bg-[var(--accent-secondary)]/10`}
+                  className={`${NAV_LINK} text-[var(--accent-secondary)] hover:bg-[var(--accent-secondary)]/8`}
                 >
-                  Switch to Spenser
+                  Spenser
                 </Link>
               ) : (
                 <Link
                   href="/catalog"
-                  className={`${NAV_LINK} text-[var(--accent)] border border-[var(--accent)]/30 hover:bg-[var(--accent)]/10`}
+                  className={`${NAV_LINK} text-[var(--accent)] hover:bg-[var(--accent)]/8`}
                 >
-                  Switch to AeroSpec
+                  AeroSpec
                 </Link>
               )}
             </>
           )}
 
-          {/* Home: show both product CTAs */}
+          {/* Home: show both product links */}
           {context === "home" && (
             <>
               <Link
                 href="/catalog"
-                className="btn-secondary rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide no-underline"
+                className="rounded-full px-4 py-1.5 text-xs font-medium text-[var(--accent)] no-underline transition-colors hover:bg-[var(--accent)]/8"
               >
                 AeroSpec
               </Link>
               <Link
                 href="/spenser"
-                className="btn-primary ml-1 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide no-underline"
+                className="btn-primary ml-1 px-4 py-1.5 text-xs no-underline"
               >
                 Spenser SFP
               </Link>

@@ -27,17 +27,14 @@ const SPENSER_STEPS: WorkflowStep[] = [
 export function WorkflowBreadcrumb() {
   const pathname = usePathname();
 
-  // Determine which workflow to show
   const isSpenser = pathname.startsWith("/spenser");
   const steps = isSpenser ? SPENSER_STEPS : AEROSPEC_STEPS;
 
-  // Find current step — for Spenser dashboard use exact match
   const currentIndex = steps.findIndex((s) => {
     if (isSpenser && s.path === "/spenser") return pathname === "/spenser";
     return pathname.startsWith(s.path);
   });
 
-  // Don't show on homepage or non-workflow pages
   if (currentIndex === -1) return null;
 
   const accentColor = isSpenser ? "var(--accent-secondary)" : "var(--accent)";
@@ -59,11 +56,11 @@ export function WorkflowBreadcrumb() {
             )}
             <Link
               href={step.path}
-              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider no-underline transition-all ${
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium no-underline transition-all ${
                 isCurrent
                   ? isSpenser
-                    ? "border border-[var(--accent-secondary)]/30 bg-[var(--accent-secondary)]/10 text-[var(--accent-secondary)]"
-                    : "border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)]"
+                    ? "bg-[var(--accent-secondary)]/8 text-[var(--accent-secondary)]"
+                    : "bg-[var(--accent)]/8 text-[var(--accent)]"
                   : isPast
                     ? isSpenser
                       ? "text-[var(--accent-secondary)]/60 hover:text-[var(--accent-secondary)]"
@@ -71,16 +68,16 @@ export function WorkflowBreadcrumb() {
                     : "text-[var(--muted)] hover:text-[var(--fg)]"
               }`}
             >
-              <span className={`flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold ${
+              <span className={`flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-semibold ${
                 isCurrent
                   ? isSpenser
-                    ? "bg-[var(--accent-secondary)] text-[var(--bg)]"
-                    : "bg-[var(--accent)] text-[var(--bg)]"
+                    ? "bg-[var(--accent-secondary)] text-white"
+                    : "bg-[var(--accent)] text-white"
                   : isPast
                     ? isSpenser
-                      ? "bg-[var(--accent-secondary)]/20 text-[var(--accent-secondary)]"
-                      : "bg-[var(--accent)]/20 text-[var(--accent)]"
-                    : "bg-[var(--border)] text-[var(--muted)]"
+                      ? "bg-[var(--accent-secondary)]/15 text-[var(--accent-secondary)]"
+                      : "bg-[var(--accent)]/15 text-[var(--accent)]"
+                    : "bg-[var(--bg-secondary)] text-[var(--muted)]"
               }`}>
                 {isPast ? (
                   <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">

@@ -19,7 +19,7 @@ const ActuatorViewer3D = dynamic(() => import("@/components/ActuatorViewer3D"), 
           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.2" />
           <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
-        <p className="mt-2 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Loading 3D viewer...</p>
+        <p className="mt-2 text-xs text-[var(--muted)]">Loading 3D viewer...</p>
       </div>
     </div>
   ),
@@ -34,7 +34,7 @@ function RegimeBadge({ regime }: { regime: string }) {
   };
   const color = colors[regime] || "var(--muted)";
   return (
-    <span className="rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[11px] font-bold" style={{ borderColor: color, color }}>
+    <span className="rounded-md border px-2.5 py-1 text-xs font-bold" style={{ borderColor: color, color }}>
       {regime}
     </span>
   );
@@ -49,7 +49,7 @@ function CloggingBadge({ risk }: { risk: string }) {
   };
   return (
     <span
-      className="rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase"
+      className="rounded-md border px-2.5 py-1 text-xs font-bold uppercase"
       style={{ borderColor: colors[risk], color: colors[risk] }}
     >
       {labels[risk] || risk}
@@ -229,7 +229,7 @@ function StemErgonomicsSection({ actuator }: { actuator: Actuator }) {
 
   return (
     <div className="glass rounded-xl p-6">
-      <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+      <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
           <path d="M12 6v6l4 2" />
@@ -241,30 +241,30 @@ function StemErgonomicsSection({ actuator }: { actuator: Actuator }) {
         {/* Stem profile */}
         {hasStem && (
           <div>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Stem Profile</span>
+            <span className="text-xs font-medium text-[var(--muted)]">Stem Profile</span>
             <div className="mt-3 space-y-3 text-xs">
               {td.stemProfile && (
                 <div className="flex justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Type</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)] uppercase">{td.stemProfile}</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.stemProfile}</strong>
                 </div>
               )}
               {td.stemExternalDiameter_mm && (
                 <div className="flex justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">External Diameter</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.stemExternalDiameter_mm} mm</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.stemExternalDiameter_mm} mm</strong>
                 </div>
               )}
               {td.stemInternalDiameter_mm && (
                 <div className="flex justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Internal Diameter</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.stemInternalDiameter_mm} mm</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.stemInternalDiameter_mm} mm</strong>
                 </div>
               )}
               {td.engagementDepth_mm && (
                 <div className="flex justify-between pb-2">
                   <span className="text-[var(--muted)]">Engagement Depth</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.engagementDepth_mm} mm</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.engagementDepth_mm} mm</strong>
                 </div>
               )}
             </div>
@@ -274,15 +274,15 @@ function StemErgonomicsSection({ actuator }: { actuator: Actuator }) {
         {/* Ergonomics */}
         {hasErgonomics && (
           <div>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Ergonomic Data</span>
+            <span className="text-xs font-medium text-[var(--muted)]">Ergonomic Data</span>
             <div className="mt-3 space-y-3 text-xs">
               {td.actuationForce_N && (
                 <div className="flex justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Actuation Force</span>
                   <span className="flex items-center gap-2">
-                    <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.actuationForce_N} N</strong>
+                    <strong className="tabular-nums text-[var(--fg-bright)]">{td.actuationForce_N} N</strong>
                     {isAdaCompliant !== null && (
-                      <span className={`rounded-md border px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[9px] font-bold ${
+                      <span className={`rounded-md border px-1.5 py-0.5 text-[11px] font-bold ${
                         isAdaCompliant ? "border-[var(--success)] text-[var(--success)]" : "border-[var(--warning)] text-[var(--warning)]"
                       }`}>
                         {isAdaCompliant ? "ADA OK" : "HIGH FORCE"}
@@ -294,31 +294,31 @@ function StemErgonomicsSection({ actuator }: { actuator: Actuator }) {
               {td.strokeLength_mm && (
                 <div className="flex justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Stroke Length</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.strokeLength_mm} mm</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.strokeLength_mm} mm</strong>
                 </div>
               )}
               {td.returnSpeed_mm_s && (
                 <div className="flex justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Return Speed</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.returnSpeed_mm_s} mm/s</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.returnSpeed_mm_s} mm/s</strong>
                 </div>
               )}
               {td.primeStrokes && (
                 <div className="flex justify-between pb-2">
                   <span className="text-[var(--muted)]">Prime Strokes</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.primeStrokes} actuations</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.primeStrokes} actuations</strong>
                 </div>
               )}
               {td.dosage_uL && (
                 <div className="flex justify-between pb-2">
                   <span className="text-[var(--muted)]">Dose per Actuation</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.dosage_uL} µL</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.dosage_uL} µL</strong>
                 </div>
               )}
               {td.internalVolume_uL && (
                 <div className="flex justify-between pb-2">
                   <span className="text-[var(--muted)]">Dead Volume</span>
-                  <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{td.internalVolume_uL} µL</strong>
+                  <strong className="tabular-nums text-[var(--fg-bright)]">{td.internalVolume_uL} µL</strong>
                 </div>
               )}
             </div>
@@ -359,7 +359,7 @@ function PressureChart({ actuator, fluid }: { actuator: Actuator; fluid: Fluid }
 
   return (
     <div className="glass rounded-xl p-6">
-      <h2 className="mb-4 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+      <h2 className="mb-4 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
         Performance vs Pressure
       </h2>
@@ -390,7 +390,7 @@ function PressureChart({ actuator, fluid }: { actuator: Actuator; fluid: Fluid }
         <text x={PAD - 4} y={PAD + 4} textAnchor="end" fill="#06b6d4" fontSize="8" fontFamily="monospace">{maxDv50}µm</text>
         <text x={PAD - 4} y={H - PAD} textAnchor="end" fill="#06b6d4" fontSize="8" fontFamily="monospace">0</text>
       </svg>
-      <div className="mt-3 flex items-center gap-6 font-[family-name:var(--font-mono)] text-[10px]">
+      <div className="mt-3 flex items-center gap-6 text-xs">
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-0.5 w-4 rounded" style={{ backgroundColor: "#06b6d4" }} />
           <span className="text-[#06b6d4]">Dv50 (µm)</span>
@@ -426,7 +426,7 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
 
   return (
     <div className="glass rounded-xl p-6">
-      <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+      <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
         </svg>
@@ -434,15 +434,15 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
       </h2>
 
       <div className="mb-5 flex items-center gap-4">
-        <label className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+        <label className="text-xs font-medium text-[var(--muted)]">
           Production Volume:
         </label>
         <input
           type="number" min={1} max={1000000} value={volume}
           onChange={(e) => setVolume(Number(e.target.value))}
-          className="input-field w-32 rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-xs"
+          className="input-field w-32 rounded-lg px-3 py-2 text-sm"
         />
-        <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">units</span>
+        <span className="text-xs text-[var(--muted)]">units</span>
       </div>
 
       <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-xs md:grid-cols-3">
@@ -454,31 +454,31 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
         </div>
         <div>
           <span className="text-[var(--muted)]">Cavity Count</span>
-          <p className="mt-0.5 font-[family-name:var(--font-mono)] font-semibold text-[var(--fg-bright)]">
+          <p className="mt-0.5 tabular-nums font-semibold text-[var(--fg-bright)]">
             {tooling.cavityCount} {tooling.cavityCount > 1 ? "cavities" : "cavity"}
           </p>
         </div>
         <div>
           <span className="text-[var(--muted)]">Lead Time</span>
-          <p className="mt-0.5 font-[family-name:var(--font-mono)] font-semibold text-[var(--fg-bright)]">
+          <p className="mt-0.5 tabular-nums font-semibold text-[var(--fg-bright)]">
             {tooling.estimatedLeadTime_days} days
           </p>
         </div>
         <div>
           <span className="text-[var(--muted)]">Tool Cost</span>
-          <p className="mt-0.5 font-[family-name:var(--font-mono)] font-semibold text-[var(--fg-bright)]">
+          <p className="mt-0.5 tabular-nums font-semibold text-[var(--fg-bright)]">
             {tooling.estimatedToolCost_usd > 0 ? `$${tooling.estimatedToolCost_usd.toLocaleString()}` : "None (print-on-demand)"}
           </p>
         </div>
         <div>
           <span className="text-[var(--muted)]">Cost Per Unit</span>
-          <p className="mt-0.5 font-[family-name:var(--font-mono)] font-semibold text-[var(--fg-bright)]">
+          <p className="mt-0.5 tabular-nums font-semibold text-[var(--fg-bright)]">
             ${tooling.costPerUnit_usd.toFixed(2)}
           </p>
         </div>
         <div>
           <span className="text-[var(--muted)]">Total (tool + units)</span>
-          <p className="mt-0.5 font-[family-name:var(--font-mono)] font-bold text-[var(--accent)]">
+          <p className="mt-0.5 tabular-nums font-bold text-[var(--accent)]">
             ${(tooling.estimatedToolCost_usd + tooling.costPerUnit_usd * volume).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </div>
@@ -486,15 +486,15 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
 
       {/* Volume tier comparison */}
       <div className="mt-5 border-t border-[var(--border)] pt-4">
-        <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Cost At Volume</span>
+        <span className="text-xs font-medium text-[var(--muted)]">Cost At Volume</span>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[var(--border)]">
-                <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium text-[var(--muted)]">Volume</th>
-                <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium text-[var(--muted)]">Process</th>
-                <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium text-[var(--muted)]">Unit Cost</th>
-                <th className="py-2 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium text-[var(--muted)]">Total</th>
+                <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">Volume</th>
+                <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">Process</th>
+                <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">Unit Cost</th>
+                <th className="py-2 text-left text-xs font-medium text-[var(--muted)]">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -504,10 +504,10 @@ function ToolingSection({ actuator }: { actuator: Actuator }) {
                 const isActive = v === volume;
                 return (
                   <tr key={v} className={`border-b border-[var(--border)] last:border-b-0 ${isActive ? "bg-[var(--accent)]/5" : ""}`}>
-                    <td className="py-2 pr-4 font-[family-name:var(--font-mono)]">{v.toLocaleString()}</td>
+                    <td className="py-2 pr-4 tabular-nums">{v.toLocaleString()}</td>
                     <td className="py-2 pr-4" style={{ color: colorMap[t.recommendation] }}>{labelMap[t.recommendation].split(" (")[0]}</td>
-                    <td className="py-2 pr-4 font-[family-name:var(--font-mono)]">${t.costPerUnit_usd.toFixed(2)}</td>
-                    <td className="py-2 font-[family-name:var(--font-mono)] font-semibold">${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td className="py-2 pr-4 tabular-nums">${t.costPerUnit_usd.toFixed(2)}</td>
+                    <td className="py-2 tabular-nums font-semibold">${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                   </tr>
                 );
               })}
@@ -591,7 +591,7 @@ function RegulatorySection({ actuator, fluid }: { actuator: Actuator; fluid: Flu
 
   return (
     <div className="glass rounded-xl p-6">
-      <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+      <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
@@ -609,7 +609,7 @@ function RegulatorySection({ actuator, fluid }: { actuator: Actuator; fluid: Flu
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-[var(--fg-bright)]">{c.label}</span>
                   <span
-                    className="rounded-md border px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[8px] font-bold uppercase"
+                    className="rounded-md border px-1.5 py-0.5 text-[10px] font-bold uppercase"
                     style={{ borderColor: s.color, color: s.color }}
                   >
                     {c.status === "na" ? "N/A" : c.status}
@@ -642,18 +642,18 @@ function DistributionBar({ dist }: { dist: { Dv10_um: number; Dv50_um: number; D
         />
         {/* Dv10 marker */}
         <div className="absolute top-0 bottom-0 w-0.5 bg-[#06b6d4]/60" style={{ left: `${pct10}%` }}>
-          <span className="absolute -top-5 -translate-x-1/2 font-[family-name:var(--font-mono)] text-[9px] text-[#06b6d4]">{dist.Dv10_um}</span>
+          <span className="absolute -top-5 -translate-x-1/2 text-[11px] text-[#06b6d4]">{dist.Dv10_um}</span>
         </div>
         {/* Dv50 marker */}
         <div className="absolute top-0 bottom-0 w-1 bg-[var(--accent)]" style={{ left: `${pct50}%` }}>
-          <span className="absolute -top-5 -translate-x-1/2 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--accent)]">{dist.Dv50_um}</span>
+          <span className="absolute -top-5 -translate-x-1/2 text-xs font-bold text-[var(--accent)]">{dist.Dv50_um}</span>
         </div>
         {/* Dv90 marker */}
         <div className="absolute top-0 bottom-0 w-0.5 bg-[#06b6d4]/60" style={{ left: `${pct90}%` }}>
-          <span className="absolute -top-5 -translate-x-1/2 font-[family-name:var(--font-mono)] text-[9px] text-[#06b6d4]">{dist.Dv90_um}</span>
+          <span className="absolute -top-5 -translate-x-1/2 text-[11px] text-[#06b6d4]">{dist.Dv90_um}</span>
         </div>
       </div>
-      <div className="flex justify-between font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">
+      <div className="flex justify-between text-[11px] text-[var(--muted)]">
         <span>0 µm</span>
         <span>{Math.round(max)} µm</span>
       </div>
@@ -692,9 +692,9 @@ function ResultsContent() {
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-            <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">PREDICTION DETAIL</span>
+            <span className="text-xs tracking-wider text-[var(--accent)]">PREDICTION DETAIL</span>
           </div>
-          <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">{actuator.name}</h1>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--fg-bright)]">{actuator.name}</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">{fluid.name} @ {pressure} bar</p>
           <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{actuator.description}</p>
         </div>
@@ -708,7 +708,7 @@ function ResultsContent() {
       <div className="glass-bright rounded-xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="mb-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <p className="mb-1 text-xs font-medium text-[var(--muted)]">
               Compatibility Score
             </p>
             <div className="flex items-end gap-3">
@@ -719,32 +719,32 @@ function ResultsContent() {
             </div>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <p className="text-xs font-medium text-[var(--muted)]">
               Atomization Regime
             </p>
             <RegimeBadge regime={result.atomizationRegime} />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <p className="text-xs font-medium text-[var(--muted)]">
               Clogging Risk
             </p>
             <CloggingBadge risk={result.cloggingRisk} />
           </div>
           <div className="space-y-2 text-right">
             <div className="flex items-center justify-end gap-2">
-              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">Material</span>
+              <span className="text-xs text-[var(--muted)]">Material</span>
               {actuator.materialCompatibility.includes(fluid.solventClass) ? (
-                <span className="rounded-md border border-[var(--success)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--success)]">PASS</span>
+                <span className="rounded-md border border-[var(--success)] px-2 py-0.5 text-xs font-bold text-[var(--success)]">PASS</span>
               ) : (
-                <span className="rounded-md border border-[var(--danger)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--danger)]">FAIL</span>
+                <span className="rounded-md border border-[var(--danger)] px-2 py-0.5 text-xs font-bold text-[var(--danger)]">FAIL</span>
               )}
             </div>
             <div className="flex items-center justify-end gap-2">
-              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">Pressure</span>
+              <span className="text-xs text-[var(--muted)]">Pressure</span>
               {pressure <= actuator.maxPressure_bar ? (
-                <span className="rounded-md border border-[var(--success)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--success)]">SAFE</span>
+                <span className="rounded-md border border-[var(--success)] px-2 py-0.5 text-xs font-bold text-[var(--success)]">SAFE</span>
               ) : (
-                <span className="rounded-md border border-[var(--danger)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--danger)]">OVER</span>
+                <span className="rounded-md border border-[var(--danger)] px-2 py-0.5 text-xs font-bold text-[var(--danger)]">OVER</span>
               )}
             </div>
           </div>
@@ -754,26 +754,26 @@ function ResultsContent() {
       {/* Material Stress Analysis */}
       {(result.materialStress.swellingRisk || result.materialStress.stressCrackingRisk || result.materialStress.leachingRisk) && (
         <div className="rounded-xl border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-5">
-          <h2 className="mb-3 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--warning)]">
+          <h2 className="mb-3 flex items-center gap-2 text-xs font-medium text-[var(--warning)]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 9v2m0 4h.01" /></svg>
             Material Stress Analysis
           </h2>
           <div className="flex flex-wrap gap-3">
             {result.materialStress.swellingRisk && (
               <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--bg)] px-4 py-2">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--warning)]">Swelling Risk</p>
+                <p className="text-xs font-bold text-[var(--warning)]">Swelling Risk</p>
                 <p className="text-[10px] text-[var(--muted)]">Solvent may cause polymer swelling in {actuator.technicalDesign.bodyMaterial}</p>
               </div>
             )}
             {result.materialStress.stressCrackingRisk && (
               <div className="rounded-lg border border-[var(--danger)]/30 bg-[var(--bg)] px-4 py-2">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--danger)]">Stress Cracking Risk</p>
+                <p className="text-xs font-bold text-[var(--danger)]">Stress Cracking Risk</p>
                 <p className="text-[10px] text-[var(--muted)]">Environmental stress cracking possible with {fluid.solventClass} solvents</p>
               </div>
             )}
             {result.materialStress.leachingRisk && (
               <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--bg)] px-4 py-2">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--warning)]">Leaching Risk</p>
+                <p className="text-xs font-bold text-[var(--warning)]">Leaching Risk</p>
                 <p className="text-[10px] text-[var(--muted)]">Components may leach into product — verify for food/pharma applications</p>
               </div>
             )}
@@ -784,7 +784,7 @@ function ResultsContent() {
       {/* Safety Warnings */}
       {result.safetyWarnings.length > 0 && (
         <div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/5 p-5">
-          <h2 className="mb-3 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--danger)]">
+          <h2 className="mb-3 flex items-center gap-2 text-xs font-medium text-[var(--danger)]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
@@ -797,10 +797,10 @@ function ResultsContent() {
           </div>
           {fluid.ppeRequired.length > 0 && (
             <div className="mt-3 border-t border-[var(--danger)]/20 pt-3">
-              <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--warning)]">Required PPE:</span>
+              <span className="text-xs font-medium text-[var(--warning)]">Required PPE:</span>
               <div className="mt-1 flex flex-wrap gap-1">
                 {fluid.ppeRequired.map((p) => (
-                  <span key={p} className="rounded-md border border-[var(--warning)]/30 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--warning)]">
+                  <span key={p} className="rounded-md border border-[var(--warning)]/30 px-2 py-0.5 text-xs text-[var(--warning)]">
                     {p.replace("_", " ")}
                   </span>
                 ))}
@@ -812,7 +812,7 @@ function ResultsContent() {
 
       {/* Droplet Distribution */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
             <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
           </svg>
@@ -822,24 +822,24 @@ function ResultsContent() {
           <div className="space-y-5">
             <div className="grid grid-cols-4 gap-3 text-center">
               <div className="rounded-lg border border-[var(--border)] p-3">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Dv10</p>
+                <p className="text-xs text-[var(--muted)]">Dv10</p>
                 <p className="text-lg font-bold text-[var(--fg-bright)]">{dist.Dv10_um}</p>
-                <p className="font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">µm</p>
+                <p className="text-[11px] text-[var(--muted)]">µm</p>
               </div>
               <div className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent)]/5 p-3">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--accent)]">Dv50</p>
+                <p className="text-xs text-[var(--accent)]">Dv50</p>
                 <p className="text-lg font-bold text-[var(--accent)]">{dist.Dv50_um}</p>
-                <p className="font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">µm</p>
+                <p className="text-[11px] text-[var(--muted)]">µm</p>
               </div>
               <div className="rounded-lg border border-[var(--border)] p-3">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Dv90</p>
+                <p className="text-xs text-[var(--muted)]">Dv90</p>
                 <p className="text-lg font-bold text-[var(--fg-bright)]">{dist.Dv90_um}</p>
-                <p className="font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">µm</p>
+                <p className="text-[11px] text-[var(--muted)]">µm</p>
               </div>
               <div className="rounded-lg border border-[var(--border)] p-3">
-                <p className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Span</p>
+                <p className="text-xs text-[var(--muted)]">Span</p>
                 <p className="text-lg font-bold text-[var(--fg-bright)]">{dist.span}</p>
-                <p className="font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">(Dv90-Dv10)/Dv50</p>
+                <p className="text-[11px] text-[var(--muted)]">(Dv90-Dv10)/Dv50</p>
               </div>
             </div>
             <DistributionBar dist={dist} />
@@ -847,27 +847,27 @@ function ResultsContent() {
           <div className="space-y-4 text-xs">
             <div className="flex justify-between border-b border-[var(--border)] pb-3">
               <span className="text-[var(--muted)]">Delivery Rate</span>
-              <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{result.deliveryRate_g_s} g/s</strong>
+              <strong className="tabular-nums text-[var(--fg-bright)]">{result.deliveryRate_g_s} g/s</strong>
             </div>
             {fluid.rheology !== "newtonian" && (
               <div className="flex justify-between border-b border-[var(--border)] pb-3">
                 <span className="text-[var(--muted)]">Apparent Viscosity (at orifice)</span>
-                <strong className="font-[family-name:var(--font-mono)] text-[var(--accent)]">{result.apparentViscosity_cP} cP</strong>
+                <strong className="tabular-nums text-[var(--accent)]">{result.apparentViscosity_cP} cP</strong>
               </div>
             )}
             <div className="flex justify-between border-b border-[var(--border)] pb-3">
               <span className="text-[var(--muted)]">Nominal Viscosity</span>
-              <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{fluid.viscosity_cP} cP</strong>
+              <strong className="tabular-nums text-[var(--fg-bright)]">{fluid.viscosity_cP} cP</strong>
             </div>
             <div className="flex justify-between border-b border-[var(--border)] pb-3">
               <span className="text-[var(--muted)]">Polydispersity</span>
-              <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">
+              <strong className="tabular-nums text-[var(--fg-bright)]">
                 {dist.span < 1 ? "Narrow" : dist.span < 2 ? "Moderate" : "Wide"} ({dist.span})
               </strong>
             </div>
             <div className="flex justify-between pb-3">
               <span className="text-[var(--muted)]">Flow Regime</span>
-              <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">
+              <strong className="tabular-nums text-[var(--fg-bright)]">
                 {result.reynoldsNumber > 4000 ? "Turbulent" : result.reynoldsNumber > 2000 ? "Transitional" : "Laminar"}
               </strong>
             </div>
@@ -878,7 +878,7 @@ function ResultsContent() {
       {/* Physics + Dimensionless Numbers */}
       <div className="grid gap-4 md:grid-cols-2">
         <div className="glass rounded-xl p-6">
-          <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
             </svg>
@@ -894,14 +894,14 @@ function ResultsContent() {
             ].map((item, i, arr) => (
               <div key={item.label} className={`flex justify-between pb-3 ${i < arr.length - 1 ? "border-b border-[var(--border)]" : ""}`}>
                 <span className="text-[var(--muted)]">{item.label}</span>
-                <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{item.value}</strong>
+                <strong className="tabular-nums text-[var(--fg-bright)]">{item.value}</strong>
               </div>
             ))}
           </div>
         </div>
 
         <div className="glass rounded-xl p-6">
-          <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
             </svg>
@@ -917,7 +917,7 @@ function ResultsContent() {
             ].map((item, i, arr) => (
               <div key={item.label} className={`flex justify-between pb-3 ${i < arr.length - 1 ? "border-b border-[var(--border)]" : ""}`}>
                 <span className="text-[var(--muted)]">{item.label}</span>
-                <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{item.value}</strong>
+                <strong className="tabular-nums text-[var(--fg-bright)]">{item.value}</strong>
               </div>
             ))}
           </div>
@@ -932,17 +932,17 @@ function ResultsContent() {
 
       {/* Spray Pattern Visualization (2D) */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-4 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-4 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
           <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
           Spray Pattern — {actuator.type.replace(/_/g, " ")}
         </h2>
         <div className="flex items-center justify-center gap-12 py-6">
           <div className="text-center">
-            <p className="mb-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Side View</p>
+            <p className="mb-2 text-xs font-medium text-[var(--muted)]">Side View</p>
             <div className="float"><ActuatorIllustration type={actuator.type} size={160} /></div>
           </div>
           <div className="text-center">
-            <p className="mb-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Top-Down Pattern</p>
+            <p className="mb-2 text-xs font-medium text-[var(--muted)]">Top-Down Pattern</p>
             <div className="float" style={{ animationDelay: "1s" }}><SprayPatternIllustration type={actuator.type} size={120} /></div>
           </div>
         </div>
@@ -959,7 +959,7 @@ function ResultsContent() {
 
       {/* Actuator Specs */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-5 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-5 text-xs font-medium text-[var(--muted)]">
           Actuator Specifications
         </h2>
         <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-xs md:grid-cols-4">
@@ -983,10 +983,10 @@ function ResultsContent() {
         </div>
         {/* Industries */}
         <div className="mt-4 border-t border-[var(--border)] pt-4">
-          <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">Industries</span>
+          <span className="text-xs font-medium text-[var(--muted)]">Industries</span>
           <div className="mt-2 flex flex-wrap gap-1">
             {actuator.industries.map((ind) => (
-              <span key={ind} className="rounded-md bg-[var(--accent)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">
+              <span key={ind} className="rounded-md bg-[var(--accent)]/5 px-2 py-0.5 text-xs tracking-wider text-[var(--accent)]">
                 {INDUSTRY_LABELS[ind]}
               </span>
             ))}
@@ -996,7 +996,7 @@ function ResultsContent() {
 
       {/* Technical Design */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-5 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
           </svg>
@@ -1009,7 +1009,7 @@ function ResultsContent() {
       <div className="flex flex-wrap gap-4">
         <button
           onClick={() => exportCSV(actuator, fluid, result, pressure)}
-          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center gap-2"
+          className="btn-secondary rounded-lg px-6 py-3 text-sm tracking-wider flex items-center gap-2"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -1018,7 +1018,7 @@ function ResultsContent() {
         </button>
         <button
           onClick={() => exportPDF(actuator, fluid, result, pressure)}
-          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center gap-2"
+          className="btn-secondary rounded-lg px-6 py-3 text-sm tracking-wider flex items-center gap-2"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" />
@@ -1030,7 +1030,7 @@ function ResultsContent() {
             addToCart({ actuatorId: actuator.id, quantity: 10, orderType: "sample" });
             alert(`Added ${actuator.sku} to cart`);
           }}
-          className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center gap-2"
+          className="btn-secondary rounded-lg px-6 py-3 text-sm tracking-wider flex items-center gap-2"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
@@ -1038,13 +1038,13 @@ function ResultsContent() {
           </svg>
           Add to Cart
         </button>
-        <Link href="/configure" className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href="/configure" className="btn-secondary rounded-lg px-6 py-3 text-sm tracking-wider no-underline">
           Back to Configurator
         </Link>
-        <Link href={`/compare?actuators=${actuator.id}&fluid=${fluid.id}&pressure=${pressure}`} className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href={`/compare?actuators=${actuator.id}&fluid=${fluid.id}&pressure=${pressure}`} className="btn-secondary rounded-lg px-6 py-3 text-sm tracking-wider no-underline">
           Compare Actuators
         </Link>
-        <Link href={`/procurement?actuator=${actuator.id}&qty=100`} className="btn-primary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href={`/procurement?actuator=${actuator.id}&qty=100`} className="btn-primary rounded-lg px-6 py-3 text-sm tracking-wider no-underline">
           Procure This Actuator
         </Link>
       </div>

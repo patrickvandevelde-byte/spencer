@@ -47,7 +47,7 @@ function PressureCurveChart({ curve }: { curve: PressureCurvePoint[] }) {
     curve.map((p, i) => `${i === 0 ? "M" : "L"}${toX(i).toFixed(1)},${toY(p[key] as number).toFixed(1)}`).join(" ");
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full max-w-md" style={{ fontFamily: "var(--font-mono)" }}>
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full max-w-md" style={{ fontFamily: "var(--font-sans)" }}>
       {/* Grid lines */}
       {[0, 0.25, 0.5, 0.75, 1].map((f) => (
         <line key={f} x1={pad} y1={toY(maxP * f)} x2={w - pad} y2={toY(maxP * f)} stroke="var(--border)" strokeWidth="0.5" />
@@ -81,7 +81,7 @@ function GradeBadge({ grade, score }: { grade: string; score: number }) {
     E: "text-[var(--danger)] border-[var(--danger)]",
   };
   return (
-    <span className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1 font-[family-name:var(--font-mono)] text-sm font-bold ${colors[grade] ?? ""}`}>
+    <span className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1 text-sm font-bold ${colors[grade] ?? ""}`}>
       Grade {grade} <span className="text-xs font-normal opacity-70">({score}%)</span>
     </span>
   );
@@ -134,20 +134,20 @@ export default function SpenserConfigurePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/spenser" className="font-[family-name:var(--font-mono)] text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
+          <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
             &larr; Spenser Dashboard
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-[var(--fg-bright)]">Formula-to-Hardware Mapping</h1>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Formula-to-Hardware Mapping</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">Enter your formula data to generate a complete SFP hardware specification.</p>
         </div>
-        <span className="rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-3 py-1 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">
+        <span className="rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
           FLOW A
         </span>
       </div>
 
       {/* Input Form */}
       <form onSubmit={handleSubmit} className="glass rounded-2xl p-6">
-        <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">
+        <div className="mb-4 text-xs font-medium text-[var(--muted)]">
           PRODUCT INPUT
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -161,7 +161,7 @@ export default function SpenserConfigurePage() {
               required
               value={form.viscosity_cP}
               onChange={(e) => setForm({ ...form, viscosity_cP: e.target.value })}
-              className="input-field w-full rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field w-full rounded-lg px-3 py-2 text-sm"
               placeholder="e.g. 5000"
             />
             {form.viscosity_cP && (
@@ -186,7 +186,7 @@ export default function SpenserConfigurePage() {
               required
               value={form.density_g_cm3}
               onChange={(e) => setForm({ ...form, density_g_cm3: e.target.value })}
-              className="input-field w-full rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -199,7 +199,7 @@ export default function SpenserConfigurePage() {
               required
               value={form.fillVolume_ml}
               onChange={(e) => setForm({ ...form, fillVolume_ml: e.target.value })}
-              className="input-field w-full rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
         </div>
@@ -222,7 +222,7 @@ export default function SpenserConfigurePage() {
             />
             360° orientation
           </label>
-          <button type="submit" disabled={loading} className="btn-primary ml-auto rounded-lg px-6 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider">
+          <button type="submit" disabled={loading} className="btn-primary ml-auto rounded-lg px-6 py-2 text-xs font-medium">
             {loading ? "SIMULATING..." : "RUN CONFIGURATION"}
           </button>
         </div>
@@ -234,7 +234,7 @@ export default function SpenserConfigurePage() {
         <div className="space-y-8 animate-in">
           {/* Pressure Simulation */}
           <section className="glass-bright rounded-2xl p-6">
-            <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--accent)]">PRESSURE CURVE SIMULATION</div>
+            <div className="mb-4 text-xs font-medium text-[var(--accent)]">PRESSURE CURVE SIMULATION</div>
             <div className="grid gap-6 md:grid-cols-2">
               <PressureCurveChart curve={result.pressureCurve} />
               <div className="space-y-3">
@@ -257,7 +257,7 @@ export default function SpenserConfigurePage() {
 
           {/* Recommended Piston */}
           <section className="glass rounded-2xl p-6">
-            <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">RECOMMENDED PISTON</div>
+            <div className="mb-4 text-xs font-medium text-[var(--muted)]">RECOMMENDED PISTON</div>
             <div className="grid gap-4 md:grid-cols-4">
               <div>
                 <div className="text-xs text-[var(--muted)]">Model</div>
@@ -280,7 +280,7 @@ export default function SpenserConfigurePage() {
 
           {/* Compatible ITVs */}
           <section className="glass rounded-2xl p-6">
-            <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">
+            <div className="mb-4 text-xs font-medium text-[var(--muted)]">
               COMPATIBLE INTEGRATED VALVES (ITV)
             </div>
             <div className="overflow-x-auto">
@@ -311,7 +311,7 @@ export default function SpenserConfigurePage() {
 
           {/* Compatible LPVs */}
           <section className="glass rounded-2xl p-6">
-            <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">
+            <div className="mb-4 text-xs font-medium text-[var(--muted)]">
               COMPATIBLE PRESSURE VESSELS (LPV)
             </div>
             <div className="grid gap-3 md:grid-cols-3">
@@ -336,7 +336,7 @@ export default function SpenserConfigurePage() {
           {/* 11 IM Parts */}
           <section className="glass rounded-2xl p-6">
             <div className="mb-4 flex items-center justify-between">
-              <div className="font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">
+              <div className="text-xs font-medium text-[var(--muted)]">
                 11 INJECTION-MOULDED PARTS
               </div>
               <GradeBadge grade={result.ppwr.grade} score={result.ppwr.score} />
@@ -355,10 +355,10 @@ export default function SpenserConfigurePage() {
                 <tbody>
                   {result.components.map((comp, i) => (
                     <tr key={comp.part.id} className="border-b border-[var(--border)] table-row-hover">
-                      <td className="py-2 pr-4 font-[family-name:var(--font-mono)] text-xs text-[var(--muted)]">{i + 1}</td>
+                      <td className="py-2 pr-4 text-xs text-[var(--muted)]">{i + 1}</td>
                       <td className="py-2 pr-4 font-semibold text-[var(--fg-bright)]">{comp.part.name}</td>
                       <td className="py-2 pr-4">
-                        <span className="rounded bg-[var(--surface)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-xs">
+                        <span className="rounded bg-[var(--surface)] px-2 py-0.5 text-xs">
                           {comp.selectedMaterial}
                         </span>
                       </td>
@@ -373,25 +373,25 @@ export default function SpenserConfigurePage() {
 
           {/* Finalization */}
           <section className="glass-bright rounded-2xl p-6 text-center">
-            <div className="mb-2 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--accent)]">RECIPE READY</div>
+            <div className="mb-2 text-xs font-medium text-[var(--accent)]">RECIPE READY</div>
             <p className="mb-4 text-sm text-[var(--muted)]">
               Configuration complete. Generate a QR-code Recipe for the SFP Filling Platform.
             </p>
             <div className="flex items-center justify-center gap-4">
               <Link
                 href={`/spenser/compliance?category=${result.category}`}
-                className="btn-secondary rounded-lg px-5 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
+                className="btn-secondary rounded-lg px-5 py-2 text-xs font-medium no-underline"
               >
                 CHECK COMPLIANCE
               </Link>
               <Link
                 href="/spenser/economics"
-                className="btn-secondary rounded-lg px-5 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
+                className="btn-secondary rounded-lg px-5 py-2 text-xs font-medium no-underline"
               >
                 VIEW ECONOMICS
               </Link>
               <button
-                className="btn-primary rounded-lg px-5 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+                className="btn-primary rounded-lg px-5 py-2 text-xs font-medium"
                 onClick={() => {
                   const recipe = {
                     formula: result.input,

@@ -96,7 +96,7 @@ export default function AnalyticsPage() {
     <div className="space-y-10">
       <div>
         <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-          <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">ANALYTICS</span>
+          <span className="text-xs font-medium text-[var(--accent)]">ANALYTICS</span>
         </div>
         <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">Usage Dashboard</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">
@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((s) => (
           <div key={s.label} className="glass rounded-xl p-5">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">{s.label}</p>
+            <p className="text-xs font-medium text-[var(--muted)]">{s.label}</p>
             <p className="mt-1 text-3xl font-bold" style={{ color: s.color }}>{s.value}</p>
             <p className="mt-1 text-[11px] text-[var(--muted)]">{s.sub}</p>
           </div>
@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
 
       {/* Activity heatmap */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-4 text-xs font-medium text-[var(--muted)]">
           Activity — Last 30 Days
         </h2>
         {events.length === 0 ? (
@@ -134,7 +134,7 @@ export default function AnalyticsPage() {
                     className="w-full rounded-t-sm bg-[var(--accent)] transition-all hover:bg-[var(--accent-secondary)]"
                     style={{ height: `${h}%`, opacity: d.count > 0 ? 0.3 + (d.count / maxActivity) * 0.7 : 0.1 }}
                   />
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block rounded bg-[var(--surface)] border border-[var(--border)] px-2 py-1 font-[family-name:var(--font-mono)] text-[9px] text-[var(--fg-bright)] whitespace-nowrap">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block rounded bg-[var(--surface)] border border-[var(--border)] px-2 py-1 text-[11px] text-[var(--fg-bright)] whitespace-nowrap">
                     {d.date}: {d.count}
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function AnalyticsPage() {
             })}
           </div>
         )}
-        <div className="mt-2 flex justify-between font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">
+        <div className="mt-2 flex justify-between text-[11px] text-[var(--muted)]">
           <span>{activityByDay[0]?.date}</span>
           <span>{activityByDay[activityByDay.length - 1]?.date}</span>
         </div>
@@ -151,7 +151,7 @@ export default function AnalyticsPage() {
       {/* Top actuators + fluids */}
       <div className="grid gap-6 md:grid-cols-2">
         <div className="glass rounded-xl p-6">
-          <h2 className="mb-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <h2 className="mb-4 text-xs font-medium text-[var(--muted)]">
             Most-Used Actuators
           </h2>
           {topActuators.length === 0 ? (
@@ -160,12 +160,12 @@ export default function AnalyticsPage() {
             <div className="space-y-2">
               {topActuators.map((a, i) => (
                 <div key={a.id} className="flex items-center gap-3 rounded-lg border border-[var(--border)] px-3 py-2">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">#{i + 1}</span>
+                  <span className="text-xs text-[var(--muted)]">#{i + 1}</span>
                   <div className="flex-1">
-                    <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold text-[var(--accent)]">{a.sku}</span>
+                    <span className="text-xs font-bold text-[var(--accent)]">{a.sku}</span>
                     <span className="ml-2 text-[11px] text-[var(--muted)]">{a.name}</span>
                   </div>
-                  <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--fg-bright)]">{a.count}</span>
+                  <span className="text-xs text-[var(--fg-bright)]">{a.count}</span>
                 </div>
               ))}
             </div>
@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="glass rounded-xl p-6">
-          <h2 className="mb-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <h2 className="mb-4 text-xs font-medium text-[var(--muted)]">
             Most-Used Fluids
           </h2>
           {topFluids.length === 0 ? (
@@ -182,11 +182,11 @@ export default function AnalyticsPage() {
             <div className="space-y-2">
               {topFluids.map((f, i) => (
                 <div key={f.id} className="flex items-center gap-3 rounded-lg border border-[var(--border)] px-3 py-2">
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">#{i + 1}</span>
+                  <span className="text-xs text-[var(--muted)]">#{i + 1}</span>
                   <div className="flex-1">
                     <span className="text-[11px] font-semibold text-[var(--fg-bright)]">{f.name}</span>
                   </div>
-                  <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--fg-bright)]">{f.count}</span>
+                  <span className="text-xs text-[var(--fg-bright)]">{f.count}</span>
                 </div>
               ))}
             </div>
@@ -196,7 +196,7 @@ export default function AnalyticsPage() {
 
       {/* Recent orders summary */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-4 text-xs font-medium text-[var(--muted)]">
           Recent Orders
         </h2>
         {orders.length === 0 ? (
@@ -208,22 +208,22 @@ export default function AnalyticsPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">PO #</th>
-                  <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Date</th>
-                  <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Items</th>
-                  <th className="py-2 pr-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Total</th>
-                  <th className="py-2 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Status</th>
+                  <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">PO #</th>
+                  <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">Date</th>
+                  <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">Items</th>
+                  <th className="py-2 pr-4 text-left text-xs font-medium text-[var(--muted)]">Total</th>
+                  <th className="py-2 text-left text-xs font-medium text-[var(--muted)]">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.slice(0, 10).map((o) => (
                   <tr key={o.id} className="border-b border-[var(--border)] last:border-b-0">
-                    <td className="py-2 pr-4 font-[family-name:var(--font-mono)] font-bold text-[var(--fg-bright)]">{o.poNumber}</td>
+                    <td className="py-2 pr-4 tabular-nums font-bold text-[var(--fg-bright)]">{o.poNumber}</td>
                     <td className="py-2 pr-4 text-[var(--muted)]">{new Date(o.createdAt).toLocaleDateString()}</td>
                     <td className="py-2 pr-4">{o.items.length}</td>
-                    <td className="py-2 pr-4 font-[family-name:var(--font-mono)] font-bold text-[var(--accent)]">${o.totalUsd.toFixed(2)}</td>
+                    <td className="py-2 pr-4 tabular-nums font-bold text-[var(--accent)]">${o.totalUsd.toFixed(2)}</td>
                     <td className="py-2">
-                      <span className="rounded-md border px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] uppercase"
+                      <span className="rounded-md border px-2 py-0.5 text-[11px] uppercase"
                         style={{
                           borderColor: o.status === "delivered" ? "var(--success)" : o.status === "shipped" ? "var(--accent-secondary)" : "var(--accent)",
                           color: o.status === "delivered" ? "var(--success)" : o.status === "shipped" ? "var(--accent-secondary)" : "var(--accent)",
@@ -242,13 +242,13 @@ export default function AnalyticsPage() {
 
       {/* Quick links */}
       <div className="flex flex-wrap gap-3">
-        <Link href="/configure" className="btn-primary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href="/configure" className="btn-primary rounded-lg px-5 py-2.5 text-xs font-medium no-underline">
           New Configuration
         </Link>
-        <Link href="/orders" className="btn-secondary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href="/orders" className="btn-secondary rounded-lg px-5 py-2.5 text-xs font-medium no-underline">
           View All Orders
         </Link>
-        <Link href="/compare" className="btn-secondary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href="/compare" className="btn-secondary rounded-lg px-5 py-2.5 text-xs font-medium no-underline">
           Compare Actuators
         </Link>
       </div>

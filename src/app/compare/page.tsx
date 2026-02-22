@@ -11,7 +11,7 @@ import { trackEvent } from "@/lib/store";
 function ScoreBadge({ score }: { score: number }) {
   const cls = score >= 80 ? "score-excellent" : score >= 50 ? "score-good" : "score-poor";
   return (
-    <span className={`inline-block rounded-md border px-2 py-0.5 font-[family-name:var(--font-mono)] text-[11px] font-bold ${cls}`}>
+    <span className={`inline-block rounded-md border px-2 py-0.5 text-xs font-semibold ${cls}`}>
       {score}
     </span>
   );
@@ -26,7 +26,7 @@ function RegimeBadge({ regime }: { regime: string }) {
   };
   const color = colors[regime] || "var(--muted)";
   return (
-    <span className="rounded-md border px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold" style={{ borderColor: color, color }}>
+    <span className="rounded-md border px-2 py-0.5 text-xs font-bold" style={{ borderColor: color, color }}>
       {regime}
     </span>
   );
@@ -128,9 +128,9 @@ function CompareContent() {
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-            <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">COMPARE</span>
+            <span className="text-xs font-medium text-[var(--accent)]">COMPARE</span>
           </div>
-          <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--fg-bright)]">
             Side-by-Side Comparison
           </h1>
           <p className="mt-2 text-sm text-[var(--muted)]">
@@ -143,7 +143,7 @@ function CompareContent() {
             <>
               <button
                 onClick={() => exportComparisonCSV(predictions, fluid.name, pressure)}
-                className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+                className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
@@ -152,7 +152,7 @@ function CompareContent() {
               </button>
               <button
                 onClick={handleCopyShareLink}
-                className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+                className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
@@ -164,7 +164,7 @@ function CompareContent() {
           )}
           <Link
             href="/configure"
-            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium no-underline"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -175,7 +175,7 @@ function CompareContent() {
       </div>
 
       {shareMessage && (
-        <div className="animate-in rounded-lg border border-[var(--success)]/30 bg-[var(--success)]/5 px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] text-[var(--success)]">
+        <div className="animate-in rounded-lg border border-[var(--success)]/30 bg-[var(--success)]/5 px-4 py-2 text-xs text-[var(--success)]">
           {shareMessage}
         </div>
       )}
@@ -184,13 +184,13 @@ function CompareContent() {
       <div className="glass-bright rounded-xl p-6">
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
               Test Fluid
             </label>
             <select
               value={fluidId}
               onChange={(e) => setFluidId(e.target.value)}
-              className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
+              className="input-field w-full rounded-lg px-4 py-3 tabular-nums text-xs"
             >
               {FLUIDS.map((f) => (
                 <option key={f.id} value={f.id}>
@@ -200,7 +200,7 @@ function CompareContent() {
             </select>
           </div>
           <div>
-            <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
               Operating Pressure (bar)
             </label>
             <input
@@ -210,14 +210,14 @@ function CompareContent() {
               step={0.5}
               value={pressure}
               onChange={(e) => setPressure(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
+              className="input-field w-full rounded-lg px-4 py-3 tabular-nums text-xs"
             />
           </div>
         </div>
 
         {/* Actuator selector */}
         <div className="mt-6">
-          <label className="mb-3 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+          <label className="mb-3 block text-xs font-medium text-[var(--muted)]">
             Select Actuators (2-4)
           </label>
           <div className="flex flex-wrap gap-2">
@@ -228,7 +228,7 @@ function CompareContent() {
                 <button
                   key={a.id}
                   onClick={() => toggleActuator(a.id)}
-                  className={`flex items-center gap-2 rounded-lg border px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] transition-all ${
+                  className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs transition-all ${
                     active
                       ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
                       : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
@@ -250,7 +250,7 @@ function CompareContent() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-[var(--border)]">
-                  <th className="px-5 py-4 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">
+                  <th className="px-5 py-4 text-left text-xs font-medium text-[var(--muted)]">
                     Parameter
                   </th>
                   {predictions.map(({ actuator, prediction }) => {
@@ -260,12 +260,12 @@ function CompareContent() {
                       <th key={actuator.id} className="px-5 py-4 text-center">
                         <div className="flex flex-col items-center gap-2">
                           {isWinner && (
-                            <span className="rounded-full border border-[var(--success)]/40 bg-[var(--success)]/10 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[8px] font-bold uppercase tracking-wider text-[var(--success)]">
+                            <span className="rounded-full border border-[var(--success)]/40 bg-[var(--success)]/10 px-2 py-0.5 text-[10px] font-bold font-medium text-[var(--success)]">
                               Best Match
                             </span>
                           )}
                           <ActuatorIllustration type={actuator.type} size={56} />
-                          <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
+                          <span className="text-xs font-semibold" style={{ color }}>
                             {actuator.sku}
                           </span>
                           <span className="text-[10px] text-[var(--muted)]">{actuator.name}</span>
@@ -331,7 +331,7 @@ function CompareContent() {
                       return (
                         <td
                           key={actuator.id}
-                          className={`px-5 py-3 text-center font-[family-name:var(--font-mono)] ${isBest ? "font-bold text-[var(--accent)]" : "text-[var(--fg-bright)]"}`}
+                          className={`px-5 py-3 text-center tabular-nums ${isBest ? "font-bold text-[var(--accent)]" : "text-[var(--fg-bright)]"}`}
                         >
                           {typeof val === "number" ? val.toLocaleString() : typeof val === "string" ? val : "—"}
                           {unit}
@@ -350,7 +350,7 @@ function CompareContent() {
                   <tr key={label} className="table-row-hover border-b border-[var(--border)] last:border-b-0">
                     <td className="px-5 py-3 text-[var(--muted)]">{label}</td>
                     {predictions.map(({ actuator }) => (
-                      <td key={actuator.id} className="px-5 py-3 text-center font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">
+                      <td key={actuator.id} className="px-5 py-3 text-center tabular-nums text-[var(--fg-bright)]">
                         {fn(actuator)}
                       </td>
                     ))}
@@ -362,7 +362,7 @@ function CompareContent() {
                   {predictions.map(({ actuator, prediction }) => (
                     <td key={actuator.id} className="px-5 py-3 text-center">
                       {prediction.safetyWarnings.length === 0 ? (
-                        <span className="text-[var(--success)] font-[family-name:var(--font-mono)] text-[10px]">None</span>
+                        <span className="text-[var(--success)] text-xs">None</span>
                       ) : (
                         <div className="space-y-1">
                           {prediction.safetyWarnings.map((w, i) => (
@@ -381,14 +381,14 @@ function CompareContent() {
                       <div className="flex flex-col items-center gap-2">
                         <Link
                           href={`/results?actuator=${actuator.id}&fluid=${fluidId}&pressure=${pressure}`}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)]/30 px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/10"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)]/30 px-3 py-1.5 text-xs text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/10"
                         >
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                           Detail
                         </Link>
                         <Link
                           href={`/procurement?actuator=${actuator.id}&qty=100`}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--success)]/30 px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--success)] no-underline transition-all hover:bg-[var(--success)]/10"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--success)]/30 px-3 py-1.5 text-xs text-[var(--success)] no-underline transition-all hover:bg-[var(--success)]/10"
                         >
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" /></svg>
                           Procure
@@ -408,7 +408,7 @@ function CompareContent() {
           <p className="text-sm text-[var(--muted)]">Select at least 2 actuators to compare</p>
           <Link
             href="/configure"
-            className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline"
+            className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 text-xs font-medium no-underline"
           >
             Run a prediction to find candidates
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>

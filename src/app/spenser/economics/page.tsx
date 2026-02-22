@@ -31,7 +31,7 @@ function ROIChart({ timeline }: { timeline: ROITimeline }) {
   const tradPath = months.map((m, i) => `${i === 0 ? "M" : "L"}${toX(m.month).toFixed(1)},${toY(m.traditionalCumulative_eur).toFixed(1)}`).join(" ");
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full" style={{ fontFamily: "var(--font-mono)" }}>
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full" style={{ fontFamily: "var(--font-sans)" }}>
       {/* Grid */}
       {[0, 0.25, 0.5, 0.75, 1].map((f) => (
         <line key={f} x1={pad} y1={toY(maxVal * f)} x2={w - pad} y2={toY(maxVal * f)} stroke="var(--border)" strokeWidth="0.5" />
@@ -102,22 +102,22 @@ export default function SpenserEconomicsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/spenser" className="font-[family-name:var(--font-mono)] text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
+          <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
             &larr; Spenser Dashboard
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-[var(--fg-bright)]">Filler Economics</h1>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Filler Economics</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
             Compare SFP line investment against traditional aerosol infrastructure. Visualise ROI and payback period.
           </p>
         </div>
-        <span className="rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-3 py-1 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">
+        <span className="rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
           FLOW C
         </span>
       </div>
 
       {/* Input Form */}
       <form onSubmit={handleSubmit} className="glass rounded-2xl p-6">
-        <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">CAPEX COMPARISON INPUT</div>
+        <div className="mb-4 text-xs font-medium text-[var(--muted)]">CAPEX COMPARISON INPUT</div>
         <div className="flex flex-wrap items-end gap-4">
           <div>
             <label className="mb-1 block text-xs text-[var(--muted)]">Annual Volume (units/yr)</label>
@@ -129,7 +129,7 @@ export default function SpenserEconomicsPage() {
               required
               value={form.annualVolume_units}
               onChange={(e) => setForm({ ...form, annualVolume_units: e.target.value })}
-              className="input-field w-48 rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field w-48 rounded-lg px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -137,7 +137,7 @@ export default function SpenserEconomicsPage() {
             <select
               value={form.lineType}
               onChange={(e) => setForm({ ...form, lineType: e.target.value as "Line38" | "Line53" })}
-              className="input-field rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field rounded-lg px-3 py-2 text-sm"
             >
               <option value="Line38">Line 38 (€150K, 2,400 uph)</option>
               <option value="Line53">Line 53 (€220K, 4,800 uph)</option>
@@ -149,10 +149,10 @@ export default function SpenserEconomicsPage() {
               type="text"
               value={form.productCategory}
               onChange={(e) => setForm({ ...form, productCategory: e.target.value })}
-              className="input-field w-36 rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field w-36 rounded-lg px-3 py-2 text-sm"
             />
           </div>
-          <button type="submit" disabled={loading} className="btn-primary rounded-lg px-6 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider">
+          <button type="submit" disabled={loading} className="btn-primary rounded-lg px-6 py-2 text-xs font-medium">
             {loading ? "CALCULATING..." : "CALCULATE ROI"}
           </button>
         </div>
@@ -163,7 +163,7 @@ export default function SpenserEconomicsPage() {
           {/* CAPEX Comparison */}
           <section className="grid gap-6 md:grid-cols-3">
             <div className="glass-bright rounded-2xl p-6">
-              <div className="mb-1 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">SPENSER SFP</div>
+              <div className="mb-1 text-xs font-medium text-[var(--accent)]">SPENSER SFP</div>
               <div className="text-3xl font-bold text-[var(--success)]">{formatEur(result.capex.spenser.capex_eur)}</div>
               <div className="mt-1 text-xs text-[var(--muted)]">+ {formatEur(result.capex.spenser.installationCost_eur)} installation</div>
               <div className="mt-3 space-y-1 text-xs text-[var(--muted)]">
@@ -174,7 +174,7 @@ export default function SpenserEconomicsPage() {
               </div>
             </div>
             <div className="glass rounded-2xl p-6">
-              <div className="mb-1 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--muted)]">TRADITIONAL AEROSOL</div>
+              <div className="mb-1 text-xs font-medium text-[var(--muted)]">TRADITIONAL AEROSOL</div>
               <div className="text-3xl font-bold text-[var(--danger)]">{formatEur(result.capex.traditional.capex_eur)}</div>
               <div className="mt-1 text-xs text-[var(--muted)]">+ {formatEur(result.capex.traditional.installationCost_eur)} installation</div>
               <div className="mt-3 space-y-1 text-xs text-[var(--muted)]">
@@ -185,7 +185,7 @@ export default function SpenserEconomicsPage() {
               </div>
             </div>
             <div className="glass rounded-2xl p-6">
-              <div className="mb-1 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">SAVINGS</div>
+              <div className="mb-1 text-xs font-medium text-[var(--accent)]">SAVINGS</div>
               <div className="text-3xl font-bold text-[var(--fg-bright)]">{formatEur(result.capex.delta.capexSaving_eur)}</div>
               <div className="mt-1 text-xs text-[var(--success)]">{result.capex.delta.capexSaving_pct}% lower CAPEX</div>
               <div className="mt-3 space-y-1 text-xs">
@@ -200,8 +200,8 @@ export default function SpenserEconomicsPage() {
           {/* ROI Timeline */}
           <section className="glass-bright rounded-2xl p-6">
             <div className="mb-2 flex items-center justify-between">
-              <div className="font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--accent)]">ROI TIMELINE (60 MONTHS)</div>
-              <div className="font-[family-name:var(--font-mono)] text-xs text-[var(--muted)]">
+              <div className="text-xs font-medium text-[var(--accent)]">ROI TIMELINE (60 MONTHS)</div>
+              <div className="text-xs text-[var(--muted)]">
                 5-Year ROI: <span className="text-[var(--success)] font-bold">{result.roi.fiveYearROI_pct}%</span>
               </div>
             </div>
@@ -210,7 +210,7 @@ export default function SpenserEconomicsPage() {
 
           {/* OPEX Breakdown */}
           <section className="glass rounded-2xl p-6">
-            <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">
+            <div className="mb-4 text-xs font-medium text-[var(--muted)]">
               OPEX BREAKDOWN (ANNUAL @ {Number(form.annualVolume_units).toLocaleString()} UNITS)
             </div>
             <div className="overflow-x-auto">
@@ -238,9 +238,9 @@ export default function SpenserEconomicsPage() {
                       return (
                         <tr key={key} className="border-b border-[var(--border)] table-row-hover">
                           <td className="py-2 pr-4 text-[var(--fg-bright)]">{label}</td>
-                          <td className="py-2 pr-4 text-right font-[family-name:var(--font-mono)]">{formatEur(sVal)}</td>
-                          <td className="py-2 pr-4 text-right font-[family-name:var(--font-mono)]">{formatEur(tVal)}</td>
-                          <td className={`py-2 text-right font-[family-name:var(--font-mono)] ${delta > 0 ? "text-[var(--success)]" : delta < 0 ? "text-[var(--danger)]" : ""}`}>
+                          <td className="py-2 pr-4 text-right tabular-nums">{formatEur(sVal)}</td>
+                          <td className="py-2 pr-4 text-right tabular-nums">{formatEur(tVal)}</td>
+                          <td className={`py-2 text-right tabular-nums ${delta > 0 ? "text-[var(--success)]" : delta < 0 ? "text-[var(--danger)]" : ""}`}>
                             {delta > 0 ? "+" : ""}{formatEur(delta)}
                           </td>
                         </tr>
@@ -248,9 +248,9 @@ export default function SpenserEconomicsPage() {
                     })}
                   <tr className="border-t-2 border-[var(--accent)] font-bold">
                     <td className="py-2 pr-4 text-[var(--fg-bright)]">Total</td>
-                    <td className="py-2 pr-4 text-right font-[family-name:var(--font-mono)] text-[var(--success)]">{formatEur(result.opex.spenser.total_eur)}</td>
-                    <td className="py-2 pr-4 text-right font-[family-name:var(--font-mono)] text-[var(--danger)]">{formatEur(result.opex.traditional.total_eur)}</td>
-                    <td className="py-2 text-right font-[family-name:var(--font-mono)] text-[var(--success)]">
+                    <td className="py-2 pr-4 text-right tabular-nums text-[var(--success)]">{formatEur(result.opex.spenser.total_eur)}</td>
+                    <td className="py-2 pr-4 text-right tabular-nums text-[var(--danger)]">{formatEur(result.opex.traditional.total_eur)}</td>
+                    <td className="py-2 text-right tabular-nums text-[var(--success)]">
                       +{formatEur(result.opex.traditional.total_eur - result.opex.spenser.total_eur)}
                     </td>
                   </tr>
@@ -262,7 +262,7 @@ export default function SpenserEconomicsPage() {
           {/* Infrastructure Comparison */}
           <section className="grid gap-6 md:grid-cols-2">
             <div className="glass rounded-2xl p-6">
-              <div className="mb-3 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--success)]">SPENSER SFP ADVANTAGES</div>
+              <div className="mb-3 text-xs font-medium text-[var(--success)]">SPENSER SFP ADVANTAGES</div>
               <ul className="space-y-2 text-sm text-[var(--fg)]">
                 <li className="flex items-start gap-2"><span className="text-[var(--success)]">&#10003;</span> Zero gas infrastructure (no ATEX compliance)</li>
                 <li className="flex items-start gap-2"><span className="text-[var(--success)]">&#10003;</span> Single operator (vs 4 for traditional)</li>
@@ -273,7 +273,7 @@ export default function SpenserEconomicsPage() {
               </ul>
             </div>
             <div className="glass rounded-2xl p-6">
-              <div className="mb-3 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--danger)]">TRADITIONAL AEROSOL CONSTRAINTS</div>
+              <div className="mb-3 text-xs font-medium text-[var(--danger)]">TRADITIONAL AEROSOL CONSTRAINTS</div>
               <ul className="space-y-2 text-sm text-[var(--muted)]">
                 <li className="flex items-start gap-2"><span className="text-[var(--danger)]">&#10007;</span> LPG/DME gas infrastructure required</li>
                 <li className="flex items-start gap-2"><span className="text-[var(--danger)]">&#10007;</span> ATEX Zone 2 compliance mandatory</li>

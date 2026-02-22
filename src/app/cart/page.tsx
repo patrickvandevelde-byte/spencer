@@ -69,16 +69,16 @@ export default function CartPage() {
               <path d="M20 6L9 17l-5-5" />
             </svg>
           </div>
-          <p className="mb-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--success)]">
+          <p className="mb-1 text-xs font-medium text-[var(--success)]">
             Order Placed
           </p>
           <h1 className="mb-2 text-2xl font-bold text-[var(--fg-bright)]">{poNumber}</h1>
           <p className="text-sm text-[var(--muted)]">Your order has been confirmed and is being processed.</p>
           <div className="mt-8 flex justify-center gap-3">
-            <Link href="/orders" className="btn-primary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline">
+            <Link href="/orders" className="btn-primary rounded-lg px-5 py-2.5 text-xs font-medium no-underline">
               Track Order
             </Link>
-            <Link href="/configure" className="btn-secondary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline">
+            <Link href="/configure" className="btn-secondary rounded-lg px-5 py-2.5 text-xs font-medium no-underline">
               New Configuration
             </Link>
           </div>
@@ -91,7 +91,7 @@ export default function CartPage() {
     <div className="space-y-10">
       <div>
         <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-          <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">CART</span>
+          <span className="text-xs font-medium text-[var(--accent)]">CART</span>
         </div>
         <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">Shopping Cart</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">
@@ -106,7 +106,7 @@ export default function CartPage() {
             <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
           </svg>
           <p className="text-sm text-[var(--muted)]">Your cart is empty.</p>
-          <Link href="/configure" className="btn-primary mt-4 inline-block rounded-lg px-6 py-2.5 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+          <Link href="/configure" className="btn-primary mt-4 inline-block rounded-lg px-6 py-2.5 text-xs font-medium no-underline">
             Configure Actuators
           </Link>
         </div>
@@ -128,13 +128,13 @@ export default function CartPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-                        <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold" style={{ color }}>{act.sku}</span>
+                        <span className="text-xs font-bold" style={{ color }}>{act.sku}</span>
                         <span className="text-xs text-[var(--muted)]">{act.name}</span>
-                        <span className="rounded-md border border-[var(--border)] px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[9px] uppercase text-[var(--muted)]">
+                        <span className="rounded-md border border-[var(--border)] px-1.5 py-0.5 text-[11px] uppercase text-[var(--muted)]">
                           {item.orderType}
                         </span>
                       </div>
-                      <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                      <p className="mt-1 text-xs text-[var(--muted)]">
                         ${unitPrice.toFixed(2)} / unit
                         {item.quantity >= 500 && (
                           <span className="ml-2 text-[var(--success)]">
@@ -151,7 +151,7 @@ export default function CartPage() {
                         >
                           -
                         </button>
-                        <span className="w-12 text-center font-[family-name:var(--font-mono)] text-xs font-bold text-[var(--fg-bright)]">
+                        <span className="w-12 text-center text-sm font-bold text-[var(--fg-bright)]">
                           {item.quantity}
                         </span>
                         <button
@@ -161,7 +161,7 @@ export default function CartPage() {
                           +
                         </button>
                       </div>
-                      <span className="w-24 text-right font-[family-name:var(--font-mono)] text-sm font-bold text-[var(--fg-bright)]">
+                      <span className="w-24 text-right text-sm font-bold text-[var(--fg-bright)]">
                         ${lineTotal.toFixed(2)}
                       </span>
                       <button
@@ -181,7 +181,7 @@ export default function CartPage() {
 
           {/* Order summary */}
           <div className="glass-bright rounded-xl p-6 h-fit sticky top-24">
-            <h2 className="mb-5 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+            <h2 className="mb-5 text-xs font-medium text-[var(--muted)]">
               Order Summary
             </h2>
             <div className="space-y-3 text-xs">
@@ -191,7 +191,7 @@ export default function CartPage() {
                 return (
                   <div key={item.actuatorId} className="flex justify-between border-b border-[var(--border)] pb-2">
                     <span className="text-[var(--muted)]">{act?.sku} x{item.quantity}</span>
-                    <span className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">${(unitPrice * item.quantity).toFixed(2)}</span>
+                    <span className="tabular-nums text-[var(--fg-bright)]">${(unitPrice * item.quantity).toFixed(2)}</span>
                   </div>
                 );
               })}
@@ -202,11 +202,11 @@ export default function CartPage() {
             </div>
             <button
               onClick={handleCheckout}
-              className="btn-primary mt-6 w-full rounded-lg px-6 py-3.5 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+              className="btn-primary mt-6 w-full rounded-lg px-6 py-3.5 text-xs font-medium"
             >
               Place Order
             </button>
-            <p className="mt-3 text-center font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+            <p className="mt-3 text-center text-xs text-[var(--muted)]">
               Volume discounts applied automatically
             </p>
           </div>

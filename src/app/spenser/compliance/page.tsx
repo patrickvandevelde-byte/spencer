@@ -39,10 +39,10 @@ function GradeDisplay({ grade, score, label }: { grade: string; score: number; l
       className="rounded-2xl p-8 text-center"
       style={{ background: colors.bg, border: `2px solid ${colors.border}` }}
     >
-      <div className="font-[family-name:var(--font-mono)] text-6xl font-bold" style={{ color: colors.text }}>
+      <div className="text-6xl font-bold" style={{ color: colors.text }}>
         {grade}
       </div>
-      <div className="mt-2 text-2xl font-bold text-[var(--fg-bright)]">{score}%</div>
+      <div className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">{score}%</div>
       <div className="mt-1 text-sm text-[var(--muted)]">{label}</div>
     </div>
   );
@@ -87,29 +87,29 @@ function ComplianceContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/spenser" className="font-[family-name:var(--font-mono)] text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
+          <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
             &larr; Spenser Dashboard
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-[var(--fg-bright)]">Regulatory Compliance (PPWR)</h1>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Regulatory Compliance (PPWR)</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
             Real-time PPWR scoring based on material selections. Identify recyclability and export a Compliance Pack.
           </p>
         </div>
-        <span className="rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-3 py-1 font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">
+        <span className="rounded-full border border-[var(--border-bright)] bg-[var(--surface)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
           FLOW B
         </span>
       </div>
 
       {/* Controls */}
       <div className="glass rounded-2xl p-6">
-        <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">MATERIAL CHECK</div>
+        <div className="mb-4 text-xs font-medium text-[var(--muted)]">MATERIAL CHECK</div>
         <div className="flex flex-wrap items-end gap-4">
           <div>
             <label className="mb-1 block text-xs text-[var(--muted)]">Product Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as ViscosityCategory)}
-              className="input-field rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-sm"
+              className="input-field rounded-lg px-3 py-2 text-sm"
             >
               <option value="liquid">Liquids</option>
               <option value="lotion">Lotions</option>
@@ -121,7 +121,7 @@ function ComplianceContent() {
           <button
             onClick={runAssessment}
             disabled={loading}
-            className="btn-primary rounded-lg px-6 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+            className="btn-primary rounded-lg px-6 py-2 text-xs font-medium"
           >
             {loading ? "ASSESSING..." : "RUN ASSESSMENT"}
           </button>
@@ -134,7 +134,7 @@ function ComplianceContent() {
           <div className="grid gap-6 md:grid-cols-3">
             <GradeDisplay grade={result.ppwr.grade} score={result.ppwr.score} label={result.ppwr.label} />
             <div className="glass rounded-2xl p-6">
-              <div className="mb-3 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">SUMMARY</div>
+              <div className="mb-3 text-xs font-medium text-[var(--muted)]">SUMMARY</div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[var(--muted)]">Total Parts</span>
@@ -155,7 +155,7 @@ function ComplianceContent() {
               </div>
             </div>
             <div className="glass rounded-2xl p-6">
-              <div className="mb-3 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">VS TRADITIONAL</div>
+              <div className="mb-3 text-xs font-medium text-[var(--muted)]">VS TRADITIONAL</div>
               <div className="space-y-3">
                 <div className="rounded-xl border border-[var(--success)]/30 bg-[var(--success)]/5 p-3">
                   <div className="text-xs text-[var(--muted)]">Spenser SFP</div>
@@ -173,7 +173,7 @@ function ComplianceContent() {
 
           {/* Material Audit Table */}
           <section className="glass rounded-2xl p-6">
-            <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">
+            <div className="mb-4 text-xs font-medium text-[var(--muted)]">
               MATERIAL AUDIT — {result.ppwr.assessments.length} COMPONENTS
             </div>
             <div className="overflow-x-auto">
@@ -195,7 +195,7 @@ function ComplianceContent() {
                     return (
                       <tr key={a.partId} className="border-b border-[var(--border)] table-row-hover">
                         <td className="py-2 pr-4 font-semibold text-[var(--fg-bright)]">{a.partName}</td>
-                        <td className="py-2 pr-4 font-[family-name:var(--font-mono)] text-xs">{a.material}</td>
+                        <td className="py-2 pr-4 text-xs">{a.material}</td>
                         <td className="py-2 pr-4">
                           {comp && (
                             <select
@@ -204,7 +204,7 @@ function ComplianceContent() {
                                 const newOverrides = { ...overrides, [a.partId]: e.target.value };
                                 setOverrides(newOverrides);
                               }}
-                              className="input-field rounded px-2 py-1 font-[family-name:var(--font-mono)] text-[11px]"
+                              className="input-field rounded px-2 py-1 text-xs"
                             >
                               {comp.part.materialOptions.map((opt) => (
                                 <option key={opt} value={opt}>{opt}</option>
@@ -220,7 +220,7 @@ function ComplianceContent() {
                                 style={{ width: `${a.recyclabilityScore}%`, background: flagColor }}
                               />
                             </div>
-                            <span className="font-[family-name:var(--font-mono)] text-xs">{a.recyclabilityScore}%</span>
+                            <span className="text-xs">{a.recyclabilityScore}%</span>
                           </div>
                         </td>
                         <td className="py-2 pr-4 text-xs text-[var(--muted)]">{a.wasteStream}</td>
@@ -236,7 +236,7 @@ function ComplianceContent() {
             {Object.keys(overrides).length > 0 && (
               <button
                 onClick={runAssessment}
-                className="btn-primary mt-4 rounded-lg px-5 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+                className="btn-primary mt-4 rounded-lg px-5 py-2 text-xs font-medium"
               >
                 RE-ASSESS WITH OVERRIDES
               </button>
@@ -246,7 +246,7 @@ function ComplianceContent() {
           {/* Recommendations */}
           {result.ppwr.summary.recommendations.length > 0 && (
             <section className="glass rounded-2xl p-6">
-              <div className="mb-4 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--muted)]">RECOMMENDATIONS</div>
+              <div className="mb-4 text-xs font-medium text-[var(--muted)]">RECOMMENDATIONS</div>
               <ul className="space-y-2">
                 {result.ppwr.summary.recommendations.map((rec) => (
                   <li key={rec} className="flex items-start gap-2 text-sm text-[var(--fg)]">
@@ -260,14 +260,14 @@ function ComplianceContent() {
 
           {/* Compliance Pack Export */}
           <section className="glass-bright rounded-2xl p-6 text-center">
-            <div className="mb-2 font-[family-name:var(--font-mono)] text-xs tracking-wider text-[var(--accent)]">CERTIFICATION</div>
+            <div className="mb-2 text-xs font-medium text-[var(--accent)]">CERTIFICATION</div>
             <p className="mb-4 text-sm text-[var(--muted)]">
               {result.ppwr.compliancePack.certificationReady
                 ? "This configuration is ready for PPWR certification."
                 : "This configuration requires material changes before certification."}
             </p>
             <button
-              className="btn-primary rounded-lg px-6 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+              className="btn-primary rounded-lg px-6 py-2 text-xs font-medium"
               onClick={() => {
                 const blob = new Blob([JSON.stringify(result.ppwr.compliancePack, null, 2)], { type: "application/json" });
                 const url = URL.createObjectURL(blob);
