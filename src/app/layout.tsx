@@ -21,11 +21,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <footer className="border-t border-[var(--border)] bg-[var(--bg-secondary)] py-6">
           <div className="mx-auto flex max-w-[980px] items-center justify-between px-6">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-medium text-[var(--muted)]">
+              <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--muted)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
                 AeroSpec
               </span>
               <span className="h-3 w-px bg-[var(--border)]" />
-              <span className="text-xs font-medium text-[var(--muted)]">
+              <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--muted)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-secondary)]" />
                 Spenser SFP
               </span>
             </div>
