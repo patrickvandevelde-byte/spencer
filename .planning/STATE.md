@@ -1,9 +1,10 @@
 # Project State
 
 ## Current Focus
-User journey improvements across the AeroSpec website
+GSD framework installed for structured AI-assisted development workflow
 
 ## Recently Completed
+- 2026-02-22: Installed GSD (Get Shit Done) v1.20.5 globally for Claude Code — 31 slash commands available via /gsd:*
 - 2026-02-22: Deep UX analysis of all user journeys and pain points
 - 2026-02-22: Compare page deep linking (URL params: actuators, fluid, pressure)
 - 2026-02-22: Compare page CTAs (Detail, Procure, Export CSV, Share Link, Back to Configure)
