@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { WorkflowBreadcrumb } from "@/components/WorkflowBreadcrumb";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <Nav />
         <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
+          <WorkflowBreadcrumb />
           {children}
         </main>
         <footer className="border-t border-[var(--border)] py-8">

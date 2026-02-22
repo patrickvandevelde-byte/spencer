@@ -1041,7 +1041,7 @@ function ResultsContent() {
         <Link href="/configure" className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
           Back to Configurator
         </Link>
-        <Link href="/compare" className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+        <Link href={`/compare?actuators=${actuator.id}&fluid=${fluid.id}&pressure=${pressure}`} className="btn-secondary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
           Compare Actuators
         </Link>
         <Link href={`/procurement?actuator=${actuator.id}&qty=100`} className="btn-primary rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">

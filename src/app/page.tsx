@@ -227,7 +227,7 @@ export default function Home() {
             return (
               <Link
                 key={a.id}
-                href={`/configure`}
+                href={`/configure?actuator=${a.id}`}
                 className="glass group rounded-xl p-6 transition-all hover:border-[var(--border-bright)] hover:shadow-[var(--glow)] no-underline block"
               >
                 <div className="mb-4 flex items-center justify-between">
@@ -310,7 +310,7 @@ export default function Home() {
               </thead>
               <tbody>
                 {filteredFluids.map((f) => (
-                  <Link key={f.id} href="/configure" className="table-row-hover border-b border-[var(--border)] last:border-b-0 no-underline cursor-pointer" style={{ display: "table-row" }}>
+                  <Link key={f.id} href={`/configure?fluid=${f.id}`} className="table-row-hover border-b border-[var(--border)] last:border-b-0 no-underline cursor-pointer" style={{ display: "table-row" }}>
                     <td className="px-4 py-3 text-[var(--fg-bright)] font-semibold">{f.name}</td>
                     <td className="px-4 py-3 font-[family-name:var(--font-mono)]">{f.viscosity_cP} cP</td>
                     <td className="px-4 py-3 font-[family-name:var(--font-mono)]">{f.density_kg_m3}</td>
