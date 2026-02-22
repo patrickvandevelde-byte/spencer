@@ -206,73 +206,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Decision Helper */}
-      <section>
-        <div className="mb-8 text-center">
+      {/* Decision Helper — scannable question router */}
+      <section className="mx-auto max-w-xl">
+        <div className="mb-6 text-center">
           <h2 className="mb-2 text-2xl font-semibold tracking-tight text-[var(--fg-bright)]">
-            Which platform do I need?
+            Not sure which to pick?
           </h2>
           <p className="text-sm text-[var(--fg-secondary)]">
-            Find the right tool for your engineering question
+            Find your question &mdash; we&rsquo;ll point you to the right platform.
           </p>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
-          {/* Table header */}
-          <div className="grid grid-cols-[1fr_120px_120px]">
-            <div className="bg-[var(--bg-secondary)] px-5 py-3 text-xs font-medium text-[var(--muted)]">
-              Your question
-            </div>
-            <div className="bg-[var(--bg-secondary)] px-3 py-3 text-center">
-              <Link href="/catalog" className="text-xs font-semibold text-[var(--accent)] no-underline hover:underline">
-                AeroSpec
-              </Link>
-            </div>
-            <div className="bg-[var(--bg-secondary)] px-3 py-3 text-center">
-              <Link href="/spenser" className="text-xs font-semibold text-[var(--accent-secondary)] no-underline hover:underline">
-                Spenser SFP
-              </Link>
-            </div>
-          </div>
 
-          {[
-            { question: "Which nozzle fits my fluid?", aerospec: true, spenser: false },
-            { question: "How do I avoid compressed gas?", aerospec: false, spenser: true },
-            { question: "What droplet size will I get?", aerospec: true, spenser: false },
-            { question: "Is my packaging PPWR compliant?", aerospec: false, spenser: true },
-            { question: "Which actuator material is safe?", aerospec: true, spenser: false },
-            { question: "What's the ROI vs aerosol lines?", aerospec: false, spenser: true },
-            { question: "Can I dispense gas-sensitive actives?", aerospec: false, spenser: true },
-            { question: "Spray cone angle prediction?", aerospec: true, spenser: false },
-          ].map((row) => (
-            <div key={row.question} className="contents">
-              <div className="border-t border-[var(--border)] px-5 py-3.5 text-sm text-[var(--fg)]">
-                {row.question}
-              </div>
-              <div className="flex items-center justify-center border-t border-[var(--border)] px-3 py-3.5">
-                {row.aerospec ? (
-                  <Link
-                    href="/catalog"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] no-underline transition-transform hover:scale-110"
-                  >
-                    &#10003;
-                  </Link>
-                ) : (
-                  <span className="text-[var(--muted)] opacity-30">&mdash;</span>
-                )}
-              </div>
-              <div className="flex items-center justify-center border-t border-[var(--border)] px-3 py-3.5">
-                {row.spenser ? (
-                  <Link
-                    href="/spenser"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent-secondary)]/10 text-xs text-[var(--accent-secondary)] no-underline transition-transform hover:scale-110"
-                  >
-                    &#10003;
-                  </Link>
-                ) : (
-                  <span className="text-[var(--muted)] opacity-30">&mdash;</span>
-                )}
-              </div>
-            </div>
+        <div className="space-y-2">
+          {([
+            { q: "Which nozzle fits my fluid?", platform: "aerospec" as const },
+            { q: "How do I avoid compressed gas?", platform: "spenser" as const },
+            { q: "What droplet size will I get?", platform: "aerospec" as const },
+            { q: "Is my packaging PPWR compliant?", platform: "spenser" as const },
+            { q: "Which actuator material is safe?", platform: "aerospec" as const },
+            { q: "What\u2019s the ROI vs aerosol lines?", platform: "spenser" as const },
+            { q: "Can I dispense gas-sensitive actives?", platform: "spenser" as const },
+            { q: "Spray cone angle prediction?", platform: "aerospec" as const },
+          ]).map((row) => (
+            <Link
+              key={row.q}
+              href={row.platform === "aerospec" ? "/catalog" : "/spenser"}
+              className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 no-underline transition-all hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-sm)]"
+            >
+              <span className="text-sm text-[var(--fg)]">{row.q}</span>
+              <span
+                className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold ${
+                  row.platform === "aerospec"
+                    ? "bg-[var(--accent)]/8 text-[var(--accent)]"
+                    : "bg-[var(--accent-secondary)]/8 text-[var(--accent-secondary)]"
+                }`}
+              >
+                {row.platform === "aerospec" ? "AeroSpec" : "Spenser SFP"}
+              </span>
+            </Link>
           ))}
         </div>
       </section>
