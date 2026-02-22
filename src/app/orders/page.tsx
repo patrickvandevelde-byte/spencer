@@ -106,7 +106,7 @@ export default function OrdersPage() {
                     const color = act ? ACTUATOR_COLORS[act.type] || "#06b6d4" : "#06b6d4";
                     return (
                       <div key={i} className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 py-2.5">
-                        {act && <ActuatorIllustration type={act.type} size={32} />}
+                        {act && <div className="pattern-dark"><ActuatorIllustration type={act.type} size={32} /></div>}
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />

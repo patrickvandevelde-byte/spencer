@@ -22,7 +22,7 @@ export function FullConeNozzle({ size = 120 }: { size?: number }) {
       <circle cx="80" cy="95" r="0.8" fill="#06b6d4" opacity="0.4"/>
       <defs>
         <linearGradient id="fullConeGrad" x1="60" y1="44" x2="60" y2="110" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#06b6d4" stopOpacity="0.3"/><stop offset="1" stopColor="#06b6d4" stopOpacity="0.02"/>
+          <stop stopColor="#06b6d4" stopOpacity="0.5"/><stop offset="1" stopColor="#06b6d4" stopOpacity="0.06"/>
         </linearGradient>
       </defs>
     </svg>
@@ -38,12 +38,12 @@ export function HollowConeNozzle({ size = 120 }: { size?: number }) {
       <circle cx="60" cy="17" r="3" fill="#0f172a" stroke="#8b5cf6" strokeWidth="1"/>
       <path d="M52 26 Q56 28 54 30" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.5" fill="none"/>
       <path d="M68 26 Q64 28 66 30" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.5" fill="none"/>
-      <path d="M57 40 L28 108" stroke="#8b5cf6" strokeWidth="2" opacity="0.4" className="spray-animated"/>
-      <path d="M63 40 L92 108" stroke="#8b5cf6" strokeWidth="2" opacity="0.4" className="spray-animated"/>
-      <path d="M57 40 L42 108" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.25"/>
-      <path d="M63 40 L78 108" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.25"/>
-      <ellipse cx="60" cy="108" rx="32" ry="4" fill="none" stroke="#8b5cf6" strokeWidth="1" opacity="0.3"/>
-      <ellipse cx="60" cy="108" rx="18" ry="2.5" fill="none" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.15" strokeDasharray="2 2"/>
+      <path d="M57 40 L28 108" stroke="#8b5cf6" strokeWidth="2" opacity="0.6" className="spray-animated"/>
+      <path d="M63 40 L92 108" stroke="#8b5cf6" strokeWidth="2" opacity="0.6" className="spray-animated"/>
+      <path d="M57 40 L42 108" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.4"/>
+      <path d="M63 40 L78 108" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.4"/>
+      <ellipse cx="60" cy="108" rx="32" ry="4" fill="none" stroke="#8b5cf6" strokeWidth="1" opacity="0.5"/>
+      <ellipse cx="60" cy="108" rx="18" ry="2.5" fill="none" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.3" strokeDasharray="2 2"/>
       <circle cx="35" cy="95" r="1" fill="#8b5cf6" opacity="0.6"/>
       <circle cx="85" cy="92" r="1.2" fill="#8b5cf6" opacity="0.5"/>
       <circle cx="32" cy="105" r="0.8" fill="#8b5cf6" opacity="0.4"/>
@@ -75,7 +75,7 @@ export function FlatFanNozzle({ size = 120 }: { size?: number }) {
       <circle cx="100" cy="92" r="1" fill="#10b981" opacity="0.4"/>
       <defs>
         <linearGradient id="flatFanGrad" x1="60" y1="40" x2="60" y2="100" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#10b981" stopOpacity="0.2"/><stop offset="1" stopColor="#10b981" stopOpacity="0.01"/>
+          <stop stopColor="#10b981" stopOpacity="0.4"/><stop offset="1" stopColor="#10b981" stopOpacity="0.05"/>
         </linearGradient>
       </defs>
     </svg>
@@ -101,9 +101,9 @@ export function FineMistActuator({ size = 120 }: { size?: number }) {
       <circle cx="40" cy="90" r="0.5" fill="#f59e0b" opacity="0.3"/>
       <circle cx="80" cy="88" r="0.6" fill="#f59e0b" opacity="0.3"/>
       <defs>
-        <radialGradient id="mistGrad1" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#f59e0b" stopOpacity="0.15"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0"/></radialGradient>
-        <radialGradient id="mistGrad2" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#f59e0b" stopOpacity="0.1"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0"/></radialGradient>
-        <radialGradient id="mistGrad3" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#f59e0b" stopOpacity="0.06"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0"/></radialGradient>
+        <radialGradient id="mistGrad1" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#f59e0b" stopOpacity="0.3"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0.02"/></radialGradient>
+        <radialGradient id="mistGrad2" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#f59e0b" stopOpacity="0.22"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0.01"/></radialGradient>
+        <radialGradient id="mistGrad3" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#f59e0b" stopOpacity="0.15"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0"/></radialGradient>
       </defs>
     </svg>
   );
@@ -126,7 +126,7 @@ export function JetStreamNozzle({ size = 120 }: { size?: number }) {
       <path d="M50 108 Q55 104 60 108 Q65 104 70 108" stroke="#ef4444" strokeWidth="1" opacity="0.3" fill="none"/>
       <defs>
         <linearGradient id="jetGrad" x1="60" y1="40" x2="60" y2="110" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#ef4444" stopOpacity="0.35"/><stop offset="0.5" stopColor="#ef4444" stopOpacity="0.2"/><stop offset="1" stopColor="#ef4444" stopOpacity="0.05"/>
+          <stop stopColor="#ef4444" stopOpacity="0.55"/><stop offset="0.5" stopColor="#ef4444" stopOpacity="0.35"/><stop offset="1" stopColor="#ef4444" stopOpacity="0.1"/>
         </linearGradient>
       </defs>
     </svg>
@@ -169,7 +169,7 @@ export function AirAtomizingNozzle({ size = 120 }: { size?: number }) {
       <circle cx="75" cy="92" r="0.4" fill="#ec4899" opacity="0.3"/>
       <defs>
         <linearGradient id="aaGrad" x1="60" y1="34" x2="60" y2="105" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#ec4899" stopOpacity="0.25"/><stop offset="1" stopColor="#ec4899" stopOpacity="0.01"/>
+          <stop stopColor="#ec4899" stopOpacity="0.45"/><stop offset="1" stopColor="#ec4899" stopOpacity="0.05"/>
         </linearGradient>
       </defs>
     </svg>
@@ -203,7 +203,7 @@ export function SpiralNozzle({ size = 120 }: { size?: number }) {
       <circle cx="90" cy="102" r="1" fill="#14b8a6" opacity="0.3"/>
       <defs>
         <linearGradient id="spGrad" x1="60" y1="42" x2="60" y2="110" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#14b8a6" stopOpacity="0.25"/><stop offset="1" stopColor="#14b8a6" stopOpacity="0.02"/>
+          <stop stopColor="#14b8a6" stopOpacity="0.45"/><stop offset="1" stopColor="#14b8a6" stopOpacity="0.06"/>
         </linearGradient>
       </defs>
     </svg>
@@ -238,7 +238,7 @@ export function DeflectionNozzle({ size = 120 }: { size?: number }) {
       <circle cx="60" cy="68" r="0.7" fill="#f97316" opacity="0.5"/>
       <defs>
         <linearGradient id="dfGrad" x1="60" y1="38" x2="60" y2="105" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#f97316" stopOpacity="0.18"/><stop offset="1" stopColor="#f97316" stopOpacity="0.01"/>
+          <stop stopColor="#f97316" stopOpacity="0.4"/><stop offset="1" stopColor="#f97316" stopOpacity="0.05"/>
         </linearGradient>
       </defs>
     </svg>
@@ -271,15 +271,15 @@ export function UltrasonicAtomizer({ size = 120 }: { size?: number }) {
       <circle cx="76" cy="70" r="0.3" fill="#a855f7" opacity="0.5"/>
       <circle cx="50" cy="85" r="0.4" fill="#a855f7" opacity="0.3"/>
       <circle cx="70" cy="88" r="0.3" fill="#a855f7" opacity="0.3"/>
-      <circle cx="38" cy="95" r="0.4" fill="#a855f7" opacity="0.2"/>
-      <circle cx="82" cy="92" r="0.3" fill="#a855f7" opacity="0.2"/>
+      <circle cx="38" cy="95" r="0.4" fill="#a855f7" opacity="0.4"/>
+      <circle cx="82" cy="92" r="0.3" fill="#a855f7" opacity="0.4"/>
       <circle cx="55" cy="62" r="0.3" fill="#a855f7" opacity="0.6"/>
       <circle cx="65" cy="78" r="0.3" fill="#a855f7" opacity="0.4"/>
       <defs>
-        <radialGradient id="usGrad1" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.18"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient>
-        <radialGradient id="usGrad2" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.12"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient>
-        <radialGradient id="usGrad3" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.08"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient>
-        <radialGradient id="usGrad4" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.04"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient>
+        <radialGradient id="usGrad1" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.35"/><stop offset="1" stopColor="#a855f7" stopOpacity="0.02"/></radialGradient>
+        <radialGradient id="usGrad2" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.25"/><stop offset="1" stopColor="#a855f7" stopOpacity="0.01"/></radialGradient>
+        <radialGradient id="usGrad3" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.18"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient>
+        <radialGradient id="usGrad4" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#a855f7" stopOpacity="0.1"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient>
       </defs>
     </svg>
   );
@@ -317,7 +317,7 @@ export function MultiOrificeCluster({ size = 120 }: { size?: number }) {
       <circle cx="35" cy="90" r="0.6" fill="#0ea5e9" opacity="0.3"/>
       <circle cx="85" cy="85" r="0.6" fill="#0ea5e9" opacity="0.3"/>
       <defs>
-        <radialGradient id="moGrad" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#0ea5e9" stopOpacity="0.2"/><stop offset="1" stopColor="#0ea5e9" stopOpacity="0"/></radialGradient>
+        <radialGradient id="moGrad" cx="0.5" cy="0.5" r="0.5"><stop stopColor="#0ea5e9" stopOpacity="0.4"/><stop offset="1" stopColor="#0ea5e9" stopOpacity="0.03"/></radialGradient>
       </defs>
     </svg>
   );
@@ -356,7 +356,7 @@ export function AdjustableConeNozzle({ size = 120 }: { size?: number }) {
       <circle cx="82" cy="98" r="0.8" fill="#22d3ee" opacity="0.3"/>
       <defs>
         <linearGradient id="acGrad1" x1="60" y1="40" x2="60" y2="108" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#22d3ee" stopOpacity="0.25"/><stop offset="1" stopColor="#22d3ee" stopOpacity="0.02"/>
+          <stop stopColor="#22d3ee" stopOpacity="0.45"/><stop offset="1" stopColor="#22d3ee" stopOpacity="0.06"/>
         </linearGradient>
       </defs>
     </svg>
@@ -389,11 +389,11 @@ export function ImpingementNozzle({ size = 120 }: { size?: number }) {
       <circle cx="45" cy="72" r="0.5" fill="#f43f5e" opacity="0.5"/>
       <circle cx="75" cy="74" r="0.5" fill="#f43f5e" opacity="0.5"/>
       <circle cx="60" cy="60" r="0.6" fill="#f43f5e" opacity="0.6"/>
-      <circle cx="20" cy="100" r="0.5" fill="#f43f5e" opacity="0.2"/>
-      <circle cx="100" cy="98" r="0.5" fill="#f43f5e" opacity="0.2"/>
+      <circle cx="20" cy="100" r="0.5" fill="#f43f5e" opacity="0.4"/>
+      <circle cx="100" cy="98" r="0.5" fill="#f43f5e" opacity="0.4"/>
       <defs>
         <linearGradient id="imGrad" x1="60" y1="36" x2="60" y2="108" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#f43f5e" stopOpacity="0.2"/><stop offset="1" stopColor="#f43f5e" stopOpacity="0.01"/>
+          <stop stopColor="#f43f5e" stopOpacity="0.4"/><stop offset="1" stopColor="#f43f5e" stopOpacity="0.05"/>
         </linearGradient>
       </defs>
     </svg>
@@ -406,11 +406,11 @@ export function FullConePattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="35" fill="url(#fcPat)" className="spray-animated"/>
-      <circle cx="40" cy="40" r="35" stroke="#06b6d4" strokeWidth="0.5" opacity="0.3"/>
-      <circle cx="40" cy="40" r="25" stroke="#06b6d4" strokeWidth="0.3" opacity="0.2" strokeDasharray="2 2"/>
-      <circle cx="40" cy="40" r="15" stroke="#06b6d4" strokeWidth="0.3" opacity="0.15" strokeDasharray="2 2"/>
+      <circle cx="40" cy="40" r="35" stroke="#06b6d4" strokeWidth="0.8" opacity="0.5"/>
+      <circle cx="40" cy="40" r="25" stroke="#06b6d4" strokeWidth="0.5" opacity="0.35" strokeDasharray="2 2"/>
+      <circle cx="40" cy="40" r="15" stroke="#06b6d4" strokeWidth="0.5" opacity="0.25" strokeDasharray="2 2"/>
       <circle cx="40" cy="40" r="3" fill="#06b6d4" opacity="0.8"/>
-      <defs><radialGradient id="fcPat"><stop stopColor="#06b6d4" stopOpacity="0.3"/><stop offset="1" stopColor="#06b6d4" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="fcPat"><stop stopColor="#06b6d4" stopOpacity="0.5"/><stop offset="1" stopColor="#06b6d4" stopOpacity="0.04"/></radialGradient></defs>
     </svg>
   );
 }
@@ -418,9 +418,9 @@ export function FullConePattern({ size = 80 }: { size?: number }) {
 export function HollowConePattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="40" cy="40" r="35" fill="none" stroke="#8b5cf6" strokeWidth="6" opacity="0.2" className="spray-animated"/>
-      <circle cx="40" cy="40" r="35" fill="none" stroke="#8b5cf6" strokeWidth="1" opacity="0.4"/>
-      <circle cx="40" cy="40" r="28" fill="none" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.15" strokeDasharray="2 2"/>
+      <circle cx="40" cy="40" r="35" fill="none" stroke="#8b5cf6" strokeWidth="6" opacity="0.35" className="spray-animated"/>
+      <circle cx="40" cy="40" r="35" fill="none" stroke="#8b5cf6" strokeWidth="1" opacity="0.6"/>
+      <circle cx="40" cy="40" r="28" fill="none" stroke="#8b5cf6" strokeWidth="0.8" opacity="0.3" strokeDasharray="2 2"/>
       <circle cx="40" cy="40" r="3" fill="#8b5cf6" opacity="0.8"/>
     </svg>
   );
@@ -430,10 +430,10 @@ export function FlatFanPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="40" cy="40" rx="38" ry="8" fill="url(#ffPat)" className="spray-animated"/>
-      <ellipse cx="40" cy="40" rx="38" ry="8" stroke="#10b981" strokeWidth="0.5" opacity="0.4"/>
-      <ellipse cx="40" cy="40" rx="28" ry="5" stroke="#10b981" strokeWidth="0.3" opacity="0.2" strokeDasharray="2 2"/>
+      <ellipse cx="40" cy="40" rx="38" ry="8" stroke="#10b981" strokeWidth="0.8" opacity="0.6"/>
+      <ellipse cx="40" cy="40" rx="28" ry="5" stroke="#10b981" strokeWidth="0.5" opacity="0.35" strokeDasharray="2 2"/>
       <circle cx="40" cy="40" r="3" fill="#10b981" opacity="0.8"/>
-      <defs><radialGradient id="ffPat"><stop stopColor="#10b981" stopOpacity="0.3"/><stop offset="1" stopColor="#10b981" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="ffPat"><stop stopColor="#10b981" stopOpacity="0.5"/><stop offset="1" stopColor="#10b981" stopOpacity="0.04"/></radialGradient></defs>
     </svg>
   );
 }
@@ -442,16 +442,16 @@ export function FineMistPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="35" fill="url(#fmPat)" className="spray-animated"/>
-      <circle cx="22" cy="28" r="0.6" fill="#f59e0b" opacity="0.4"/>
-      <circle cx="55" cy="20" r="0.5" fill="#f59e0b" opacity="0.3"/>
-      <circle cx="18" cy="50" r="0.5" fill="#f59e0b" opacity="0.3"/>
-      <circle cx="62" cy="55" r="0.6" fill="#f59e0b" opacity="0.4"/>
-      <circle cx="30" cy="60" r="0.5" fill="#f59e0b" opacity="0.3"/>
-      <circle cx="48" cy="65" r="0.5" fill="#f59e0b" opacity="0.3"/>
-      <circle cx="35" cy="35" r="0.4" fill="#f59e0b" opacity="0.5"/>
-      <circle cx="50" cy="40" r="0.5" fill="#f59e0b" opacity="0.4"/>
+      <circle cx="22" cy="28" r="0.8" fill="#f59e0b" opacity="0.6"/>
+      <circle cx="55" cy="20" r="0.7" fill="#f59e0b" opacity="0.5"/>
+      <circle cx="18" cy="50" r="0.7" fill="#f59e0b" opacity="0.5"/>
+      <circle cx="62" cy="55" r="0.8" fill="#f59e0b" opacity="0.6"/>
+      <circle cx="30" cy="60" r="0.7" fill="#f59e0b" opacity="0.5"/>
+      <circle cx="48" cy="65" r="0.7" fill="#f59e0b" opacity="0.5"/>
+      <circle cx="35" cy="35" r="0.6" fill="#f59e0b" opacity="0.7"/>
+      <circle cx="50" cy="40" r="0.7" fill="#f59e0b" opacity="0.6"/>
       <circle cx="40" cy="40" r="3" fill="#f59e0b" opacity="0.8"/>
-      <defs><radialGradient id="fmPat"><stop stopColor="#f59e0b" stopOpacity="0.15"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="fmPat"><stop stopColor="#f59e0b" stopOpacity="0.35"/><stop offset="1" stopColor="#f59e0b" stopOpacity="0.02"/></radialGradient></defs>
     </svg>
   );
 }
@@ -460,11 +460,11 @@ export function JetStreamPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="6" fill="url(#jsPat)" className="spray-animated"/>
-      <circle cx="40" cy="40" r="6" stroke="#ef4444" strokeWidth="1" opacity="0.5"/>
-      <circle cx="40" cy="40" r="10" stroke="#ef4444" strokeWidth="0.3" opacity="0.2" strokeDasharray="2 2"/>
+      <circle cx="40" cy="40" r="6" stroke="#ef4444" strokeWidth="1.5" opacity="0.7"/>
+      <circle cx="40" cy="40" r="10" stroke="#ef4444" strokeWidth="0.5" opacity="0.35" strokeDasharray="2 2"/>
       <circle cx="40" cy="40" r="3" fill="#ef4444" opacity="0.8"/>
       <circle cx="40" cy="40" r="16" stroke="#ef4444" strokeWidth="0.3" opacity="0.1"/>
-      <defs><radialGradient id="jsPat"><stop stopColor="#ef4444" stopOpacity="0.5"/><stop offset="1" stopColor="#ef4444" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="jsPat"><stop stopColor="#ef4444" stopOpacity="0.7"/><stop offset="1" stopColor="#ef4444" stopOpacity="0.04"/></radialGradient></defs>
     </svg>
   );
 }
@@ -473,14 +473,14 @@ export function AirAtomizingPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="32" fill="url(#aaPat)" className="spray-animated"/>
-      <circle cx="40" cy="40" r="32" stroke="#ec4899" strokeWidth="0.5" opacity="0.25"/>
-      <circle cx="40" cy="40" r="20" stroke="#ec4899" strokeWidth="0.3" opacity="0.15" strokeDasharray="2 2"/>
-      <circle cx="25" cy="30" r="0.4" fill="#ec4899" opacity="0.4"/>
-      <circle cx="55" cy="35" r="0.3" fill="#ec4899" opacity="0.5"/>
-      <circle cx="30" cy="52" r="0.4" fill="#ec4899" opacity="0.3"/>
-      <circle cx="50" cy="50" r="0.3" fill="#ec4899" opacity="0.4"/>
+      <circle cx="40" cy="40" r="32" stroke="#ec4899" strokeWidth="0.8" opacity="0.45"/>
+      <circle cx="40" cy="40" r="20" stroke="#ec4899" strokeWidth="0.5" opacity="0.3" strokeDasharray="2 2"/>
+      <circle cx="25" cy="30" r="0.6" fill="#ec4899" opacity="0.6"/>
+      <circle cx="55" cy="35" r="0.5" fill="#ec4899" opacity="0.7"/>
+      <circle cx="30" cy="52" r="0.6" fill="#ec4899" opacity="0.5"/>
+      <circle cx="50" cy="50" r="0.5" fill="#ec4899" opacity="0.6"/>
       <circle cx="40" cy="40" r="3" fill="#ec4899" opacity="0.8"/>
-      <defs><radialGradient id="aaPat"><stop stopColor="#ec4899" stopOpacity="0.25"/><stop offset="1" stopColor="#ec4899" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="aaPat"><stop stopColor="#ec4899" stopOpacity="0.45"/><stop offset="1" stopColor="#ec4899" stopOpacity="0.03"/></radialGradient></defs>
     </svg>
   );
 }
@@ -489,10 +489,10 @@ export function SpiralPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="35" fill="url(#spPat)" className="spray-animated"/>
-      <circle cx="40" cy="40" r="35" stroke="#14b8a6" strokeWidth="0.5" opacity="0.3"/>
-      <path d="M40 40 Q50 30 50 40 Q50 50 40 50 Q30 50 30 40 Q30 30 40 25 Q55 25 55 40 Q55 55 40 55 Q25 55 25 40" stroke="#14b8a6" strokeWidth="0.5" opacity="0.2" fill="none"/>
+      <circle cx="40" cy="40" r="35" stroke="#14b8a6" strokeWidth="0.8" opacity="0.5"/>
+      <path d="M40 40 Q50 30 50 40 Q50 50 40 50 Q30 50 30 40 Q30 30 40 25 Q55 25 55 40 Q55 55 40 55 Q25 55 25 40" stroke="#14b8a6" strokeWidth="0.8" opacity="0.35" fill="none"/>
       <circle cx="40" cy="40" r="3" fill="#14b8a6" opacity="0.8"/>
-      <defs><radialGradient id="spPat"><stop stopColor="#14b8a6" stopOpacity="0.25"/><stop offset="1" stopColor="#14b8a6" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="spPat"><stop stopColor="#14b8a6" stopOpacity="0.45"/><stop offset="1" stopColor="#14b8a6" stopOpacity="0.03"/></radialGradient></defs>
     </svg>
   );
 }
@@ -501,10 +501,10 @@ export function DeflectionPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="40" cy="40" rx="38" ry="12" fill="url(#dfPat)" className="spray-animated"/>
-      <ellipse cx="40" cy="40" rx="38" ry="12" stroke="#f97316" strokeWidth="0.5" opacity="0.35"/>
-      <ellipse cx="40" cy="40" rx="28" ry="8" stroke="#f97316" strokeWidth="0.3" opacity="0.2" strokeDasharray="2 2"/>
+      <ellipse cx="40" cy="40" rx="38" ry="12" stroke="#f97316" strokeWidth="0.8" opacity="0.55"/>
+      <ellipse cx="40" cy="40" rx="28" ry="8" stroke="#f97316" strokeWidth="0.5" opacity="0.35" strokeDasharray="2 2"/>
       <circle cx="40" cy="40" r="3" fill="#f97316" opacity="0.8"/>
-      <defs><radialGradient id="dfPat"><stop stopColor="#f97316" stopOpacity="0.25"/><stop offset="1" stopColor="#f97316" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="dfPat"><stop stopColor="#f97316" stopOpacity="0.45"/><stop offset="1" stopColor="#f97316" stopOpacity="0.03"/></radialGradient></defs>
     </svg>
   );
 }
@@ -513,14 +513,14 @@ export function UltrasonicPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="35" fill="url(#usPat)" className="spray-animated"/>
-      <circle cx="40" cy="40" r="28" stroke="#a855f7" strokeWidth="0.3" opacity="0.1" strokeDasharray="1 2"/>
-      <circle cx="40" cy="40" r="18" stroke="#a855f7" strokeWidth="0.3" opacity="0.15" strokeDasharray="1 2"/>
-      <circle cx="28" cy="32" r="0.3" fill="#a855f7" opacity="0.4"/>
-      <circle cx="52" cy="36" r="0.3" fill="#a855f7" opacity="0.3"/>
-      <circle cx="35" cy="50" r="0.3" fill="#a855f7" opacity="0.3"/>
-      <circle cx="48" cy="48" r="0.3" fill="#a855f7" opacity="0.4"/>
+      <circle cx="40" cy="40" r="28" stroke="#a855f7" strokeWidth="0.5" opacity="0.25" strokeDasharray="1 2"/>
+      <circle cx="40" cy="40" r="18" stroke="#a855f7" strokeWidth="0.5" opacity="0.3" strokeDasharray="1 2"/>
+      <circle cx="28" cy="32" r="0.5" fill="#a855f7" opacity="0.6"/>
+      <circle cx="52" cy="36" r="0.5" fill="#a855f7" opacity="0.5"/>
+      <circle cx="35" cy="50" r="0.5" fill="#a855f7" opacity="0.5"/>
+      <circle cx="48" cy="48" r="0.5" fill="#a855f7" opacity="0.6"/>
       <circle cx="40" cy="40" r="3" fill="#a855f7" opacity="0.8"/>
-      <defs><radialGradient id="usPat"><stop stopColor="#a855f7" stopOpacity="0.12"/><stop offset="1" stopColor="#a855f7" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="usPat"><stop stopColor="#a855f7" stopOpacity="0.3"/><stop offset="1" stopColor="#a855f7" stopOpacity="0.02"/></radialGradient></defs>
     </svg>
   );
 }
@@ -530,16 +530,16 @@ export function MultiOrificePattern({ size = 80 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="32" fill="url(#moPat)" className="spray-animated"/>
       {/* 8 sub-circles for the 8 orifice footprints */}
-      <circle cx="40" cy="28" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="48" cy="30" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="50" cy="40" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="48" cy="50" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="40" cy="52" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="32" cy="50" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="30" cy="40" r="8" fill="#0ea5e9" opacity="0.08"/>
-      <circle cx="32" cy="30" r="8" fill="#0ea5e9" opacity="0.08"/>
+      <circle cx="40" cy="28" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="48" cy="30" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="50" cy="40" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="48" cy="50" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="40" cy="52" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="32" cy="50" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="30" cy="40" r="8" fill="#0ea5e9" opacity="0.18"/>
+      <circle cx="32" cy="30" r="8" fill="#0ea5e9" opacity="0.18"/>
       <circle cx="40" cy="40" r="3" fill="#0ea5e9" opacity="0.8"/>
-      <defs><radialGradient id="moPat"><stop stopColor="#0ea5e9" stopOpacity="0.2"/><stop offset="1" stopColor="#0ea5e9" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="moPat"><stop stopColor="#0ea5e9" stopOpacity="0.4"/><stop offset="1" stopColor="#0ea5e9" stopOpacity="0.03"/></radialGradient></defs>
     </svg>
   );
 }
@@ -548,12 +548,12 @@ export function AdjustableConePattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="40" cy="40" r="35" fill="url(#acPat)" className="spray-animated"/>
-      <circle cx="40" cy="40" r="35" stroke="#22d3ee" strokeWidth="0.5" opacity="0.25"/>
+      <circle cx="40" cy="40" r="35" stroke="#22d3ee" strokeWidth="0.8" opacity="0.45"/>
       {/* Ghost inner ring showing adjustability */}
-      <circle cx="40" cy="40" r="18" stroke="#22d3ee" strokeWidth="0.5" opacity="0.15" strokeDasharray="3 3"/>
-      <circle cx="40" cy="40" r="8" stroke="#22d3ee" strokeWidth="0.5" opacity="0.1" strokeDasharray="3 3"/>
+      <circle cx="40" cy="40" r="18" stroke="#22d3ee" strokeWidth="0.8" opacity="0.3" strokeDasharray="3 3"/>
+      <circle cx="40" cy="40" r="8" stroke="#22d3ee" strokeWidth="0.8" opacity="0.2" strokeDasharray="3 3"/>
       <circle cx="40" cy="40" r="3" fill="#22d3ee" opacity="0.8"/>
-      <defs><radialGradient id="acPat"><stop stopColor="#22d3ee" stopOpacity="0.25"/><stop offset="1" stopColor="#22d3ee" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="acPat"><stop stopColor="#22d3ee" stopOpacity="0.45"/><stop offset="1" stopColor="#22d3ee" stopOpacity="0.03"/></radialGradient></defs>
     </svg>
   );
 }
@@ -562,12 +562,12 @@ export function ImpingementPattern({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="40" cy="40" rx="38" ry="10" fill="url(#imPat)" className="spray-animated"/>
-      <ellipse cx="40" cy="40" rx="38" ry="10" stroke="#f43f5e" strokeWidth="0.5" opacity="0.35"/>
+      <ellipse cx="40" cy="40" rx="38" ry="10" stroke="#f43f5e" strokeWidth="0.8" opacity="0.55"/>
       {/* Two impact points */}
-      <circle cx="35" cy="40" r="2" fill="#f43f5e" opacity="0.2"/>
-      <circle cx="45" cy="40" r="2" fill="#f43f5e" opacity="0.2"/>
+      <circle cx="35" cy="40" r="2" fill="#f43f5e" opacity="0.4"/>
+      <circle cx="45" cy="40" r="2" fill="#f43f5e" opacity="0.4"/>
       <circle cx="40" cy="40" r="3" fill="#f43f5e" opacity="0.8"/>
-      <defs><radialGradient id="imPat"><stop stopColor="#f43f5e" stopOpacity="0.25"/><stop offset="1" stopColor="#f43f5e" stopOpacity="0"/></radialGradient></defs>
+      <defs><radialGradient id="imPat"><stop stopColor="#f43f5e" stopOpacity="0.45"/><stop offset="1" stopColor="#f43f5e" stopOpacity="0.03"/></radialGradient></defs>
     </svg>
   );
 }

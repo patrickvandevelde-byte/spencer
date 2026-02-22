@@ -124,7 +124,7 @@ export default function CartPage() {
               return (
                 <div key={item.actuatorId} className="glass rounded-xl p-5 transition-all hover:border-[var(--border-bright)]">
                   <div className="flex items-center gap-4">
-                    <ActuatorIllustration type={act.type} size={56} />
+                    <div className="pattern-dark"><ActuatorIllustration type={act.type} size={56} /></div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
