@@ -146,7 +146,7 @@ export default function CatalogPage() {
                 href={`/configure?actuator=${a.id}`}
                 className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 transition-all hover:shadow-[var(--shadow-md)] hover:border-[var(--border-hover)] no-underline block"
               >
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-4 flex items-center justify-between rounded-lg bg-[#0c1222] px-4 py-3">
                   <ActuatorIllustration type={a.type} size={70} />
                   <SprayPatternIllustration type={a.type} size={44} />
                 </div>

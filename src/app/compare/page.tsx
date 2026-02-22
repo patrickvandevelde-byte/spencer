@@ -264,7 +264,7 @@ function CompareContent() {
                               Best Match
                             </span>
                           )}
-                          <ActuatorIllustration type={actuator.type} size={56} />
+                          <div className="pattern-dark"><ActuatorIllustration type={actuator.type} size={56} /></div>
                           <span className="text-xs font-semibold" style={{ color }}>
                             {actuator.sku}
                           </span>
@@ -282,7 +282,7 @@ function CompareContent() {
                   {predictions.map(({ actuator }) => (
                     <td key={actuator.id} className="px-5 py-3 text-center">
                       <div className="flex justify-center">
-                        <SprayPatternIllustration type={actuator.type} size={48} />
+                        <div className="pattern-dark inline-block"><SprayPatternIllustration type={actuator.type} size={48} /></div>
                       </div>
                     </td>
                   ))}

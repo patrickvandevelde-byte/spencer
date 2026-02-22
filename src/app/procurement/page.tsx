@@ -119,7 +119,7 @@ function ProcurementContent() {
           <div className="space-y-6">
             {/* Actuator preview */}
             <div className="flex items-center gap-4 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-4">
-              <ActuatorIllustration type={actuator.type} size={64} />
+              <div className="pattern-dark"><ActuatorIllustration type={actuator.type} size={64} /></div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />

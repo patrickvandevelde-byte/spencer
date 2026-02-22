@@ -305,7 +305,7 @@ function ConfigureContent() {
         return (
           <div className="glass animate-in rounded-xl p-4">
             <div className="flex items-center gap-4">
-              <ActuatorIllustration type={preselected.type} size={48} />
+              <div className="pattern-dark"><ActuatorIllustration type={preselected.type} size={48} /></div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
@@ -665,7 +665,7 @@ function ConfigureContent() {
                           <span className="text-sm font-bold text-[var(--muted)]">#{i + 1}</span>
                         )}
                       </button>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 pattern-dark">
                         <ActuatorIllustration type={r.actuator.type} size={56} />
                         <SprayPatternIllustration type={r.actuator.type} size={40} />
                       </div>

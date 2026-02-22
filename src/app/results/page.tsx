@@ -698,7 +698,7 @@ function ResultsContent() {
           <p className="mt-1 text-sm text-[var(--muted)]">{fluid.name} @ {pressure} bar</p>
           <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">{actuator.description}</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 pattern-dark">
           <ActuatorIllustration type={actuator.type} size={80} />
           <SprayPatternIllustration type={actuator.type} size={60} />
         </div>
@@ -936,13 +936,13 @@ function ResultsContent() {
           <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
           Spray Pattern — {actuator.type.replace(/_/g, " ")}
         </h2>
-        <div className="flex items-center justify-center gap-12 py-6">
+        <div className="flex items-center justify-center gap-12 rounded-lg bg-[#0c1222] py-8 px-6">
           <div className="text-center">
-            <p className="mb-2 text-xs font-medium text-[var(--muted)]">Side View</p>
+            <p className="mb-2 text-xs font-medium text-slate-400">Side View</p>
             <div className="float"><ActuatorIllustration type={actuator.type} size={160} /></div>
           </div>
           <div className="text-center">
-            <p className="mb-2 text-xs font-medium text-[var(--muted)]">Top-Down Pattern</p>
+            <p className="mb-2 text-xs font-medium text-slate-400">Top-Down Pattern</p>
             <div className="float" style={{ animationDelay: "1s" }}><SprayPatternIllustration type={actuator.type} size={120} /></div>
           </div>
         </div>
