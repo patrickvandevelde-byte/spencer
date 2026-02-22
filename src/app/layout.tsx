@@ -71,6 +71,13 @@ function Nav() {
             </svg>
             Cart
           </Link>
+          <span className="mx-1 h-4 w-px bg-[var(--border)]" />
+          <Link
+            href="/spenser"
+            className="rounded-lg px-3 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] border border-[var(--accent)]/30"
+          >
+            SFP Configurator
+          </Link>
           <Link
             href="/configure"
             className="btn-primary ml-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-xs tracking-wide no-underline"
