@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { ViscosityCategory } from "@/lib/spenser-physics";
@@ -48,7 +48,7 @@ function GradeDisplay({ grade, score, label }: { grade: string; score: number; l
   );
 }
 
-export default function SpenserCompliancePage() {
+function ComplianceContent() {
   const searchParams = useSearchParams();
   const [category, setCategory] = useState<ViscosityCategory>(
     (searchParams.get("category") as ViscosityCategory) || "cream"
@@ -284,5 +284,13 @@ export default function SpenserCompliancePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SpenserCompliancePage() {
+  return (
+    <Suspense fallback={<div className="py-16 text-center text-[var(--muted)]">Loading compliance data...</div>}>
+      <ComplianceContent />
+    </Suspense>
   );
 }
