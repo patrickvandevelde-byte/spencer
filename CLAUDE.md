@@ -1,53 +1,36 @@
 # CLAUDE.md
 
-> This file gives Claude Code the context it needs to work effectively on this project.
-> Inspired by the core principles of [Get Shit Done](https://github.com/glittercowboy/get-shit-done) — distilled to the 20% that delivers 80% of the value.
+> Project context for Claude Code. Managed with [GSD](https://github.com/glittercowboy/get-shit-done).
 
 ## Project Overview
 
-<!-- Replace with your project details -->
-
-**What:** [One-line description of what this project does]
-**Stack:** [e.g., Next.js 14 / TypeScript / Postgres / Drizzle ORM / Tailwind]
-**Status:** [e.g., MVP in progress, Phase 2, Production]
+**What:** AeroSpec — Predictive actuator configurator & procurement platform for formulation chemists and packaging engineers
+**Stack:** Next.js 16 / TypeScript 5.9 (strict) / PostgreSQL / Drizzle ORM / Tailwind CSS 4 / React Three Fiber / Stripe
+**Status:** Phase 3 complete (MVP + SaaS + Procurement). Deployed at spencer-poc.vercel.app
 
 ## Build, Test, Run
 
 ```bash
-# Development
-npm run dev              # Start dev server (localhost:3000)
-
-# Testing
-npm test                 # Run full test suite
-npm test -- path/to/file.test.ts  # Run single test file
-
-# Quality
-npm run typecheck        # TypeScript strict check
-npm run lint             # ESLint
-npm run lint:fix         # Auto-fix lint issues
-
-# Database
-npm run db:migrate       # Run migrations
-npm run db:seed          # Seed dev data
+npm run dev          # Start dev server (localhost:3000)
+npm run build        # Production build
+npm run lint         # ESLint
 ```
 
 ## Architecture
 
-<!-- Keep this short — just enough for Claude to know where things live -->
-
 ```
 src/
 ├── app/           # Next.js app router pages & API routes
-├── components/    # React components (co-located with styles)
-├── lib/           # Shared utilities, config, constants
-├── services/      # Business logic (no framework dependencies)
-├── db/            # Schema definitions, migrations, queries
-└── types/         # Shared TypeScript types
+│   ├── api/       # 15 API endpoints (predict, auth, billing, procurements, etc.)
+│   └── */page.tsx # Pages: home, configure, results, compare, procurement, cart, orders, analytics
+├── components/    # React components (ActuatorViewer3D, WorkflowBreadcrumb, etc.)
+├── lib/           # Shared utilities (data.ts: 27 actuators, 25 fluids, 12 spray types)
+├── db/            # Drizzle schema & client (tenants, users, configs, procurements)
+├── auth/          # JWT auth utilities
+└── middleware.ts   # Request auth/routing middleware
 ```
 
 ## Code Conventions
-
-<!-- List things a linter won't catch — the stuff that trips Claude up -->
 
 - TypeScript strict mode. No `any` types — use `unknown` and narrow.
 - Named exports only, no default exports.
@@ -59,9 +42,7 @@ src/
 
 ## Important Rules
 
-<!-- The "don't shoot yourself in the foot" section -->
-
-- **Always run `npm run typecheck` before considering a task done.**
+- **Always run `npm run build` before considering a task done.**
 - **Never edit existing migration files.** Create a new migration instead.
 - **Don't install new dependencies without asking first.** Check if something in the stack already handles it.
 - **Keep components under 200 lines.** Extract logic into hooks or utilities.
@@ -69,132 +50,81 @@ src/
 
 -----
 
-# WORKFLOW: How to Approach Tasks
+# GSD WORKFLOW
 
-The following workflow patterns keep Claude effective across long sessions. Use them.
+This project uses [Get Shit Done](https://github.com/glittercowboy/get-shit-done) for structured development. Use `/gsd:*` commands instead of ad-hoc workflows.
 
-## Planning Before Coding
+## Core Workflow
 
-Before implementing anything non-trivial, create a brief plan:
+```
+/gsd:new-project     → Initialize project structure
+/gsd:discuss-phase   → Scope and discuss a phase
+/gsd:research-phase  → Deep research before planning
+/gsd:plan-phase      → Create atomic task plans
+/gsd:execute-phase   → Execute with fresh context per task
+/gsd:verify-work     → Verify completed work
+```
 
-1. **Understand** — What exactly needs to happen? What files are involved?
-1. **Research** — Read the relevant existing code first. Don't assume.
-1. **Plan** — List the specific changes needed, in order.
-1. **Execute** — Make changes one file at a time, verifying as you go.
-1. **Verify** — Run tests, typecheck, and manually confirm the feature works.
+## Quick Tasks
 
-For complex features, write the plan to `.planning/PLAN.md` before starting so it survives context resets.
+For small, well-understood changes that don't need full planning:
 
-## Task Atomicity
+```
+/gsd:quick           → Skip planning, atomic commits
+```
 
-Break work into small, focused units. Each unit should:
+## Project Management
 
-- Touch as few files as possible
-- Be independently testable
-- Get its own git commit with a descriptive message
+```
+/gsd:progress        → Check overall progress
+/gsd:add-phase       → Add a new phase to roadmap
+/gsd:complete-milestone → Archive and tag a milestone
+/gsd:pause-work      → Create handoff state for later
+/gsd:resume-work     → Pick up where you left off
+/gsd:debug           → Structured debugging workflow
+```
 
-**Bad:** "Build the entire auth system"
-**Good:** "Create the login API endpoint" → "Add JWT token generation" → "Build login form component" → "Wire form to API" → "Add auth middleware"
+## Planning Files
+
+All planning artifacts live in `.planning/`:
+
+| File | Purpose |
+|---|---|
+| `.planning/STATE.md` | Living short-term memory — current position, recent decisions, blockers |
+| `.planning/PLAN.md` | Current implementation plan |
+| `.planning/phases/` | Per-phase context, plans, and summaries (created by GSD) |
 
 ## Git Discipline
 
-- Commit after each meaningful unit of work, not at the end.
-- Commit message format: `type(scope): description`
-  - Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
-  - Example: `feat(auth): add JWT login endpoint`
+GSD commits outcomes, not process:
+
+- **One commit per task** — atomic, revertable
+- **Format:** `type(phase-plan): task-name`
+- **Types:** `feat`, `fix`, `test`, `refactor`, `perf`, `chore`
 - Never commit `.env`, secrets, or generated files.
 
 ## Context Management
 
-Claude's quality degrades as context fills up. Manage it:
-
-- **Don't read entire files unnecessarily.** Use grep/search to find what you need.
-- **Don't dump large outputs.** Redirect verbose commands to files, then read what matters.
-- **Summarize completed work.** After finishing a chunk of tasks, write a brief summary to `.planning/STATE.md` so future sessions know what happened.
-- **Keep `.planning/STATE.md` updated** with: current status, recent decisions, known issues, and what's next.
-
-## State File
-
-Maintain `.planning/STATE.md` as a living document across sessions:
-
-```markdown
-# Project State
-
-## Current Focus
-[What's being worked on right now]
-
-## Recently Completed
-- [Date] Description of what was done
-
-## Key Decisions
-- [Decision]: [Why] (don't revisit these)
-
-## Known Issues
-- [Issue]: [Status/plan]
-
-## What's Next
-- [ ] Next task 1
-- [ ] Next task 2
-```
+- Keep `.planning/STATE.md` under 100 lines — it's a digest, not an archive.
+- Use `/gsd:pause-work` to save session state before context fills up.
+- Use `/gsd:resume-work` to restore context in a fresh session.
 
 ## When Stuck
 
 1. Re-read the error message carefully — don't guess.
-1. Search the codebase for similar patterns.
-1. Check if it's a known issue in `.planning/STATE.md`.
-1. If a fix isn't working after 2 attempts, try a different approach entirely.
-1. Don't keep applying the same fix repeatedly.
-
------
-
-# PROJECT PLAN
-
-<!--
-This section is optional but powerful for larger projects.
-Define your roadmap here so Claude knows the big picture.
--->
-
-## Requirements
-
-### Must Have (v1)
-
-- [ ] Requirement 1
-- [ ] Requirement 2
-
-### Should Have (v2)
-
-- [ ] Requirement 3
-
-### Out of Scope
-
-- Thing that's explicitly not being built
-
-## Phases
-
-### Phase 1: [Name]
-
-**Goal:** [What "done" looks like for this phase]
-
-- [ ] Task 1
-- [ ] Task 2
-
-### Phase 2: [Name]
-
-**Goal:** [What "done" looks like]
-
-- [ ] Task 1
-- [ ] Task 2
+2. Search the codebase for similar patterns.
+3. Check `.planning/STATE.md` for known issues.
+4. Use `/gsd:debug` for structured debugging.
+5. If a fix isn't working after 2 attempts, try a different approach entirely.
 
 -----
 
 # DECISIONS LOG
 
-<!--
-When you make significant technical decisions, log them here.
-This prevents Claude from relitigating settled choices.
--->
-
-|Date      |Decision                            |Rationale                                    |
-|----------|------------------------------------|---------------------------------------------|
-|YYYY-MM-DD|e.g., "Use Drizzle over Prisma"     |"Better TypeScript inference, lighter weight"|
-|YYYY-MM-DD|e.g., "Server actions for mutations"|"Simpler than API routes for internal calls" |
+|Date      |Decision                                      |Rationale                                          |
+|----------|----------------------------------------------|---------------------------------------------------|
+|2025-02-21|Next.js 16 + Drizzle ORM                      |App router for SSR, Drizzle for typed DB queries    |
+|2025-02-21|Clinical Brutalist design system               |Professional, engineering-focused aesthetic          |
+|2025-02-22|URL params for cross-page data flow            |Shareable, bookmarkable, no state sync issues       |
+|2025-02-22|React Three Fiber for 3D actuator visualization|Interactive parametric viewer in-browser             |
+|2026-02-22|GSD framework for development workflow         |Structured planning, atomic commits, context management|
