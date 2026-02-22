@@ -25,7 +25,7 @@ export default function OrdersPage() {
     <div className="space-y-10">
       <div>
         <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-          <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">ORDER TRACKING</span>
+          <span className="text-xs font-medium text-[var(--accent)]">ORDER TRACKING</span>
         </div>
         <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">Your Orders</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">
@@ -40,7 +40,7 @@ export default function OrdersPage() {
             <path d="M1 9h22" />
           </svg>
           <p className="text-sm text-[var(--muted)]">No orders yet.</p>
-          <Link href="/procurement" className="btn-primary mt-4 inline-block rounded-lg px-6 py-2.5 font-[family-name:var(--font-mono)] text-xs tracking-wider no-underline">
+          <Link href="/procurement" className="btn-primary mt-4 inline-block rounded-lg px-6 py-2.5 text-xs font-medium no-underline">
             Place Your First Order
           </Link>
         </div>
@@ -61,9 +61,9 @@ export default function OrdersPage() {
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3">
-                      <span className="font-[family-name:var(--font-mono)] text-lg font-bold text-[var(--fg-bright)]">{order.poNumber}</span>
+                      <span className="tabular-nums text-lg font-bold text-[var(--fg-bright)]">{order.poNumber}</span>
                       <span
-                        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase"
+                        className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-bold uppercase"
                         style={{ borderColor: cfg.color, color: cfg.color }}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -72,15 +72,15 @@ export default function OrdersPage() {
                         {cfg.label}
                       </span>
                     </div>
-                    <p className="mt-1 font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+                    <p className="mt-1 text-xs text-[var(--muted)]">
                       Placed {created.toLocaleDateString()} &middot; {order.items.length} item{order.items.length > 1 ? "s" : ""}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-[family-name:var(--font-mono)] text-lg font-bold text-[var(--accent)]">
+                    <p className="tabular-nums text-lg font-bold text-[var(--accent)]">
                       ${order.totalUsd.toFixed(2)}
                     </p>
-                    <p className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                    <p className="text-xs text-[var(--muted)]">
                       Est. delivery: {delivery.toLocaleDateString()}
                     </p>
                   </div>
@@ -88,7 +88,7 @@ export default function OrdersPage() {
 
                 {/* Progress bar */}
                 <div className="mt-4">
-                  <div className="flex justify-between font-[family-name:var(--font-mono)] text-[9px] text-[var(--muted)]">
+                  <div className="flex justify-between text-[11px] text-[var(--muted)]">
                     <span>Ordered</span>
                     <span>Processing</span>
                     <span>Shipped</span>
@@ -110,14 +110,14 @@ export default function OrdersPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
-                            <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold" style={{ color }}>{item.sku}</span>
+                            <span className="text-xs font-bold" style={{ color }}>{item.sku}</span>
                             <span className="text-[11px] text-[var(--muted)]">{item.name}</span>
                           </div>
                         </div>
-                        <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+                        <span className="text-xs text-[var(--muted)]">
                           {item.quantity} &times; ${item.unitPrice.toFixed(2)}
                         </span>
-                        <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] uppercase text-[var(--muted)]">
+                        <span className="rounded-md border border-[var(--border)] px-2 py-0.5 text-[11px] uppercase text-[var(--muted)]">
                           {item.orderType}
                         </span>
                       </div>

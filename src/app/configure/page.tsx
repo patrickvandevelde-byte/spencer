@@ -17,7 +17,7 @@ interface ResultRow {
 function ScoreBadge({ score }: { score: number }) {
   const cls = score >= 80 ? "score-excellent" : score >= 50 ? "score-good" : "score-poor";
   return (
-    <span className={`inline-block rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[11px] font-bold ${cls}`}>
+    <span className={`inline-block rounded-md border px-2.5 py-1 text-xs font-semibold ${cls}`}>
       {score}/100
     </span>
   );
@@ -32,7 +32,7 @@ function RegimeBadge({ regime }: { regime: string }) {
   };
   const color = colors[regime] || "var(--muted)";
   return (
-    <span className="rounded-md border px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold" style={{ borderColor: color, color }}>
+    <span className="rounded-md border px-2 py-0.5 text-xs font-bold" style={{ borderColor: color, color }}>
       {regime}
     </span>
   );
@@ -44,7 +44,7 @@ function CloggingBadge({ risk }: { risk: string }) {
   };
   if (risk === "none") return null;
   return (
-    <span className="rounded-md border px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] font-bold uppercase" style={{ borderColor: colors[risk], color: colors[risk] }}>
+    <span className="rounded-md border px-2 py-0.5 text-[11px] font-bold uppercase" style={{ borderColor: colors[risk], color: colors[risk] }}>
       Clog: {risk}
     </span>
   );
@@ -215,17 +215,18 @@ function ConfigureContent() {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--fg-bright)]">
+          <p className="mb-2 text-sm font-medium text-[var(--accent)]">AeroSpec</p>
+          <h1 className="text-4xl font-semibold tracking-tight text-[var(--fg-bright)]">
             Actuator Configurator
           </h1>
           <p className="mt-2 text-sm text-[var(--muted)]">
-            Define fluid properties and operating conditions. The engine predicts optimal actuator performance using type-specific atomization models.
+            Define fluid properties and operating conditions. The engine predicts optimal actuator performance.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleSave}
-            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" />
@@ -234,7 +235,7 @@ function ConfigureContent() {
           </button>
           <button
             onClick={() => setShowSaved(!showSaved)}
-            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+            className="btn-secondary flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
@@ -245,7 +246,7 @@ function ConfigureContent() {
       </div>
 
       {saveMessage && (
-        <div className="animate-in rounded-lg border border-[var(--success)]/30 bg-[var(--success)]/5 px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] text-[var(--success)]">
+        <div className="animate-in rounded-lg border border-[var(--success)]/30 bg-[var(--success)]/5 px-4 py-2 text-xs text-[var(--success)]">
           {saveMessage}
         </div>
       )}
@@ -253,7 +254,7 @@ function ConfigureContent() {
       {/* Saved Configurations Panel */}
       {showSaved && (
         <div className="glass animate-in rounded-xl p-6">
-          <h2 className="mb-4 font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+          <h2 className="mb-4 text-sm font-semibold text-[var(--accent)]">
             Saved Configurations
           </h2>
           {savedConfigs.length === 0 ? (
@@ -264,11 +265,11 @@ function ConfigureContent() {
                 <div key={cfg.id} className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-4 py-3 transition-all hover:border-[var(--accent)]/50">
                   <div className="flex-1">
                     <span className="text-xs font-semibold text-[var(--fg-bright)]">{cfg.name}</span>
-                    <span className="ml-2 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                    <span className="ml-2 text-xs text-[var(--muted)]">
                       {new Date(cfg.createdAt).toLocaleDateString()}
                     </span>
                     {cfg.topScore !== undefined && (
-                      <span className={`ml-2 rounded-md border px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[9px] font-bold ${
+                      <span className={`ml-2 rounded-md border px-1.5 py-0.5 text-[11px] font-bold ${
                         cfg.topScore >= 80 ? "border-[var(--success)] text-[var(--success)]" : cfg.topScore >= 50 ? "border-[var(--warning)] text-[var(--warning)]" : "border-[var(--danger)] text-[var(--danger)]"
                       }`}>
                         Best: {cfg.topScore}/100
@@ -277,7 +278,7 @@ function ConfigureContent() {
                   </div>
                   <button
                     onClick={() => handleLoadConfig(cfg)}
-                    className="rounded-lg border border-[var(--accent)]/30 px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--accent)] transition-all hover:bg-[var(--accent)]/10"
+                    className="rounded-lg border border-[var(--accent)]/30 px-3 py-1.5 text-xs text-[var(--accent)] transition-all hover:bg-[var(--accent)]/10"
                   >
                     Load
                   </button>
@@ -308,18 +309,18 @@ function ConfigureContent() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-                  <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
+                  <span className="text-xs font-semibold tracking-wider" style={{ color }}>
                     {preselected.sku}
                   </span>
                   <span className="text-xs text-[var(--fg-bright)]">{preselected.name}</span>
                 </div>
-                <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                <p className="mt-1 text-xs text-[var(--muted)]">
                   Selected from catalog — configure fluid properties below, then run prediction to see this actuator&apos;s ranking
                 </p>
               </div>
               <Link
                 href={`/results?actuator=${preselected.id}&fluid=${fluidId}&pressure=${pressure}`}
-                className="btn-secondary rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[10px] tracking-wider no-underline"
+                className="btn-secondary rounded-lg px-4 py-2 text-xs tracking-wider no-underline"
               >
                 Quick Detail
               </Link>
@@ -331,13 +332,13 @@ function ConfigureContent() {
       {/* ===== STEP 1: FLUID INPUT ===== */}
       <div className="glass-bright rounded-xl p-6 space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+          <h2 className="text-sm font-semibold text-[var(--accent)]">
             Step 1 — Fluid Properties
           </h2>
           <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
             <button
               onClick={() => setInputMode("library")}
-              className={`px-4 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+              className={`px-4 py-1.5 text-xs font-medium transition-all ${
                 inputMode === "library" ? "bg-[var(--accent)]/10 text-[var(--accent)]" : "text-[var(--muted)]"
               }`}
             >
@@ -345,7 +346,7 @@ function ConfigureContent() {
             </button>
             <button
               onClick={() => setInputMode("custom")}
-              className={`px-4 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+              className={`px-4 py-1.5 text-xs font-medium transition-all ${
                 inputMode === "custom" ? "bg-[var(--accent)]/10 text-[var(--accent)]" : "text-[var(--muted)]"
               }`}
             >
@@ -358,13 +359,13 @@ function ConfigureContent() {
           <>
             {/* Solvent class quick-filter */}
             <div>
-              <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
                 Solvent Class
               </label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => { setSolventFilter("all"); setFluidId(FLUIDS[0].id); }}
-                  className={`rounded-lg border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                     solventFilter === "all"
                       ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
                       : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
@@ -383,7 +384,7 @@ function ConfigureContent() {
                         const first = FLUIDS.find((f) => f.solventClass === sc);
                         if (first) setFluidId(first.id);
                       }}
-                      className={`rounded-lg border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wider transition-all ${
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
                         solventFilter === sc
                           ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
                           : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
@@ -397,13 +398,13 @@ function ConfigureContent() {
             </div>
 
             <div>
-              <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
                 Select Fluid
               </label>
               <select
                 value={fluidId}
                 onChange={(e) => setFluidId(e.target.value)}
-                className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-3 text-sm"
               >
                 {filteredFluids.map((f) => (
                   <option key={f.id} value={f.id}>
@@ -417,46 +418,46 @@ function ConfigureContent() {
           /* Custom fluid input form */
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                 Dynamic Viscosity (cP)
               </label>
               <input
                 type="number" min={0.1} max={100000} step={0.1}
                 value={customViscosity}
                 onChange={(e) => setCustomViscosity(Number(e.target.value))}
-                className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
               />
             </div>
             <div>
-              <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                 Density (kg/m³)
               </label>
               <input
                 type="number" min={500} max={3000} step={1}
                 value={customDensity}
                 onChange={(e) => setCustomDensity(Number(e.target.value))}
-                className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
               />
             </div>
             <div>
-              <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                 Surface Tension (mN/m)
               </label>
               <input
                 type="number" min={10} max={80} step={0.1}
                 value={customSurfaceTension}
                 onChange={(e) => setCustomSurfaceTension(Number(e.target.value))}
-                className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
               />
             </div>
             <div>
-              <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                 Solvent Class
               </label>
               <select
                 value={customSolventClass}
                 onChange={(e) => setCustomSolventClass(e.target.value as SolventClass)}
-                className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
               >
                 {ALL_SOLVENT_CLASSES.map((sc) => (
                   <option key={sc} value={sc}>{SOLVENT_CLASS_LABELS[sc]}</option>
@@ -464,13 +465,13 @@ function ConfigureContent() {
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                 Rheology Type
               </label>
               <select
                 value={customRheology}
                 onChange={(e) => setCustomRheology(e.target.value as RheologyType)}
-                className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
               >
                 <option value="newtonian">Newtonian</option>
                 <option value="power_law">Power-Law (Shear-Thinning)</option>
@@ -480,26 +481,26 @@ function ConfigureContent() {
             </div>
             {customRheology === "power_law" && (
               <div>
-                <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+                <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                   Flow Index (n) <span className="normal-case">n&lt;1 = shear-thinning</span>
                 </label>
                 <input
                   type="number" min={0.1} max={2} step={0.01}
                   value={customPowerLawN}
                   onChange={(e) => setCustomPowerLawN(Number(e.target.value))}
-                  className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                  className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
                 />
               </div>
             )}
             <div>
-              <label className="mb-1.5 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--muted)]">
                 Max Particle Size (µm) <span className="normal-case">0 = no particles</span>
               </label>
               <input
                 type="number" min={0} max={500} step={1}
                 value={customParticleSize}
                 onChange={(e) => setCustomParticleSize(Number(e.target.value))}
-                className="input-field w-full rounded-lg px-4 py-2.5 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-2.5 text-sm"
               />
             </div>
           </div>
@@ -508,12 +509,12 @@ function ConfigureContent() {
 
       {/* ===== STEP 2: OPERATING CONDITIONS ===== */}
       <div className="glass-bright rounded-xl p-6 space-y-5">
-        <h2 className="font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+        <h2 className="text-sm font-semibold text-[var(--accent)]">
           Step 2 — Operating Conditions
         </h2>
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
               Operating Pressure (bar)
             </label>
             <input
@@ -523,15 +524,15 @@ function ConfigureContent() {
               step={0.5}
               value={pressure}
               onChange={(e) => setPressure(Number(e.target.value))}
-              className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
+              className="input-field w-full rounded-lg px-4 py-3 text-sm"
             />
-            <p className="mt-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">Range: 0.5–350 bar</p>
+            <p className="mt-1.5 text-xs text-[var(--muted)]">Range: 0.5–350 bar</p>
           </div>
           <div className="flex items-end">
             <button
               onClick={handlePredict}
               disabled={loading}
-              className="btn-primary w-full rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+              className="btn-primary w-full rounded-lg px-6 py-3 text-sm tracking-wider"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -552,7 +553,7 @@ function ConfigureContent() {
       {/* ===== FLUID SUMMARY ===== */}
       {selectedFluid && (
         <div className="glass animate-in rounded-xl p-6">
-          <h2 className="mb-4 font-[family-name:var(--font-mono)] text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+          <h2 className="mb-4 text-sm font-semibold text-[var(--accent)]">
             Fluid Profile — {selectedFluid.name}
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-xs md:grid-cols-4 lg:grid-cols-5">
@@ -580,10 +581,10 @@ function ConfigureContent() {
             <div className="mt-4 flex flex-wrap gap-4 border-t border-[var(--border)] pt-4">
               {selectedFluid.hazards.length > 0 && (
                 <div>
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--danger)]">Hazards</span>
+                  <span className="text-xs font-medium text-[var(--danger)]">Hazards</span>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {selectedFluid.hazards.map((h) => (
-                      <span key={h} className="rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--danger)]">
+                      <span key={h} className="rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-2 py-0.5 text-xs text-[var(--danger)]">
                         {h}
                       </span>
                     ))}
@@ -592,10 +593,10 @@ function ConfigureContent() {
               )}
               {selectedFluid.ppeRequired.length > 0 && (
                 <div>
-                  <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--warning)]">PPE Required</span>
+                  <span className="text-xs font-medium text-[var(--warning)]">PPE Required</span>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {selectedFluid.ppeRequired.map((p) => (
-                      <span key={p} className="rounded-md border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--warning)]">
+                      <span key={p} className="rounded-md border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-2 py-0.5 text-xs text-[var(--warning)]">
                         {p.replace("_", " ")}
                       </span>
                     ))}
@@ -617,7 +618,7 @@ function ConfigureContent() {
             {compareIds.length >= 2 && compareUrl && (
               <Link
                 href={compareUrl}
-                className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+                className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-xs font-medium no-underline"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
@@ -626,7 +627,7 @@ function ConfigureContent() {
               </Link>
             )}
             {compareIds.length === 1 && (
-              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+              <span className="text-xs text-[var(--muted)]">
                 Select 1 more to compare
               </span>
             )}
@@ -661,7 +662,7 @@ function ConfigureContent() {
                             <path d="M20 6L9 17l-5-5" />
                           </svg>
                         ) : (
-                          <span className="font-[family-name:var(--font-mono)] text-sm font-bold text-[var(--muted)]">#{i + 1}</span>
+                          <span className="text-sm font-bold text-[var(--muted)]">#{i + 1}</span>
                         )}
                       </button>
                       <div className="flex items-center gap-3">
@@ -673,7 +674,7 @@ function ConfigureContent() {
                     <div className="flex-1">
                       <div className="mb-1 flex items-center gap-2 flex-wrap">
                         <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-                        <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
+                        <span className="text-xs font-semibold tracking-wider" style={{ color }}>
                           {r.actuator.sku}
                         </span>
                         <span className="text-xs text-[var(--muted)]">{r.actuator.name}</span>
@@ -682,7 +683,7 @@ function ConfigureContent() {
                       </div>
 
                       {/* Primary metrics */}
-                      <div className="mt-2 flex flex-wrap gap-4 font-[family-name:var(--font-mono)] text-[11px]">
+                      <div className="mt-2 flex flex-wrap gap-4 text-xs">
                         <span><span className="text-[var(--muted)]">Cone:</span> <strong className="text-[var(--fg-bright)]">{r.prediction.coneAngle_deg}°</strong></span>
                         <span>
                           <span className="text-[var(--muted)]">Dv10/50/90:</span>{" "}
@@ -695,7 +696,7 @@ function ConfigureContent() {
 
                       {/* Apparent viscosity for non-Newtonian */}
                       {selectedFluid && selectedFluid.rheology !== "newtonian" && (
-                        <div className="mt-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                        <div className="mt-1 text-xs text-[var(--muted)]">
                           Apparent viscosity at orifice: {r.prediction.apparentViscosity_cP} cP
                         </div>
                       )}
@@ -704,13 +705,13 @@ function ConfigureContent() {
                       {(r.prediction.materialStress.swellingRisk || r.prediction.materialStress.stressCrackingRisk) && (
                         <div className="mt-1 flex gap-2">
                           {r.prediction.materialStress.swellingRisk && (
-                            <span className="rounded-md border border-[var(--warning)]/40 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] text-[var(--warning)]">Swelling Risk</span>
+                            <span className="rounded-md border border-[var(--warning)]/40 px-2 py-0.5 text-[11px] text-[var(--warning)]">Swelling Risk</span>
                           )}
                           {r.prediction.materialStress.stressCrackingRisk && (
-                            <span className="rounded-md border border-[var(--danger)]/40 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] text-[var(--danger)]">Stress Crack Risk</span>
+                            <span className="rounded-md border border-[var(--danger)]/40 px-2 py-0.5 text-[11px] text-[var(--danger)]">Stress Crack Risk</span>
                           )}
                           {r.prediction.materialStress.leachingRisk && (
-                            <span className="rounded-md border border-[var(--warning)]/40 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] text-[var(--warning)]">Leaching Risk</span>
+                            <span className="rounded-md border border-[var(--warning)]/40 px-2 py-0.5 text-[11px] text-[var(--warning)]">Leaching Risk</span>
                           )}
                         </div>
                       )}
@@ -719,7 +720,7 @@ function ConfigureContent() {
                       {hasWarnings && (
                         <div className="mt-2 flex flex-wrap gap-2">
                           {r.prediction.safetyWarnings.slice(0, 3).map((w, wi) => (
-                            <span key={wi} className="rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-2 py-0.5 font-[family-name:var(--font-mono)] text-[9px] text-[var(--danger)]">
+                            <span key={wi} className="rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/5 px-2 py-0.5 text-[11px] text-[var(--danger)]">
                               {w.split(":")[0]}
                             </span>
                           ))}
@@ -734,7 +735,7 @@ function ConfigureContent() {
                       <ScoreBadge score={r.prediction.compatibilityScore} />
                       <Link
                         href={`/results?actuator=${r.actuator.id}&fluid=${selectedFluid?.id}&pressure=${pressure}`}
-                        className="btn-secondary rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+                        className="btn-secondary rounded-lg px-4 py-2 text-xs font-medium no-underline"
                       >
                         Detail
                       </Link>
@@ -751,13 +752,13 @@ function ConfigureContent() {
       {compareIds.length >= 1 && results && (
         <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 animate-in">
           <div className="flex items-center gap-3 rounded-xl border border-[var(--border-bright)] bg-[var(--bg)]/95 px-5 py-3 shadow-lg backdrop-blur-xl">
-            <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+            <span className="text-xs text-[var(--muted)]">
               {compareIds.length} selected
             </span>
             {compareIds.length >= 2 && compareUrl ? (
               <Link
                 href={compareUrl}
-                className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+                className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2 text-xs font-medium no-underline"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
@@ -765,7 +766,7 @@ function ConfigureContent() {
                 Compare Side-by-Side
               </Link>
             ) : (
-              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--accent)]">
+              <span className="text-xs text-[var(--accent)]">
                 Select {2 - compareIds.length} more
               </span>
             )}

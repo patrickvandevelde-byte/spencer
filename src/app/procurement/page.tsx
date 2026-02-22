@@ -56,7 +56,7 @@ function ProcurementContent() {
               <path d="M20 6L9 17l-5-5"/>
             </svg>
           </div>
-          <p className="mb-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--success)]">
+          <p className="mb-1 text-xs font-medium text-[var(--success)]">
             Order Confirmed
           </p>
           <h1 className="mb-6 text-2xl font-bold text-[var(--fg-bright)]">
@@ -76,19 +76,19 @@ function ProcurementContent() {
               </div>
             ))}
           </div>
-          <p className="mt-6 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+          <p className="mt-6 text-xs text-[var(--muted)]">
             Est. Lead Time: {actuator.leadTime_days} business days
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Link
               href="/configure"
-              className="btn-secondary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+              className="btn-secondary rounded-lg px-5 py-2.5 text-xs font-medium no-underline"
             >
               New Configuration
             </Link>
             <button
               onClick={() => setSubmitted(false)}
-              className="btn-primary rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-[11px] tracking-wider"
+              className="btn-primary rounded-lg px-5 py-2.5 text-xs font-medium"
             >
               Place Another Order
             </button>
@@ -103,7 +103,7 @@ function ProcurementContent() {
       {/* Header */}
       <div>
         <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-          <span className="font-[family-name:var(--font-mono)] text-[10px] tracking-wider text-[var(--accent)]">PROCUREMENT</span>
+          <span className="text-xs font-medium text-[var(--accent)]">PROCUREMENT</span>
         </div>
         <h1 className="mt-3 text-3xl font-bold text-[var(--fg-bright)]">
           Order Actuators
@@ -123,31 +123,31 @@ function ProcurementContent() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-                  <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
+                  <span className="text-xs font-bold tracking-wider" style={{ color }}>
                     {actuator.sku}
                   </span>
                 </div>
                 <p className="mt-0.5 text-sm text-[var(--fg-bright)]">{actuator.name}</p>
               </div>
               <div className="text-right">
-                <span className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] font-bold" style={{ borderColor: stockColor, color: stockColor }}>
+                <span className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-bold" style={{ borderColor: stockColor, color: stockColor }}>
                   <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: stockColor }} />
                   {stockLabel}
                 </span>
-                <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                <p className="mt-1 text-xs text-[var(--muted)]">
                   Lead: {actuator.leadTime_days} days
                 </p>
               </div>
             </div>
 
             <div>
-              <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
                 Select Actuator
               </label>
               <select
                 value={selectedId}
                 onChange={(e) => setSelectedId(e.target.value)}
-                className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
+                className="input-field w-full rounded-lg px-4 py-3 text-sm"
               >
                 {ACTUATORS.map((a) => (
                   <option key={a.id} value={a.id}>
@@ -158,13 +158,13 @@ function ProcurementContent() {
             </div>
 
             <div>
-              <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+              <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
                 Order Type
               </label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setOrderType("sample")}
-                  className={`flex-1 rounded-lg border px-4 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider transition-all ${
+                  className={`flex-1 rounded-lg border px-4 py-3 text-xs font-medium transition-all ${
                     orderType === "sample"
                       ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] shadow-[var(--glow)]"
                       : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
@@ -174,7 +174,7 @@ function ProcurementContent() {
                 </button>
                 <button
                   onClick={() => setOrderType("bulk")}
-                  className={`flex-1 rounded-lg border px-4 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider transition-all ${
+                  className={`flex-1 rounded-lg border px-4 py-3 text-xs font-medium transition-all ${
                     orderType === "bulk"
                       ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)] shadow-[var(--glow)]"
                       : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/50"
@@ -187,7 +187,7 @@ function ProcurementContent() {
 
             {orderType === "bulk" && (
               <div className="animate-in">
-                <label className="mb-2 block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[var(--muted)]">
+                <label className="mb-2 block text-xs font-medium text-[var(--muted)]">
                   Quantity
                 </label>
                 <input
@@ -196,10 +196,10 @@ function ProcurementContent() {
                   max={100000}
                   value={qty}
                   onChange={(e) => setQty(Number(e.target.value))}
-                  className="input-field w-full rounded-lg px-4 py-3 font-[family-name:var(--font-mono)] text-xs"
+                  className="input-field w-full rounded-lg px-4 py-3 text-sm"
                 />
                 {qty >= 500 && (
-                  <p className="mt-1.5 flex items-center gap-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--success)]">
+                  <p className="mt-1.5 flex items-center gap-1 text-xs text-[var(--success)]">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 6L9 17l-5-5"/>
                     </svg>
@@ -213,7 +213,7 @@ function ProcurementContent() {
 
         {/* Order Summary */}
         <div className="glass-bright rounded-xl p-6">
-          <h2 className="mb-5 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+          <h2 className="mb-5 text-xs font-medium text-[var(--muted)]">
             Order Summary
           </h2>
           <div className="space-y-4 text-xs">
@@ -226,7 +226,7 @@ function ProcurementContent() {
             ].map((item) => (
               <div key={item.label} className="flex justify-between border-b border-[var(--border)] pb-3">
                 <span className="text-[var(--muted)]">{item.label}</span>
-                <strong className="font-[family-name:var(--font-mono)] text-[var(--fg-bright)]">{item.value}</strong>
+                <strong className="tabular-nums text-[var(--fg-bright)]">{item.value}</strong>
               </div>
             ))}
             <div className="flex justify-between pt-2">
@@ -237,7 +237,7 @@ function ProcurementContent() {
 
           <button
             onClick={handleSubmit}
-            className="btn-primary mt-8 w-full rounded-lg px-6 py-3.5 font-[family-name:var(--font-mono)] text-xs tracking-wider"
+            className="btn-primary mt-8 w-full rounded-lg px-6 py-3.5 text-xs font-medium"
           >
             {orderType === "sample" ? "Request Sample" : "Generate Purchase Order"}
           </button>
@@ -250,7 +250,7 @@ function ProcurementContent() {
               });
               alert(`Added ${actuator.sku} to cart`);
             }}
-            className="btn-secondary mt-3 w-full rounded-lg px-6 py-3 font-[family-name:var(--font-mono)] text-xs tracking-wider flex items-center justify-center gap-2"
+            className="btn-secondary mt-3 w-full rounded-lg px-6 py-3 text-xs font-medium flex items-center justify-center gap-2"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
@@ -263,17 +263,17 @@ function ProcurementContent() {
 
       {/* Pricing Table */}
       <div className="glass rounded-xl p-6">
-        <h2 className="mb-5 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-widest text-[var(--muted)]">
+        <h2 className="mb-5 text-xs font-medium text-[var(--muted)]">
           Volume Pricing — {actuator.sku}
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-[var(--border)]">
-                <th className="px-5 py-3 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Tier</th>
-                <th className="px-5 py-3 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Quantity</th>
-                <th className="px-5 py-3 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Unit Price</th>
-                <th className="px-5 py-3 text-left font-[family-name:var(--font-mono)] text-[10px] font-medium uppercase tracking-widest text-[var(--muted)]">Discount</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-[var(--muted)]">Tier</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-[var(--muted)]">Quantity</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-[var(--muted)]">Unit Price</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-[var(--muted)]">Discount</th>
               </tr>
             </thead>
             <tbody>
@@ -285,11 +285,11 @@ function ProcurementContent() {
               ].map((row) => (
                 <tr key={row.tier} className="table-row-hover border-b border-[var(--border)] last:border-b-0">
                   <td className="px-5 py-3 text-[var(--fg-bright)]">{row.tier}</td>
-                  <td className="px-5 py-3 font-[family-name:var(--font-mono)]">{row.qty}</td>
-                  <td className="px-5 py-3 font-[family-name:var(--font-mono)]">${row.price.toFixed(2)}</td>
+                  <td className="px-5 py-3 tabular-nums">{row.qty}</td>
+                  <td className="px-5 py-3 tabular-nums">${row.price.toFixed(2)}</td>
                   <td className="px-5 py-3">
                     {row.discount ? (
-                      <span className="rounded-md border border-[var(--success)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold text-[var(--success)]">
+                      <span className="rounded-md border border-[var(--success)] px-2 py-0.5 text-xs font-bold text-[var(--success)]">
                         {row.discount}
                       </span>
                     ) : (
