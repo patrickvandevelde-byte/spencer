@@ -206,95 +206,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Decision Helper — side-by-side use-case cards */}
-      <section>
-        <div className="mb-8 text-center">
+      {/* Decision Helper — scannable question router */}
+      <section className="mx-auto max-w-xl">
+        <div className="mb-6 text-center">
           <h2 className="mb-2 text-2xl font-semibold tracking-tight text-[var(--fg-bright)]">
-            Which platform do I need?
+            Not sure which to pick?
           </h2>
           <p className="text-sm text-[var(--fg-secondary)]">
-            Match your engineering question to the right tool
+            Find your question &mdash; we&rsquo;ll point you to the right platform.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* AeroSpec use cases */}
-          <div className="rounded-2xl border border-[var(--accent)]/15 bg-[var(--surface)] p-6">
-            <div className="mb-5 flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent)]/10">
-                <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-[var(--fg-bright)]">Use AeroSpec</p>
-                <p className="text-[11px] text-[var(--muted)]">Spray actuator configuration</p>
-              </div>
-            </div>
-
-            <ul className="mb-6 space-y-3">
-              {[
-                "Which nozzle fits my fluid?",
-                "What droplet size will I get?",
-                "Which actuator material is safe?",
-                "Spray cone angle prediction?",
-              ].map((q) => (
-                <li key={q} className="flex items-start gap-2.5 text-sm text-[var(--fg-secondary)]">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] text-[var(--accent)]">
-                    &#10003;
-                  </span>
-                  {q}
-                </li>
-              ))}
-            </ul>
-
+        <div className="space-y-2">
+          {([
+            { q: "Which nozzle fits my fluid?", platform: "aerospec" as const },
+            { q: "How do I avoid compressed gas?", platform: "spenser" as const },
+            { q: "What droplet size will I get?", platform: "aerospec" as const },
+            { q: "Is my packaging PPWR compliant?", platform: "spenser" as const },
+            { q: "Which actuator material is safe?", platform: "aerospec" as const },
+            { q: "What\u2019s the ROI vs aerosol lines?", platform: "spenser" as const },
+            { q: "Can I dispense gas-sensitive actives?", platform: "spenser" as const },
+            { q: "Spray cone angle prediction?", platform: "aerospec" as const },
+          ]).map((row) => (
             <Link
-              href="/catalog"
-              className="flex items-center justify-center gap-2 rounded-full border border-[var(--accent)]/20 px-5 py-2 text-xs font-medium text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/5"
+              key={row.q}
+              href={row.platform === "aerospec" ? "/catalog" : "/spenser"}
+              className="flex items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 no-underline transition-all hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-sm)]"
             >
-              Open AeroSpec
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4" />
-              </svg>
-            </Link>
-          </div>
-
-          {/* Spenser use cases */}
-          <div className="rounded-2xl border border-[var(--accent-secondary)]/15 bg-[var(--surface)] p-6">
-            <div className="mb-5 flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-secondary)]/10">
-                <span className="h-2 w-2 rounded-full bg-[var(--accent-secondary)]" />
+              <span className="text-sm text-[var(--fg)]">{row.q}</span>
+              <span
+                className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold ${
+                  row.platform === "aerospec"
+                    ? "bg-[var(--accent)]/8 text-[var(--accent)]"
+                    : "bg-[var(--accent-secondary)]/8 text-[var(--accent-secondary)]"
+                }`}
+              >
+                {row.platform === "aerospec" ? "AeroSpec" : "Spenser SFP"}
               </span>
-              <div>
-                <p className="text-sm font-semibold text-[var(--fg-bright)]">Use Spenser SFP</p>
-                <p className="text-[11px] text-[var(--muted)]">Gas-free dispensing configuration</p>
-              </div>
-            </div>
-
-            <ul className="mb-6 space-y-3">
-              {[
-                "How do I avoid compressed gas?",
-                "Is my packaging PPWR compliant?",
-                "What\u2019s the ROI vs aerosol lines?",
-                "Can I dispense gas-sensitive actives?",
-              ].map((q) => (
-                <li key={q} className="flex items-start gap-2.5 text-sm text-[var(--fg-secondary)]">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent-secondary)]/10 text-[10px] text-[var(--accent-secondary)]">
-                    &#10003;
-                  </span>
-                  {q}
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              href="/spenser"
-              className="flex items-center justify-center gap-2 rounded-full border border-[var(--accent-secondary)]/20 px-5 py-2 text-xs font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/5"
-            >
-              Open Spenser SFP
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4" />
-              </svg>
             </Link>
-          </div>
+          ))}
         </div>
       </section>
 
