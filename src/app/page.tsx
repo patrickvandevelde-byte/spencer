@@ -206,74 +206,95 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Decision Helper */}
+      {/* Decision Helper — side-by-side use-case cards */}
       <section>
         <div className="mb-8 text-center">
           <h2 className="mb-2 text-2xl font-semibold tracking-tight text-[var(--fg-bright)]">
             Which platform do I need?
           </h2>
           <p className="text-sm text-[var(--fg-secondary)]">
-            Find the right tool for your engineering question
+            Match your engineering question to the right tool
           </p>
         </div>
-        <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
-          {/* Table header */}
-          <div className="grid grid-cols-[1fr_120px_120px]">
-            <div className="bg-[var(--bg-secondary)] px-5 py-3 text-xs font-medium text-[var(--muted)]">
-              Your question
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* AeroSpec use cases */}
+          <div className="rounded-2xl border border-[var(--accent)]/15 bg-[var(--surface)] p-6">
+            <div className="mb-5 flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent)]/10">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-[var(--fg-bright)]">Use AeroSpec</p>
+                <p className="text-[11px] text-[var(--muted)]">Spray actuator configuration</p>
+              </div>
             </div>
-            <div className="bg-[var(--bg-secondary)] px-3 py-3 text-center">
-              <Link href="/catalog" className="text-xs font-semibold text-[var(--accent)] no-underline hover:underline">
-                AeroSpec
-              </Link>
-            </div>
-            <div className="bg-[var(--bg-secondary)] px-3 py-3 text-center">
-              <Link href="/spenser" className="text-xs font-semibold text-[var(--accent-secondary)] no-underline hover:underline">
-                Spenser SFP
-              </Link>
-            </div>
+
+            <ul className="mb-6 space-y-3">
+              {[
+                "Which nozzle fits my fluid?",
+                "What droplet size will I get?",
+                "Which actuator material is safe?",
+                "Spray cone angle prediction?",
+              ].map((q) => (
+                <li key={q} className="flex items-start gap-2.5 text-sm text-[var(--fg-secondary)]">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] text-[var(--accent)]">
+                    &#10003;
+                  </span>
+                  {q}
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/catalog"
+              className="flex items-center justify-center gap-2 rounded-full border border-[var(--accent)]/20 px-5 py-2 text-xs font-medium text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/5"
+            >
+              Open AeroSpec
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </Link>
           </div>
 
-          {[
-            { question: "Which nozzle fits my fluid?", aerospec: true, spenser: false },
-            { question: "How do I avoid compressed gas?", aerospec: false, spenser: true },
-            { question: "What droplet size will I get?", aerospec: true, spenser: false },
-            { question: "Is my packaging PPWR compliant?", aerospec: false, spenser: true },
-            { question: "Which actuator material is safe?", aerospec: true, spenser: false },
-            { question: "What's the ROI vs aerosol lines?", aerospec: false, spenser: true },
-            { question: "Can I dispense gas-sensitive actives?", aerospec: false, spenser: true },
-            { question: "Spray cone angle prediction?", aerospec: true, spenser: false },
-          ].map((row) => (
-            <div key={row.question} className="contents">
-              <div className="border-t border-[var(--border)] px-5 py-3.5 text-sm text-[var(--fg)]">
-                {row.question}
-              </div>
-              <div className="flex items-center justify-center border-t border-[var(--border)] px-3 py-3.5">
-                {row.aerospec ? (
-                  <Link
-                    href="/catalog"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] no-underline transition-transform hover:scale-110"
-                  >
-                    &#10003;
-                  </Link>
-                ) : (
-                  <span className="text-[var(--muted)] opacity-30">&mdash;</span>
-                )}
-              </div>
-              <div className="flex items-center justify-center border-t border-[var(--border)] px-3 py-3.5">
-                {row.spenser ? (
-                  <Link
-                    href="/spenser"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent-secondary)]/10 text-xs text-[var(--accent-secondary)] no-underline transition-transform hover:scale-110"
-                  >
-                    &#10003;
-                  </Link>
-                ) : (
-                  <span className="text-[var(--muted)] opacity-30">&mdash;</span>
-                )}
+          {/* Spenser use cases */}
+          <div className="rounded-2xl border border-[var(--accent-secondary)]/15 bg-[var(--surface)] p-6">
+            <div className="mb-5 flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-secondary)]/10">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent-secondary)]" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-[var(--fg-bright)]">Use Spenser SFP</p>
+                <p className="text-[11px] text-[var(--muted)]">Gas-free dispensing configuration</p>
               </div>
             </div>
-          ))}
+
+            <ul className="mb-6 space-y-3">
+              {[
+                "How do I avoid compressed gas?",
+                "Is my packaging PPWR compliant?",
+                "What\u2019s the ROI vs aerosol lines?",
+                "Can I dispense gas-sensitive actives?",
+              ].map((q) => (
+                <li key={q} className="flex items-start gap-2.5 text-sm text-[var(--fg-secondary)]">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent-secondary)]/10 text-[10px] text-[var(--accent-secondary)]">
+                    &#10003;
+                  </span>
+                  {q}
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/spenser"
+              className="flex items-center justify-center gap-2 rounded-full border border-[var(--accent-secondary)]/20 px-5 py-2 text-xs font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/5"
+            >
+              Open Spenser SFP
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
