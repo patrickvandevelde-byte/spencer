@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FLUIDS, SOLVENT_CLASS_LABELS } from "@/lib/data";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { FLUIDS, ACTUATORS as ALL_ACTUATORS, SOLVENT_CLASS_LABELS } from "@/lib/data";
 import type { Actuator, Fluid, PredictionResult, SolventClass, RheologyType } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
@@ -51,10 +52,18 @@ function CloggingBadge({ risk }: { risk: string }) {
 
 const ALL_SOLVENT_CLASSES = Object.keys(SOLVENT_CLASS_LABELS) as SolventClass[];
 
-export default function ConfigurePage() {
+function ConfigureContent() {
+  const params = useSearchParams();
+
+  // Deep linking: read pre-selected actuator/fluid from URL
+  const urlFluid = params.get("fluid");
+  const urlActuator = params.get("actuator");
+
+  const initialFluid = urlFluid && FLUIDS.some((f) => f.id === urlFluid) ? urlFluid : FLUIDS[0].id;
+
   // Fluid selection
   const [inputMode, setInputMode] = useState<"library" | "custom">("library");
-  const [fluidId, setFluidId] = useState(FLUIDS[0].id);
+  const [fluidId, setFluidId] = useState(initialFluid);
   const [solventFilter, setSolventFilter] = useState<SolventClass | "all">("all");
 
   // Custom fluid properties
@@ -73,6 +82,9 @@ export default function ConfigurePage() {
   const [results, setResults] = useState<ResultRow[] | null>(null);
   const [selectedFluid, setSelectedFluid] = useState<Fluid | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Multi-select for comparison
+  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   // Saved configurations
   const [savedConfigs, setSavedConfigs] = useState<SavedConfiguration[]>([]);
@@ -184,6 +196,20 @@ export default function ConfigurePage() {
     setLoading(false);
   }
 
+  function toggleCompare(id: string) {
+    setCompareIds((prev) =>
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : prev.length < 4
+          ? [...prev, id]
+          : prev
+    );
+  }
+
+  const compareUrl = compareIds.length >= 2
+    ? `/compare?actuators=${compareIds.join(",")}&fluid=${selectedFluid?.id || fluidId}&pressure=${pressure}`
+    : null;
+
   return (
     <div className="space-y-10">
       {/* Header */}
@@ -269,6 +295,38 @@ export default function ConfigurePage() {
           )}
         </div>
       )}
+
+      {/* Pre-selected actuator banner */}
+      {urlActuator && (() => {
+        const preselected = ALL_ACTUATORS.find((a) => a.id === urlActuator);
+        if (!preselected) return null;
+        const color = ACTUATOR_COLORS[preselected.type] || "#06b6d4";
+        return (
+          <div className="glass animate-in rounded-xl p-4">
+            <div className="flex items-center gap-4">
+              <ActuatorIllustration type={preselected.type} size={48} />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
+                  <span className="font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-wider" style={{ color }}>
+                    {preselected.sku}
+                  </span>
+                  <span className="text-xs text-[var(--fg-bright)]">{preselected.name}</span>
+                </div>
+                <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] text-[var(--muted)]">
+                  Selected from catalog — configure fluid properties below, then run prediction to see this actuator&apos;s ranking
+                </p>
+              </div>
+              <Link
+                href={`/results?actuator=${preselected.id}&fluid=${fluidId}&pressure=${pressure}`}
+                className="btn-secondary rounded-lg px-4 py-2 font-[family-name:var(--font-mono)] text-[10px] tracking-wider no-underline"
+              >
+                Quick Detail
+              </Link>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ===== STEP 1: FLUID INPUT ===== */}
       <div className="glass-bright rounded-xl p-6 space-y-5">
@@ -552,26 +610,60 @@ export default function ConfigurePage() {
       {/* ===== RESULTS ===== */}
       {results && (
         <div className="animate-in">
-          <h2 className="mb-6 text-xl font-bold text-[var(--fg-bright)]">
-            Predicted Configurations ({results.length} actuators ranked)
-          </h2>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-[var(--fg-bright)]">
+              Predicted Configurations ({results.length} actuators ranked)
+            </h2>
+            {compareIds.length >= 2 && compareUrl && (
+              <Link
+                href={compareUrl}
+                className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2.5 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+                </svg>
+                Compare Selected ({compareIds.length})
+              </Link>
+            )}
+            {compareIds.length === 1 && (
+              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+                Select 1 more to compare
+              </span>
+            )}
+          </div>
 
           <div className="space-y-4">
             {results.map((r, i) => {
               const color = ACTUATOR_COLORS[r.actuator.type] || "#06b6d4";
               const hasWarnings = r.prediction.safetyWarnings.length > 0;
               const dist = r.prediction.dropletDistribution;
+              const isSelectedForCompare = compareIds.includes(r.actuator.id);
               return (
                 <div
                   key={r.actuator.id}
-                  className={`glass group rounded-xl p-5 transition-all hover:border-[var(--border-bright)] ${hasWarnings ? "border-l-2 border-l-[var(--danger)]" : ""}`}
+                  className={`glass group rounded-xl p-5 transition-all hover:border-[var(--border-bright)] ${hasWarnings ? "border-l-2 border-l-[var(--danger)]" : ""} ${isSelectedForCompare ? "ring-1 ring-[var(--accent)]/40" : ""}`}
                   style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-center">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)]">
-                        <span className="font-[family-name:var(--font-mono)] text-sm font-bold text-[var(--muted)]">#{i + 1}</span>
-                      </div>
+                      {/* Compare checkbox */}
+                      <button
+                        onClick={() => toggleCompare(r.actuator.id)}
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border transition-all ${
+                          isSelectedForCompare
+                            ? "border-[var(--accent)] bg-[var(--accent)]/10"
+                            : "border-[var(--border)] hover:border-[var(--accent)]/50"
+                        }`}
+                        title={isSelectedForCompare ? "Remove from comparison" : "Add to comparison"}
+                      >
+                        {isSelectedForCompare ? (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        ) : (
+                          <span className="font-[family-name:var(--font-mono)] text-sm font-bold text-[var(--muted)]">#{i + 1}</span>
+                        )}
+                      </button>
                       <div className="flex items-center gap-3">
                         <ActuatorIllustration type={r.actuator.type} size={56} />
                         <SprayPatternIllustration type={r.actuator.type} size={40} />
@@ -654,6 +746,58 @@ export default function ConfigurePage() {
           </div>
         </div>
       )}
+
+      {/* Floating compare bar */}
+      {compareIds.length >= 1 && results && (
+        <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 animate-in">
+          <div className="flex items-center gap-3 rounded-xl border border-[var(--border-bright)] bg-[var(--bg)]/95 px-5 py-3 shadow-lg backdrop-blur-xl">
+            <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)]">
+              {compareIds.length} selected
+            </span>
+            {compareIds.length >= 2 && compareUrl ? (
+              <Link
+                href={compareUrl}
+                className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2 font-[family-name:var(--font-mono)] text-[11px] tracking-wider no-underline"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+                </svg>
+                Compare Side-by-Side
+              </Link>
+            ) : (
+              <span className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--accent)]">
+                Select {2 - compareIds.length} more
+              </span>
+            )}
+            <button
+              onClick={() => setCompareIds([])}
+              className="rounded-lg p-1.5 text-[var(--muted)] hover:bg-[var(--danger)]/10 hover:text-[var(--danger)] transition-colors"
+              title="Clear selection"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function ConfigurePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-20">
+          <svg className="h-8 w-8 animate-spin text-[var(--accent)]" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
+            <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+      }
+    >
+      <ConfigureContent />
+    </Suspense>
   );
 }
