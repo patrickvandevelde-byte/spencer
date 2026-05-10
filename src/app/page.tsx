@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { BetaBanner } from "@/components/BetaBanner";
 
 export default function Home() {
   return (
-    <div className="space-y-20 py-8">
+    <div className="space-y-12 py-8">
+      <BetaBanner />
+
       {/* Hero — three-pillar framing */}
       <section className="mx-auto max-w-2xl text-center animate-in">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
@@ -97,20 +100,20 @@ export default function Home() {
         ))}
       </section>
 
-      {/* Other graphs — Spenser SFP de-emphasized to a sub-card */}
+      {/* AeroSpec SFP — gas-free dispensing surface, same fitment graph */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-xl">
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-              Other graphs · same infrastructure
+              Same graph · second hardware surface
             </p>
             <h3 className="mb-1 text-base font-semibold text-[var(--fg-bright)]">
-              Spenser SFP — gas-free dispensing fitment
+              AeroSpec SFP — gas-free dispensing fitment
             </h3>
             <p className="text-sm leading-relaxed text-[var(--fg-secondary)]">
-              A second fitment graph on the same schema: formula viscosity &rarr;
-              piston / spring / ITV hardware. PPWR compliance grading and
-              line-CAPEX modelling. Useful if you&rsquo;re moving away from
+              Same fitment-graph schema, second hardware target: formula
+              viscosity &rarr; piston / spring / ITV. Adds PPWR compliance
+              grading and line-CAPEX modelling. For teams moving away from
               compressed-gas aerosol formats.
             </p>
           </div>
@@ -119,7 +122,7 @@ export default function Home() {
             className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--accent-secondary)]/30 bg-[var(--surface)] px-4 py-2 text-xs font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/8"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-secondary)]" />
-            Open Spenser SFP
+            Open AeroSpec SFP
             <span className="text-[10px] opacity-60">&rarr;</span>
           </Link>
         </div>

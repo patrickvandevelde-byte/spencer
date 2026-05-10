@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { GRAPH_SEED, type GraphDensity } from "@/lib/graph-seed";
+import { BetaBanner } from "@/components/BetaBanner";
 
 // Fetched at request time so a fresh contribution is visible
 // on the next page load without an explicit revalidation
@@ -71,6 +72,8 @@ export default async function GraphPage() {
 
   return (
     <div className="space-y-16 py-8">
+      <BetaBanner />
+
       {/* Hero */}
       <section className="mx-auto max-w-2xl text-center animate-in">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
@@ -395,8 +398,8 @@ export default async function GraphPage() {
             Enterprise.
           </p>
         </Link>
-        <a
-          href="mailto:partners@aerospec.example"
+        <Link
+          href="/contact?topic=partners"
           className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 no-underline transition-all hover:border-[var(--border-hover)]"
         >
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
@@ -406,9 +409,9 @@ export default async function GraphPage() {
             List your catalog →
           </p>
           <p className="text-xs leading-relaxed text-[var(--fg-secondary)]">
-            Spencer, Coster, Lindal, Aptar partnership inquiries.
+            Coster, Lindal, Aptar partnership inquiries.
           </p>
-        </a>
+        </Link>
       </section>
 
       <section className="text-center">

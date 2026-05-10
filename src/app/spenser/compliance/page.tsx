@@ -88,7 +88,7 @@ function ComplianceContent() {
       <div className="flex items-center justify-between">
         <div>
           <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
-            &larr; Spenser Dashboard
+            &larr; AeroSpec SFP Dashboard
           </Link>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Regulatory Compliance (PPWR)</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
@@ -158,7 +158,7 @@ function ComplianceContent() {
               <div className="mb-3 text-xs font-medium text-[var(--muted)]">VS TRADITIONAL</div>
               <div className="space-y-3">
                 <div className="rounded-xl border border-[var(--success)]/30 bg-[var(--success)]/5 p-3">
-                  <div className="text-xs text-[var(--muted)]">Spenser SFP</div>
+                  <div className="text-xs text-[var(--muted)]">AeroSpec SFP</div>
                   <div className="text-lg font-bold text-[var(--success)]">{result.wasteComparison.spenser.recyclability_pct}%</div>
                   <div className="text-[10px] text-[var(--muted)]">{result.wasteComparison.spenser.streams} waste stream — Grade {result.wasteComparison.spenser.grade}</div>
                 </div>

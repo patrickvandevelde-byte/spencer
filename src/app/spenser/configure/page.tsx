@@ -64,7 +64,7 @@ function PressureCurveChart({ curve }: { curve: PressureCurvePoint[] }) {
       <path d={makePath("spenser_bar")} fill="none" stroke="var(--success)" strokeWidth="2" />
       {/* Legend */}
       <line x1={pad} y1={12} x2={pad + 16} y2={12} stroke="var(--success)" strokeWidth="2" />
-      <text x={pad + 20} y={15} fill="var(--success)" fontSize="8">Spenser SFP</text>
+      <text x={pad + 20} y={15} fill="var(--success)" fontSize="8">AeroSpec SFP</text>
       <line x1={pad + 90} y1={12} x2={pad + 106} y2={12} stroke="var(--warning)" strokeWidth="1.5" strokeDasharray="6 3" />
       <text x={pad + 110} y={15} fill="var(--warning)" fontSize="8">BOV</text>
       <line x1={pad + 140} y1={12} x2={pad + 156} y2={12} stroke="var(--danger)" strokeWidth="1.5" strokeDasharray="4 2" />
@@ -136,7 +136,7 @@ export default function SpenserConfigurePage() {
       <div className="flex items-center justify-between">
         <div>
           <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
-            &larr; Spenser Dashboard
+            &larr; AeroSpec SFP Dashboard
           </Link>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Formula-to-Hardware Mapping</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">Enter your formula data to generate a complete SFP hardware specification.</p>

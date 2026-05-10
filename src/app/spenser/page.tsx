@@ -82,7 +82,7 @@ export default function SpenserDashboard() {
           SFP Operating Standard
         </p>
         <h1 className="text-5xl font-semibold tracking-tight text-[var(--fg-bright)]">
-          Spenser Configurator
+          AeroSpec SFP Configurator
         </h1>
         <p className="mx-auto max-w-xl text-[var(--muted)] leading-relaxed">
           Translate formula physics into mechanical hardware specifications.

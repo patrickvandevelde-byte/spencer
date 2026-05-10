@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type NavContext = "home" | "aerospec" | "spenser";
+type NavContext = "home" | "actuator" | "sfp";
 
 function getContext(pathname: string): NavContext {
-  if (pathname.startsWith("/spenser")) return "spenser";
+  if (pathname.startsWith("/spenser")) return "sfp";
   if (
     pathname.startsWith("/configure") ||
     pathname.startsWith("/results") ||
@@ -17,7 +17,7 @@ function getContext(pathname: string): NavContext {
     pathname.startsWith("/analytics") ||
     pathname.startsWith("/catalog")
   ) {
-    return "aerospec";
+    return "actuator";
   }
   return "home";
 }
@@ -52,7 +52,7 @@ const NAV_LINK =
 const NAV_DEFAULT = `${NAV_LINK} text-[var(--muted)] hover:text-[var(--fg)] hover:bg-[var(--bg-secondary)]`;
 const NAV_ACTIVE = `${NAV_LINK} text-[var(--fg)] bg-[var(--bg-secondary)]`;
 
-function AeroSpecNav({ pathname }: { pathname: string }) {
+function ActuatorNav({ pathname }: { pathname: string }) {
   const items = [
     { href: "/catalog", label: "Catalog" },
     { href: "/configure", label: "Configure" },
@@ -81,7 +81,7 @@ function AeroSpecNav({ pathname }: { pathname: string }) {
   );
 }
 
-function SpenserNav({ pathname }: { pathname: string }) {
+function SfpNav({ pathname }: { pathname: string }) {
   const items = [
     { href: "/spenser", label: "Dashboard", exact: true },
     { href: "/spenser/configure", label: "Configure" },
@@ -145,19 +145,19 @@ export function NavBar() {
             </span>
           )}
           <span className="text-sm font-semibold tracking-tight text-[var(--fg-bright)]">
-            {context === "home" ? "Spencer" : context === "spenser" ? "Spenser" : "AeroSpec"}
+            AeroSpec
           </span>
           {context !== "home" && (
             <span className="rounded-full bg-[var(--bg-secondary)] px-2 py-0.5 text-[10px] font-medium text-[var(--muted)]">
-              {context === "spenser" ? "SFP" : "Actuator"}
+              {context === "sfp" ? "SFP" : "Actuator"}
             </span>
           )}
         </Link>
 
         {/* Context-aware navigation */}
         <div className="flex items-center gap-0.5">
-          {context === "aerospec" && <AeroSpecNav pathname={pathname} />}
-          {context === "spenser" && <SpenserNav pathname={pathname} />}
+          {context === "actuator" && <ActuatorNav pathname={pathname} />}
+          {context === "sfp" && <SfpNav pathname={pathname} />}
 
           {/* Marketing links inside product contexts */}
           {context !== "home" && (
@@ -171,13 +171,13 @@ export function NavBar() {
           {context !== "home" && (
             <>
               <span className="mx-2 h-4 w-px bg-[var(--border)]" />
-              {context === "aerospec" ? (
+              {context === "actuator" ? (
                 <Link
                   href="/spenser"
                   className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent-secondary)]/20 px-3 py-1 text-xs font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/8 hover:border-[var(--accent-secondary)]/40"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-secondary)]" />
-                  Spenser SFP
+                  AeroSpec SFP
                 </Link>
               ) : (
                 <Link
@@ -185,7 +185,7 @@ export function NavBar() {
                   className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/20 px-3 py-1 text-xs font-medium text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/8 hover:border-[var(--accent)]/40"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  AeroSpec
+                  AeroSpec Actuator
                 </Link>
               )}
             </>

@@ -2,11 +2,38 @@
 
 ## Current Focus
 v1.2 moat-thesis architecture: Configurator → Fitment Graph → Parts
-Marketplace. Sprints 1 and 2 shipped (strategy + site + /graph + pricing
-flip + feedback flywheel). Sprint 3 next: wire `/graph` to live database
-queries beyond the contributions counters.
+Marketplace. Sprints 1, 2, and a confidence-signalling pass shipped.
+Sprint 3 next: wire `/graph` to live database queries beyond the
+contributions counters; resolve the contact email + Calendly handle
+placeholders before launch.
 
 ## Recently Completed
+- 2026-05-10: **Confidence-signalling pass** — addressed the
+  credibility gaps a buyer-evaluator hits on the public site.
+  - **Brand merge**: dropped "Spenser" as a separate display brand
+    (the Spencer/Spenser typo-collision was a credibility hit).
+    Visible UI is now "AeroSpec Actuator" + "AeroSpec SFP". Routes
+    (`/spenser/*`), API paths, and DB enums kept (no migration risk).
+  - **Open-beta disclosure**: `<BetaBanner>` mounted on home, /graph,
+    /pricing, /trust, /privacy, /trust/subprocessors. Frames seed
+    figures as forward-looking targets and offers a design-partner
+    CTA.
+  - **Real contact path**: new `/contact` page with topic-routed form
+    + `/api/contact` stub (logs + 202 until wired to Resend / CRM).
+    All `*@aerospec.example` mailtos swapped to `/contact?topic=...`.
+    Calendly placeholder secondary CTA added to Pro / Pharma /
+    Enterprise tiers.
+  - **Trust honesty**: status pills downgraded from "Available" to
+    "Architecture ready" / "Roadmap" where no production tenants
+    exist; SOC 2 timeline pushed from Q2/Q3 2026 → Q4 2026 / Q2 2027;
+    last-updated stamp added; methodology Q+A links to
+    SYNTHETIC_USER_VALIDATION.md.
+  - **Broken-link cleanup**: `/privacy` and `/trust/subprocessors`
+    pages built (were referenced from /trust and would have 404'd).
+    Footer rebuilt with parent identity, beta pill, copyright stub
+    (TODO marker for legal entity name), and primary nav.
+  - Outstanding TODOs in code: `{{contact_email}}`,
+    `{{calendly_handle}}`, footer "Operating entity TBD".
 - 2026-05-10: **Sprint 2 — feedback flywheel** — added the post-config
   contribution loop that makes graph density grow.
   - New `graph_contributions` schema (`src/db/contributions-schema.ts`):

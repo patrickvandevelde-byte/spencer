@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { BetaBanner } from "@/components/BetaBanner";
+
+// TODO(prod): replace placeholder with the team calendly handle
+const CALENDLY_URL = "https://calendly.com/{{calendly_handle}}/30min";
 
 const TIERS = [
   {
@@ -66,7 +70,8 @@ const TIERS = [
     cadence: "/ month",
     tagline: "Mid-market CPG + regional CMOs (the v1.1 sweet spot)",
     badge: "Most Popular",
-    cta: { label: "Talk to Sales", href: "mailto:sales@aerospec.example" },
+    cta: { label: "Talk to Sales", href: "/contact?topic=sales" },
+    bookCall: true,
     graphAccess: "+ Graph API (10k calls/mo)",
     graphAccessSub: "Read fitment data programmatically",
     procurement: "15% + preferred Spencer pricing",
@@ -88,7 +93,8 @@ const TIERS = [
     price: "$4–8k",
     cadence: "/ month",
     tagline: "Inhalation / nasal CDMOs (MDI, DPI, nasal sprays)",
-    cta: { label: "Request Validation Pack", href: "mailto:pharma@aerospec.example" },
+    cta: { label: "Request Validation Pack", href: "/contact?topic=pharma" },
+    bookCall: true,
     graphAccess: "Private graph contributions",
     graphAccessSub: "Differential-privacy aggregation, opt-in only",
     procurement: "No procurement attach (by design)",
@@ -108,7 +114,8 @@ const TIERS = [
     price: "$8–25k",
     cadence: "/ month",
     tagline: "Tier-1 CPG + global CMOs · Year-2 motion",
-    cta: { label: "Talk to Sales", href: "mailto:sales@aerospec.example" },
+    cta: { label: "Talk to Sales", href: "/contact?topic=enterprise" },
+    bookCall: true,
     graphAccess: "Maximum graph depth + on-prem",
     graphAccessSub: "VPC-isolated tenancy · custom training",
     procurement: "ERP punch-out · no transactional margin",
@@ -151,6 +158,8 @@ const PROCUREMENT_TIERS = [
 export default function Pricing() {
   return (
     <div className="space-y-16 py-8">
+      <BetaBanner />
+
       {/* Hero */}
       <section className="mx-auto max-w-2xl text-center animate-in">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
@@ -254,7 +263,7 @@ export default function Pricing() {
               </p>
             )}
 
-            <div className="mt-auto">
+            <div className="mt-auto space-y-2">
               <Link
                 href={tier.cta.href}
                 className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium no-underline transition-all hover:opacity-90 active:scale-[0.98]"
@@ -267,6 +276,14 @@ export default function Pricing() {
               >
                 {tier.cta.label}
               </Link>
+              {tier.bookCall && (
+                <a
+                  href={CALENDLY_URL}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] px-5 py-2 text-xs font-medium text-[var(--fg-secondary)] no-underline transition-all hover:border-[var(--border-hover)] hover:text-[var(--fg)]"
+                >
+                  Or book 30 min &rarr;
+                </a>
+              )}
             </div>
           </div>
         ))}
