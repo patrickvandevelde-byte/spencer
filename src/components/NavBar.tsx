@@ -22,6 +22,25 @@ function getContext(pathname: string): NavContext {
   return "home";
 }
 
+function MarketingLinks() {
+  return (
+    <>
+      <Link
+        href="/pricing"
+        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+      >
+        Pricing
+      </Link>
+      <Link
+        href="/trust"
+        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+      >
+        Trust
+      </Link>
+    </>
+  );
+}
+
 const NAV_LINK =
   "px-3 py-1.5 text-xs font-medium no-underline transition-colors rounded-full";
 const NAV_DEFAULT = `${NAV_LINK} text-[var(--muted)] hover:text-[var(--fg)] hover:bg-[var(--bg-secondary)]`;
@@ -134,6 +153,14 @@ export function NavBar() {
           {context === "aerospec" && <AeroSpecNav pathname={pathname} />}
           {context === "spenser" && <SpenserNav pathname={pathname} />}
 
+          {/* Marketing links inside product contexts */}
+          {context !== "home" && (
+            <>
+              <span className="mx-2 h-4 w-px bg-[var(--border)]" />
+              <MarketingLinks />
+            </>
+          )}
+
           {/* Product switcher — visible inside product contexts */}
           {context !== "home" && (
             <>
@@ -161,6 +188,19 @@ export function NavBar() {
           {/* Home: prominent product entry points */}
           {context === "home" && (
             <div className="flex items-center gap-2">
+              <Link
+                href="/pricing"
+                className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/trust"
+                className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+              >
+                Trust
+              </Link>
+              <span className="mx-1 h-4 w-px bg-[var(--border)]" />
               <Link
                 href="/catalog"
                 className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-4 py-1.5 text-xs font-medium text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40"

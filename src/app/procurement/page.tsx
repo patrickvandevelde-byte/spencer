@@ -113,6 +113,42 @@ function ProcurementContent() {
         </p>
       </div>
 
+      {/* Take-rate disclosure — addresses procurement / sourcing objections */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+        <div className="grid gap-4 md:grid-cols-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+              {orderType === "sample" ? "Sample marketplace" : "Production POs"}
+            </p>
+            <p className="mt-1 text-2xl font-semibold text-[var(--fg-bright)]">
+              {orderType === "sample" ? "10–15%" : "2–4%"}
+            </p>
+            <p className="text-[11px] text-[var(--accent)]">
+              {orderType === "sample"
+                ? "take-rate baked into list price"
+                : "marketplace fee on the line"}
+            </p>
+          </div>
+          <div className="md:col-span-2">
+            <p className="text-xs leading-relaxed text-[var(--fg-secondary)]">
+              {orderType === "sample"
+                ? "Sample / pilot orders ship from Spencer or Coster with a transparent 10–15% margin baked into the catalog price. No hidden fees. Designed for qualification batches and bench validation."
+                : "Production POs use pass-through supplier pricing. The marketplace fee is shown line-item on the PO — never hidden in the unit price. Sourcing teams keep full visibility for procurement review."}
+            </p>
+            <p className="mt-2 text-[11px] text-[var(--muted)]">
+              Read the full procurement model on{" "}
+              <a
+                href="/pricing"
+                className="text-[var(--accent)] no-underline hover:underline"
+              >
+                /pricing
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2">
         {/* Order Form */}
         <div className="glass rounded-xl p-6">

@@ -8,45 +8,61 @@ export default function Home() {
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
           <span className="text-xs font-medium text-[var(--fg-secondary)]">
-            Two platforms
+            For mid-market CPG, regional CMOs, indie DTC &amp; pharma CDMOs
           </span>
-          <span className="h-3 w-px bg-[var(--border)]" />
-          <span className="text-xs font-medium text-[var(--fg-secondary)]">
-            One mission
-          </span>
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-secondary)]" />
         </div>
 
         <h1 className="mb-5 text-5xl font-semibold leading-tight tracking-tight text-[var(--fg-bright)]">
-          Spray Intelligence
+          From formulation to a
           <br />
-          <span className="gradient-text">and Gas-Free Filling.</span>
+          <span className="gradient-text">qualified sample order — in days.</span>
         </h1>
 
         <p className="mx-auto max-w-lg text-lg leading-relaxed text-[var(--fg-secondary)]">
-          Pick the platform that matches your engineering challenge.
-          Switch between them anytime.
+          Compress actuator screening from 2–3 weeks to 2–3 days. Order
+          qualification samples in one click. Keep your bench, regulatory,
+          and procurement workflows intact.
         </p>
 
-        {/* Quick jump anchors */}
-        <div className="mt-8 flex items-center justify-center gap-3">
+        {/* Outcome band — concrete, defensible numbers from v1.1 */}
+        <div className="mt-8 grid grid-cols-3 gap-3">
+          {[
+            { value: "2–3 days", label: "Screening cycle", sub: "down from 2–3 weeks" },
+            { value: "4–8%", label: "BOM cost reduction", sub: "incumbent switches" },
+            { value: "$99", label: "Indie tier / mo", sub: "credits + samples" },
+          ].map((s) => (
+            <div key={s.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left">
+              <p className="text-xl font-semibold text-[var(--fg-bright)]">{s.value}</p>
+              <p className="mt-1 text-[11px] font-medium text-[var(--fg)]">{s.label}</p>
+              <p className="mt-0.5 text-[10px] text-[var(--muted)]">{s.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white no-underline transition-all hover:opacity-90 active:scale-[0.98]"
+          >
+            See pricing
+            <span className="text-xs opacity-80">&rarr;</span>
+          </Link>
           <a
             href="#aerospec"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-5 py-2.5 text-sm font-medium text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-medium text-[var(--fg)] no-underline transition-all hover:border-[var(--border-hover)]"
           >
-            <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-            AeroSpec
-            <span className="text-xs opacity-60">&darr;</span>
-          </a>
-          <a
-            href="#spenser"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-secondary)]/20 bg-[var(--accent-secondary)]/5 px-5 py-2.5 text-sm font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/10 hover:border-[var(--accent-secondary)]/40"
-          >
-            <span className="h-2 w-2 rounded-full bg-[var(--accent-secondary)]" />
-            Spenser SFP
+            Try the configurator
             <span className="text-xs opacity-60">&darr;</span>
           </a>
         </div>
+
+        <p className="mt-4 text-[11px] text-[var(--muted)]">
+          Working numbers from synthetic-user validation (May 2026); see{" "}
+          <Link href="/trust" className="text-[var(--accent)] no-underline hover:underline">
+            Trust
+          </Link>
+          .
+        </p>
       </section>
 
       {/* Product Cards */}
