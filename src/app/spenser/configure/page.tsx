@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { FormulaInput, PhysicsResult, PressureCurvePoint } from "@/lib/spenser-physics";
 import type { ITVSpec, LPVSpec } from "@/lib/kmd-data";
 import type { PPWRResult } from "@/lib/ppwr-compliance";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 type ViscosityCategory = FormulaInput["category"];
 
@@ -415,6 +416,25 @@ export default function SpenserConfigurePage() {
               </button>
             </div>
           </section>
+
+          {/* Sprint 2: feedback flywheel */}
+          <FeedbackWidget
+            source="spenser"
+            configKey={`${result.category}::v${Math.round(result.input.viscosity_cP)}::${result.physics.recommendedPiston.id}::${result.compatibleITVs[0]?.id ?? "no-itv"}`}
+            configSummary={{
+              category: result.category,
+              viscosity_cP: result.input.viscosity_cP,
+              density_g_cm3: result.input.density_g_cm3,
+              fillVolume_ml: result.input.fillVolume_ml,
+              gasSensitive: result.input.gasSensitive,
+              orientation360: result.input.orientation360,
+              piston: result.physics.recommendedPiston.id,
+              itv: result.compatibleITVs[0]?.id ?? null,
+              lpv: result.compatibleLPVs[0]?.id ?? null,
+              outputPressure_bar: result.physics.equilibrium.outputPressure_bar,
+              ppwrGrade: result.ppwr.grade,
+            }}
+          />
         </div>
       )}
     </div>

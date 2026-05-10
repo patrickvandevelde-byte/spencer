@@ -2,10 +2,26 @@
 
 ## Current Focus
 v1.2 moat-thesis architecture: Configurator → Fitment Graph → Parts
-Marketplace. Sprint 1 shipped (strategy + site + /graph + pricing flip).
-Sprint 2 next: feedback loop in configurator to start the flywheel.
+Marketplace. Sprints 1 and 2 shipped (strategy + site + /graph + pricing
+flip + feedback flywheel). Sprint 3 next: wire `/graph` to live database
+queries beyond the contributions counters.
 
 ## Recently Completed
+- 2026-05-10: **Sprint 2 — feedback flywheel** — added the post-config
+  contribution loop that makes graph density grow.
+  - New `graph_contributions` schema (`src/db/contributions-schema.ts`):
+    nullable tenant/user (anonymous free-tier OK), config snapshot,
+    bench-tested enum, 1-5 rating, prediction-match enum, salted IP hash.
+  - `POST /api/contributions` — Zod-validated insert with demo-mode
+    fallback when `DATABASE_URL` is absent (returns 202 + `mode: "demo"`).
+  - `GET /api/graph/density` — live counters (validated triples, 7d/30d
+    contributions, distinct contributors) layered on the Sprint-1 seed
+    baseline; falls back to seed when DB query fails.
+  - `<FeedbackWidget>` component: "did you bench-test?" (yes/planned/no),
+    1-click 5-star rating, conditional prediction-match prompt, optional
+    free-text. Embedded in `/results` (AeroSpec) and `/spenser/configure`.
+  - `/graph` page now server-fetches density and surfaces seeded vs.
+    live state in the hero chip + footer copy.
 - 2026-05-10: **v1.2 moat thesis (Sprint 1)** — committed to a TVH-shaped
   three-pillar architecture (configurator funnels into fitment graph,
   graph monetizes via parts marketplace + tiered access). Added §0 Moat
@@ -50,11 +66,14 @@ Sprint 2 next: feedback loop in configurator to start the flywheel.
 - KMD database tables defined but no migration deployed yet (schema-only)
 
 ## What's Next
-- [ ] **Sprint 2:** Add feedback loop to configurator (post-config
-      "did you bench-test?" capture, 1-click rating, contributions
-      schema). Without this, graph density doesn't grow → no moat.
-- [ ] **Sprint 3:** Wire `/graph` surface to live database queries
-      (currently seeded from constants).
+- [ ] **Sprint 3:** Run Drizzle migration for `graph_contributions`
+      and the KMD tables, then surface live top-fluids / top-actuators
+      lists on `/graph` (today only the headline counters are live —
+      the top-N lists are still seed).
+- [ ] **Sprint 3b:** Add rate-limit on `POST /api/contributions`
+      (per-ipHash window) and a server-side anti-replay check on
+      `configKey` so a single user spamming the widget can't inflate
+      density.
 - [ ] **Sprint 4:** Supplier-partnership outreach kit; catalog expansion
       plan (27 → 100 SKUs target via Spencer / Coster / Lindal / Aptar).
 - [ ] **Sprint 5–6:** Production-PO marketplace (2–4% transparent take),

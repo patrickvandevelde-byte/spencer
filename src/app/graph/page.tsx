@@ -1,44 +1,37 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+import { GRAPH_SEED, type GraphDensity } from "@/lib/graph-seed";
 
-// Seed numbers reflect current state. Replace with live queries once
-// the contributions schema is wired (Sprint 2).
-const GRAPH = {
-  validatedTriples: 247,
-  unvalidatedPairs: 428,
-  catalogActuators: 27,
-  catalogFluids: 25,
-  catalogTarget6mo: 200,
-  catalogTarget18mo: 2000,
-  contributors: 18,
-  contributionsLast7d: 31,
-  contributionsLast30d: 124,
-  predictiveConsensusRate: 0.62, // % of recommendations w/ ≥3-source consensus
-};
+// Fetched at request time so a fresh contribution is visible
+// on the next page load without an explicit revalidation
+// trigger. The endpoint itself is force-dynamic.
+export const dynamic = "force-dynamic";
 
-const TOP_FLUIDS = [
-  { name: "Ethanol (anhydrous)", validations: 38, trend: "+4" },
-  { name: "Isopropyl alcohol 70%", validations: 31, trend: "+2" },
-  { name: "Deionized water", validations: 27, trend: "+3" },
-  { name: "Propylene glycol", validations: 21, trend: "+1" },
-  { name: "Glycerin (anhydrous)", validations: 18, trend: "+2" },
-  { name: "Hexylene glycol", validations: 14, trend: "0" },
-  { name: "Cyclomethicone D5", validations: 12, trend: "+1" },
-  { name: "Acetone", validations: 11, trend: "0" },
-];
+async function loadDensity(): Promise<GraphDensity> {
+  try {
+    const hdrs = await headers();
+    const host = hdrs.get("host");
+    const proto = hdrs.get("x-forwarded-proto") ?? "http";
+    if (!host) return GRAPH_SEED;
+    const res = await fetch(`${proto}://${host}/api/graph/density`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return GRAPH_SEED;
+    return (await res.json()) as GraphDensity;
+  } catch {
+    return GRAPH_SEED;
+  }
+}
 
-const TOP_ACTUATORS = [
-  { sku: "SP-MBU-018", name: "Mechanical Break-Up · 0.018″", validations: 29 },
-  { sku: "SP-MBU-022", name: "Mechanical Break-Up · 0.022″", validations: 24 },
-  { sku: "SP-FAN-035", name: "Flat Fan · 0.035″", validations: 21 },
-  { sku: "SP-FOAM-040", name: "Foam Generator · 0.040″", validations: 18 },
-  { sku: "SP-MIST-014", name: "Fine Mist · 0.014″", validations: 16 },
-  { sku: "SP-CONE-028", name: "Hollow Cone · 0.028″", validations: 14 },
-];
-
-// Tiny inline sparkline — last 12 weeks of weekly graph density
-const DENSITY_HISTORY = [142, 148, 156, 161, 169, 178, 185, 198, 209, 221, 234, 247];
-
-function Sparkline({ data, width = 280, height = 64 }: { data: number[]; width?: number; height?: number }) {
+function Sparkline({
+  data,
+  width = 280,
+  height = 64,
+}: {
+  data: number[];
+  width?: number;
+  height?: number;
+}) {
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
@@ -69,9 +62,12 @@ function Sparkline({ data, width = 280, height = 64 }: { data: number[]; width?:
   );
 }
 
-export default function GraphPage() {
-  const catalogProgress6mo = (GRAPH.catalogActuators / GRAPH.catalogTarget6mo) * 100;
-  const catalogProgress18mo = (GRAPH.catalogActuators / GRAPH.catalogTarget18mo) * 100;
+export default async function GraphPage() {
+  const GRAPH = await loadDensity();
+  const catalogProgress6mo =
+    (GRAPH.catalogActuators / GRAPH.catalogTarget6mo) * 100;
+  const catalogProgress18mo =
+    (GRAPH.catalogActuators / GRAPH.catalogTarget18mo) * 100;
 
   return (
     <div className="space-y-16 py-8">
@@ -80,7 +76,7 @@ export default function GraphPage() {
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
           <span className="text-xs font-medium text-[var(--fg-secondary)]">
-            The asset · live density
+            The asset · {GRAPH.live ? "live density" : "seeded baseline"}
           </span>
         </div>
         <h1 className="mb-5 text-5xl font-semibold leading-tight tracking-tight text-[var(--fg-bright)]">
@@ -107,23 +103,40 @@ export default function GraphPage() {
               {GRAPH.validatedTriples.toLocaleString()}
             </p>
             <p className="mt-1 text-sm text-[var(--fg-secondary)]">
-              +{GRAPH.contributionsLast7d} last 7 days · +{GRAPH.contributionsLast30d} last 30 days
+              +{GRAPH.contributionsLast7d} last 7 days · +
+              {GRAPH.contributionsLast30d} last 30 days
             </p>
           </div>
           <div className="md:justify-self-end">
             <p className="mb-2 text-[11px] font-medium text-[var(--muted)]">
               Density · last 12 weeks
             </p>
-            <Sparkline data={DENSITY_HISTORY} />
+            <Sparkline data={GRAPH.densityHistory} />
           </div>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {[
-            { label: "Unvalidated pairs", value: GRAPH.unvalidatedPairs.toLocaleString(), sub: "awaiting first report" },
-            { label: "Actuator SKUs", value: GRAPH.catalogActuators, sub: `target 200 by month 6` },
-            { label: "Fluids cataloged", value: GRAPH.catalogFluids, sub: "growing weekly" },
-            { label: "Active contributors", value: GRAPH.contributors, sub: "customers + partners" },
+            {
+              label: "Unvalidated pairs",
+              value: GRAPH.unvalidatedPairs.toLocaleString(),
+              sub: "awaiting first report",
+            },
+            {
+              label: "Actuator SKUs",
+              value: GRAPH.catalogActuators,
+              sub: `target ${GRAPH.catalogTarget6mo} by month 6`,
+            },
+            {
+              label: "Fluids cataloged",
+              value: GRAPH.catalogFluids,
+              sub: "growing weekly",
+            },
+            {
+              label: "Active contributors",
+              value: GRAPH.contributors,
+              sub: "customers + partners",
+            },
           ].map((s) => (
             <div key={s.label} className="rounded-xl bg-[var(--bg-secondary)] p-4">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
@@ -147,7 +160,8 @@ export default function GraphPage() {
             Catalog depth
           </p>
           <h2 className="text-2xl font-semibold tracking-tight text-[var(--fg-bright)]">
-            From 27 SKUs today to 2,000+ in 18 months.
+            From {GRAPH.catalogActuators} SKUs today to{" "}
+            {GRAPH.catalogTarget18mo.toLocaleString()}+ in 18 months.
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--fg-secondary)]">
             Catalog expansion via supplier partnerships (Spencer, Coster,
@@ -158,8 +172,18 @@ export default function GraphPage() {
 
         <div className="space-y-4">
           {[
-            { label: "Month 6 target · 200 SKUs", pct: catalogProgress6mo, cur: GRAPH.catalogActuators, target: GRAPH.catalogTarget6mo },
-            { label: "Month 18 target · 2,000 SKUs", pct: catalogProgress18mo, cur: GRAPH.catalogActuators, target: GRAPH.catalogTarget18mo },
+            {
+              label: `Month 6 target · ${GRAPH.catalogTarget6mo} SKUs`,
+              pct: catalogProgress6mo,
+              cur: GRAPH.catalogActuators,
+              target: GRAPH.catalogTarget6mo,
+            },
+            {
+              label: `Month 18 target · ${GRAPH.catalogTarget18mo.toLocaleString()} SKUs`,
+              pct: catalogProgress18mo,
+              cur: GRAPH.catalogActuators,
+              target: GRAPH.catalogTarget18mo,
+            },
           ].map((row) => (
             <div key={row.label}>
               <div className="mb-1.5 flex items-baseline justify-between text-xs">
@@ -189,8 +213,8 @@ export default function GraphPage() {
             Most-tested fluids
           </h3>
           <div className="space-y-2">
-            {TOP_FLUIDS.map((f) => {
-              const max = TOP_FLUIDS[0].validations;
+            {GRAPH.topFluids.map((f) => {
+              const max = GRAPH.topFluids[0].validations;
               const pct = (f.validations / max) * 100;
               return (
                 <div key={f.name} className="space-y-1">
@@ -198,7 +222,13 @@ export default function GraphPage() {
                     <span className="text-[var(--fg)]">{f.name}</span>
                     <span className="text-[var(--muted)]">
                       {f.validations}{" "}
-                      <span className={f.trend.startsWith("+") ? "text-[var(--success)]" : "text-[var(--muted)]"}>
+                      <span
+                        className={
+                          f.trend.startsWith("+")
+                            ? "text-[var(--success)]"
+                            : "text-[var(--muted)]"
+                        }
+                      >
                         {f.trend !== "0" ? f.trend : ""}
                       </span>
                     </span>
@@ -223,17 +253,23 @@ export default function GraphPage() {
             Most-validated SKUs
           </h3>
           <div className="space-y-3">
-            {TOP_ACTUATORS.map((a) => {
-              const max = TOP_ACTUATORS[0].validations;
+            {GRAPH.topActuators.map((a) => {
+              const max = GRAPH.topActuators[0].validations;
               const pct = (a.validations / max) * 100;
               return (
                 <div key={a.sku} className="space-y-1">
                   <div className="flex items-baseline justify-between gap-2 text-xs">
                     <div className="min-w-0">
-                      <span className="font-mono font-semibold text-[var(--fg-bright)]">{a.sku}</span>
-                      <span className="ml-2 text-[var(--fg-secondary)]">{a.name}</span>
+                      <span className="font-mono font-semibold text-[var(--fg-bright)]">
+                        {a.sku}
+                      </span>
+                      <span className="ml-2 text-[var(--fg-secondary)]">
+                        {a.name}
+                      </span>
                     </div>
-                    <span className="shrink-0 text-[var(--muted)]">{a.validations}</span>
+                    <span className="shrink-0 text-[var(--muted)]">
+                      {a.validations}
+                    </span>
                   </div>
                   <div className="h-1 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
                     <div
@@ -267,8 +303,9 @@ export default function GraphPage() {
             density. As density grows, more recommendations are backed by
             multiple independent customer-reported outcomes. Today: 62%
             three-source consensus on common fluid classes; rising to a
-            target <strong className="text-[var(--fg)]">85% by month 18</strong> with 5,000+
-            validated triples.
+            target{" "}
+            <strong className="text-[var(--fg)]">85% by month 18</strong>{" "}
+            with 5,000+ validated triples.
           </p>
         </div>
       </section>
@@ -284,12 +321,35 @@ export default function GraphPage() {
 
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            { step: "1", title: "Configure", body: "User inputs fluid properties; configurator returns ranked actuator candidates with predicted spray physics." },
-            { step: "2", title: "Order sample", body: "User orders a sample through the marketplace. Order linked to the configuration ID — graph remembers what was tried." },
-            { step: "3", title: "Report outcome", body: "Post-test, user reports the actual cone angle, droplet size, clogging, material wear. One-click confirm or correct the prediction." },
-            { step: "4", title: "Triple validated", body: "The fluid → actuator → outcome triple lands in the graph. After three independent confirmations, the triple becomes community-validated." },
+            {
+              step: "1",
+              title: "Configure",
+              body:
+                "User inputs fluid properties; configurator returns ranked actuator candidates with predicted spray physics.",
+            },
+            {
+              step: "2",
+              title: "Order sample",
+              body:
+                "User orders a sample through the marketplace. Order linked to the configuration ID — graph remembers what was tried.",
+            },
+            {
+              step: "3",
+              title: "Report outcome",
+              body:
+                "Post-test, user reports the actual cone angle, droplet size, clogging, material wear. One-click confirm or correct the prediction.",
+            },
+            {
+              step: "4",
+              title: "Triple validated",
+              body:
+                "The fluid → actuator → outcome triple lands in the graph. After three independent confirmations, the triple becomes community-validated.",
+            },
           ].map((s) => (
-            <div key={s.step} className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5">
+            <div
+              key={s.step}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5"
+            >
               <p className="mb-2 text-3xl font-semibold text-[var(--accent)]">
                 {s.step}
               </p>
@@ -353,9 +413,12 @@ export default function GraphPage() {
 
       <section className="text-center">
         <p className="text-xs text-[var(--muted)]">
-          Density figures are seed-data baselines (Sprint 1). Live graph
-          queries ship with the contributions schema in Sprint 2. See
-          BUSINESS_STRATEGY.md §0 + §12.
+          {GRAPH.live
+            ? GRAPH.augmented
+              ? "Counters are seed baseline + live contributions (Sprint 2)."
+              : "Sprint 2 contributions schema is live — waiting for the first submission to layer on top of the seed baseline."
+            : "Density figures are seed-data baselines. Connect DATABASE_URL to enable live contribution counters."}{" "}
+          See BUSINESS_STRATEGY.md §0 + §12.
         </p>
       </section>
     </div>

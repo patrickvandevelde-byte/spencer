@@ -7,6 +7,7 @@ import type { Actuator, Fluid, PredictionResult, ToolingSpec } from "@/lib/data"
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
 import { TechnicalDesignPanel } from "@/components/TechnicalDesign";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { addToCart, trackEvent } from "@/lib/store";
 import dynamic from "next/dynamic";
 
@@ -1004,6 +1005,24 @@ function ResultsContent() {
         </h2>
         <TechnicalDesignPanel actuator={actuator} />
       </div>
+
+      {/* Sprint 2: feedback flywheel */}
+      <FeedbackWidget
+        source="aerospec"
+        configKey={`${actuator.sku}::${fluid.id}::${pressure}bar`}
+        configSummary={{
+          actuatorSku: actuator.sku,
+          actuatorName: actuator.name,
+          fluidId: fluid.id,
+          fluidName: fluid.name,
+          pressure_bar: pressure,
+          predictedConeAngle_deg: result.coneAngle_deg,
+          predictedDv50_um: result.dropletDistribution.Dv50_um,
+          compatibilityScore: result.compatibilityScore,
+          atomizationRegime: result.atomizationRegime,
+          cloggingRisk: result.cloggingRisk,
+        }}
+      />
 
       {/* Actions */}
       <div className="flex flex-wrap gap-4">
