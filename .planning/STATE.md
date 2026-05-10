@@ -1,9 +1,17 @@
 # Project State
 
 ## Current Focus
-Spenser Configurator (SFP Operating Standard) — fully implemented
+Business-concept validation pass via synthetic users (v1.1 strategy)
 
 ## Recently Completed
+- 2026-05-10: **Synthetic-user validation** — 10 personas across Segments
+  A–D + pharma + consultant skeptic; 12-question structured interviews;
+  produced `SYNTHETIC_USER_VALIDATION.md` and v1.1 revisions to
+  `BUSINESS_STRATEGY.md`. Major changes: ICP narrowed to mid-market CPG
+  + regional CMOs; Indie/Maker $99 tier added; Pharma SaaS vertical
+  split out at $4–$8k/mo; procurement model split into sample / price-
+  discovery / enterprise-integration; time-savings + BOM + ML + CAC +
+  Year-1 GR claims tightened.
 - 2026-02-22: **Spenser Configurator** — Complete implementation of the SFP system configurator
   - Physics Engine: Boyle's Law bypass via mechanical equilibrium (piston/spring preload)
   - KMD: 11 IM parts, 6 ITVs, 7 LPVs, 5 product categories with viscosity mapping
@@ -31,6 +39,13 @@ Spenser Configurator (SFP Operating Standard) — fully implemented
 - KMD database tables defined but no migration deployed yet (schema-only)
 
 ## What's Next
+- [ ] Close real-customer-discovery gaps from `SYNTHETIC_USER_VALIDATION.md` §7
+      (5 mid-market CPG calls, 3 pharma CDMO calls, channel-conflict
+      review with Spencer/Coster)
+- [ ] Scope Indie/Maker $99 tier (metered config credits, curated
+      catalog, sample-marketplace UX)
+- [ ] Scope Pharma SaaS vertical (21 CFR Part 11, e-signature, validated
+      environment)
 - [ ] Run Drizzle migration for KMD tables
 - [ ] Add QR code generation for SFP Recipes (currently exports JSON)
 - [ ] Connect Spenser configure results to procurement workflow

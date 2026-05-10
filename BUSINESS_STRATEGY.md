@@ -1,8 +1,23 @@
 # AeroSpec Business Strategy & Product Roadmap
 
+> **v1.1 (2026-05-10):** Revised after the synthetic-user validation pass
+> in `SYNTHETIC_USER_VALIDATION.md`. Several quantitative claims (screening
+> time-savings, RFQ cycle, BOM reduction, ML adoption, accuracy ramp, CAC,
+> Year-1 revenue mix) were tightened. Inline changes are tagged
+> **[v1.1]**; the full changelog is in §11.
+
 ## Executive Summary
 
-AeroSpec transforms the actuator selection and procurement process from a manual, time-intensive R&D workflow into a digitized, AI-powered platform. This document outlines the customer segments, critical use cases, pain points, and SaaS/ecommerce monetization strategy.
+AeroSpec transforms the actuator selection and procurement process from a
+manual, time-intensive R&D workflow into a digitized, AI-powered platform.
+This document outlines the customer segments, critical use cases, pain
+points, and SaaS / e-commerce monetization strategy.
+
+**[v1.1] ICP refinement:** the Year-1 sweet spot is **mid-market CPG
+brands ($50M–$500M revenue) and regional / specialty CMOs**, plus a new
+**Indie / Maker** product-led wedge and a separate **regulated-pharma
+SaaS** vertical. Tier-1 CPG (Unilever / P&G / Henkel-class) is a Year-2+
+enterprise-integration motion, not a Year-1 ICP.
 
 ---
 
@@ -19,6 +34,10 @@ AeroSpec transforms the actuator selection and procurement process from a manual
   - Trial-and-error process takes 2–6 weeks per new product
   - Lack real-time access to spray physics predictions
   - Need MSDS parsing and hazard compliance tracking
+  - **[v1.1] Caveat:** Tier-1 CPG R&D will not export formulation data to
+    an external SaaS without on-prem / VPC-isolated deployment or
+    differential-privacy aggregation. Treat them as a Year-2 motion gated
+    on SOC 2 Type II + isolated-tenancy.
 - **Buying Signal:** New product development cycles; compliance audits
 - **Key Metrics:** Time-to-market reduction (from weeks to hours), R&D cost savings
 - **Use Frequency:** 5–15 configurations per month during active development
@@ -115,7 +134,9 @@ AeroSpec transforms the actuator selection and procurement process from a manual
 - **Closed-loop feedback:** Test results feed ML model for continuous improvement
 
 **Expected Impact:**
-- **Reduce discovery phase** from 2–3 weeks → 2–3 hours
+- **[v1.1] Reduce screening / shortlist phase** from 2–3 weeks → **2–3 days**
+  (the original "2–3 hours" claim conflated prediction with the bench
+  validation that customers will not skip; see Validation §5, row 1)
 - **Reduce total sample waste** by 40–60%
 - **Improve compliance tracking** with automated hazard flags
 - **Enable parallel testing** of top 3–5 candidates instead of sequential
@@ -149,9 +170,15 @@ AeroSpec transforms the actuator selection and procurement process from a manual
 - **Direct procurement:** Place POs within platform; auto-sync to ERP
 
 **Expected Impact:**
-- **Reduce RFQ cycle** from 4–6 weeks → 2–3 days
-- **Reduce BOM cost** by 10–15% through intelligent price/performance trade-offs
-- **Consolidate suppliers** from 4–5 → 2–3 through volume aggregation
+- **[v1.1] Reduce RFQ cycle** from 4–6 weeks → **10–14 days** (the
+  original "2–3 days" did not account for internal approval workflows;
+  see Validation §5, row 2)
+- **[v1.1] Reduce BOM cost** by **4–8% on incumbent switches** and 10–15%
+  only on greenfield BOMs after netting out qualification cost (3–6 mo,
+  ~$80k); see Validation §5, row 3
+- **[v1.1] Consolidate quote intake** (not contracts) from 4–5 → 1
+  request — Tier-1 CPG sourcing teams will not consolidate contracts
+  through a middleman
 - **Improve supply chain visibility** with real-time SLA tracking
 
 ---
@@ -245,6 +272,20 @@ Formulation Chemist / Packaging Engineer / Procurement Lead
 
 ### 4.1 Tier-Based SaaS Pricing Model
 
+#### **[v1.1] Indie / Maker Plan: $99/month**
+- **Target:** Indie DTC brands (haircare, clean beauty, fragrance), 5–50
+  FTE, ordering 5–25k units per launch
+- **Includes:**
+  - Up to 10 configurations / month (metered credits, top-ups available)
+  - Curated catalog (top 12 actuator SKUs)
+  - 1 user seat
+  - Community support
+  - Sample-procurement marketplace access (10–15% take-rate baked into
+    sample price)
+- **Why it exists (v1.1):** Validation interview P5 (Okafor) flagged
+  ~2,000+ indie shops priced out of $500/mo today and currently buying
+  blind from Alibaba. Product-led growth wedge that funnels into Starter.
+
 #### **Starter Plan: $500/month**
 - **Target:** Individual R&D teams, SMB packaging companies
 - **Includes:**
@@ -269,7 +310,23 @@ Formulation Chemist / Packaging Engineer / Procurement Lead
   - API access (basic; 10k calls/month)
 - **Procurement Discount:** 15% off actuator orders; preferred pricing from Spencer
 
-#### **Enterprise Plan: Custom Pricing (typically $5,000–$20,000/month)**
+#### **[v1.1] Pharma SaaS Plan: $4,000–$8,000/month**
+- **Target:** Inhalation pharma / nasal spray CDMOs (MDI, DPI, nasal); 200–
+  2,000 FTE
+- **Includes:**
+  - Everything in Professional, **plus**:
+  - 21 CFR Part 11 compliant audit trail + e-signature
+  - Validated environment (IQ/OQ documentation provided)
+  - GMP-friendly export (no procurement attach — pharma will not buy
+    actuators through a third-party platform)
+  - Candidate-ranking-only mode for early-phase formulation screening
+- **Why it exists (v1.1):** Validation interview P3 (Tanaka) — pharma
+  CDMOs explicitly do not want procurement features but pay materially
+  more for validated SaaS.
+
+#### **Enterprise Plan: Custom Pricing (typically $8,000–$25,000/month)**
+> **[v1.1]** Floor raised from $5k to $8k; ceiling honest at $25k
+> (was $20k). Implementation fee unchanged.
 - **Target:** Large OEMs, contract manufacturers, supply chain leaders
 - **Includes:**
   - Everything in Professional
@@ -286,13 +343,35 @@ Formulation Chemist / Packaging Engineer / Procurement Lead
 
 ### 4.2 Procurement Revenue (Core Monetization)
 
-AeroSpec captures **margin on every actuator order** placed through the platform:
+> **[v1.1] Major revision.** Validation interviews (P1, P6) showed the
+> uniform "$0.50–$2.00 hidden margin per unit" model breaks at production
+> volume — Tier-1 CPG framework pricing ($0.04–$0.09/unit at 50–500M
+> units/yr) is 15–25× below our previously stated wholesale price, and
+> sourcing teams will route those POs around the platform. The model is
+> now split by transaction type:
 
-**Transaction Structure:**
-1. **Spencer/Coster manufacturing cost:** $2–$5 per unit
-2. **Platform list price:** $4–$15 per unit (varies by SKU, volume)
-3. **Customer sees:** $4–$15 (wholesale cost; transparent)
-4. **AeroSpec margin:** $0.50–$2.00 per unit (10–15% of transaction value)
+**Tier 1 — Sample & pilot marketplace (margin survives here):**
+- Spencer / Coster sample cost: $2–$5 per unit
+- Platform sample price: $4–$15 per unit
+- AeroSpec margin: **$0.50–$2.00 per unit (10–15% take-rate)**
+- This is where the original v1.0 model is intact — small-batch sample
+  buys, qualification orders, indie pilot runs.
+
+**Tier 2 — Production price-discovery + RFQ orchestration:**
+- Pass-through pricing (transparent supplier quotes, no hidden margin)
+- AeroSpec take-rate: **2–4% marketplace fee, capped per PO**
+- Customer-facing value: consolidated RFQ intake, real-time pricing,
+  audit trail. Suppliers pay (or co-pay) the take-rate, not the buyer.
+
+**Tier 3 — Enterprise integration (no transactional margin):**
+- Ariba / Coupa / SAP punch-out, ERP webhooks
+- Monetized via SaaS subscription + one-time implementation fee
+- No procurement margin on production POs — channel-conflict avoidance.
+
+**[v1.1] Revenue projection (Year 1, recast):**
+- Sample / pilot procurement: ~$150k (was rolled into $340k)
+- Production price-discovery take-rate: ~$25k (conservative ramp)
+- See §8 for the full revised Year-1 mix.
 
 **Revenue Projection (Year 1):**
 - 50 Starter customers × 100 units/month = 60,000 units
@@ -467,18 +546,30 @@ AeroSpec captures **margin on every actuator order** placed through the platform
 ### Assumptions
 - SaaS customers grow at 40% YoY
 - Procurement transaction volume grows at 150% YoY (as product scales)
-- Average transaction margin: $1.00–$1.50
-- Customer acquisition cost (CAC): $2,000 per Starter, $5,000 per Professional
-- Payback period: 8–12 months
+- Average transaction margin: $1.00–$1.50 (samples / pilot only); 2–4%
+  marketplace fee on production POs **[v1.1]**
+- **[v1.1]** Customer acquisition cost (CAC): **$1,500 Indie/Starter,
+  $8,000–$12,000 Professional, $30,000–$50,000 Enterprise** (was
+  understated in v1.0; per validation P10)
+- Payback period: 8–12 months Indie/Starter; 14–18 months Pro;
+  18–24 months Enterprise **[v1.1]**
 
-### Year 1 Projection
+### Year 1 Projection — **[v1.1] recast**
 | Category | Q1 | Q2 | Q3 | Q4 | **Year 1 Total** |
 |----------|----|----|----|----|-----------------|
-| SaaS Subscriptions | $2k | $8k | $18k | $32k | **$60k** |
-| Procurement Revenue | $20k | $45k | $95k | $180k | **$340k** |
-| **Gross Revenue** | $22k | $53k | $113k | $212k | **$400k** |
+| SaaS — Indie ($99) + Starter + Pro | $5k | $15k | $30k | $45k | **$95k** |
+| Pharma SaaS (1–2 design partners) | $0 | $2k | $4k | $4k | **$10k** |
+| Sample / Pilot Procurement (10–15%) | $10k | $25k | $45k | $70k | **$150k** |
+| Production Procurement (2–4% take) | $0 | $3k | $7k | $15k | **$25k** |
+| **Gross Revenue** | $15k | $45k | $86k | $134k | **~$280k** |
 | Operating Costs | $120k | $135k | $150k | $170k | **$575k** |
-| **Net (EBITDA)** | -$98k | -$82k | -$37k | +$42k | **-$175k** |
+| **Net (EBITDA)** | -$105k | -$90k | -$64k | -$36k | **-$295k** |
+
+> **Why down from $400k → $280k (v1.1):** Validation showed Tier-1 CPG
+> production procurement will not flow through AeroSpec in Year 1 (P1, P6).
+> The Indie tier and Pharma SaaS recover ~$45k of that loss. The remaining
+> gap is real and should be closed in Year 2 via indie ramp and Ariba /
+> Coupa integrations, not by re-asserting the v1.0 numbers.
 
 ### Year 2 Projection
 | Category | Target |
@@ -528,8 +619,12 @@ AeroSpec captures **margin on every actuator order** placed through the platform
 
 ### Product Metrics
 - **Configuration generation:** Target 1,000+ per month by end of Year 1
-- **Feedback loop adoption:** >40% of Professional+ customers submitting field data
-- **Model accuracy:** Improve from 70% → 90% by end of Year 2
+- **[v1.1] Feedback loop adoption:** **20%** of Professional+ customers
+  submitting field data (was 40%; gated on on-prem / differential-privacy
+  options per Validation §5, row 7)
+- **[v1.1] Model accuracy:** Improve from 70% → **85% over 18 months**,
+  bootstrapped via synthetic CFD (was "70%→90% in 6 months" — judged
+  unrealistic by validation P10)
 - **System uptime:** 99.5%+ (track in dashboard)
 
 ### Business Metrics
@@ -544,6 +639,53 @@ AeroSpec captures **margin on every actuator order** placed through the platform
 - **Churn rate:** <5% monthly (SaaS), <10% annually
 - **Support ticket resolution:** <48 hours for Professional+
 - **Feature adoption:** >70% of key features used within 60 days
+
+---
+
+## 11. [v1.1] Changelog & Synthetic-User Validation Summary
+
+**Source:** `SYNTHETIC_USER_VALIDATION.md` (10 personas across Segments
+A–D plus pharma + consultant skeptics; 12-question structured script).
+
+**Headline changes:**
+
+1. **ICP narrowed.** Year-1 sweet spot = mid-market CPG ($50M–$500M) +
+   regional CMOs. Tier-1 CPG and indie DTC are addressed via *separate*
+   motions (Enterprise integration; Indie/Maker product-led tier).
+2. **Indie / Maker tier added** at **$99/mo** (§4.1). Sample-marketplace
+   take-rate is the monetization, not the subscription.
+3. **Pharma SaaS vertical split out** at **$4–$8k/mo** (§4.1). 21 CFR
+   Part 11 + e-signature + validated environment. **No** procurement
+   attach.
+4. **Procurement model split into 3 tiers** (§4.2): sample/pilot
+   marketplace (10–15% take, intact), production price-discovery (2–4%
+   take, transparent), enterprise integration (no margin, SaaS-only).
+5. **Time-savings claim corrected.** Screening 2–6 weeks → **2–3 days**
+   (was "2–3 hours"). RFQ 4–6 weeks → **10–14 days** (was "2–3 days").
+6. **BOM cost reduction tightened** to **4–8% on incumbent switches**;
+   10–15% only on greenfield.
+7. **ML metrics reset.** Field-data adoption target 40% → **20%**;
+   accuracy ramp 70%→90% in 6mo → **70%→85% in 18mo** (synthetic-CFD
+   bootstrap).
+8. **CAC corrected.** Pro CAC $5k → **$8–12k**; Enterprise CAC
+   **$30–50k** (previously implicit, now explicit).
+9. **Year-1 GR recast** from $400k to **~$280k** (§8) — production-
+   procurement revenue is deferred to Year 2 because Tier-1 CPG won't
+   route prod POs through AeroSpec without Ariba/Coupa integration.
+10. **Sequencing changes:** SOC 2 Type II + on-prem export *before*
+    Tier-1 outreach; 21 CFR Part 11 *before* pharma launch; sample
+    marketplace *before* production-procurement integrations.
+11. **Consultant channel SKU** (Affiliate / White-label, 20–30% rev-share)
+    introduced to convert independent consultants from objectors into
+    distributors (per validation P10 / Hobbs).
+
+**Open validation gaps to close (real customer-discovery, not synthetic):**
+- 5 mid-market CPG calls to confirm 4–8% BOM-reduction and tier appetite
+- Channel-conflict review with Spencer / Coster on the sample-marketplace
+  take-rate
+- 3 pharma CDMO calls to size the validated-environment SaaS opportunity
+- Tier-1 CPG architecture review on VPC-isolated deployment economics
+- CFD synthetic-data build plan to validate the 18-month accuracy ramp
 
 ---
 
@@ -562,6 +704,7 @@ AeroSpec captures **margin on every actuator order** placed through the platform
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2026-02-21
-**Next Review:** 2026-04-30
+**Document Version:** 1.1
+**Last Updated:** 2026-05-10
+**Next Review:** 2026-07-15
+**v1.1 Sources:** `SYNTHETIC_USER_VALIDATION.md`
