@@ -22,6 +22,31 @@ function getContext(pathname: string): NavContext {
   return "home";
 }
 
+function MarketingLinks() {
+  return (
+    <>
+      <Link
+        href="/graph"
+        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+      >
+        Graph
+      </Link>
+      <Link
+        href="/pricing"
+        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+      >
+        Pricing
+      </Link>
+      <Link
+        href="/trust"
+        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
+      >
+        Trust
+      </Link>
+    </>
+  );
+}
+
 const NAV_LINK =
   "px-3 py-1.5 text-xs font-medium no-underline transition-colors rounded-full";
 const NAV_DEFAULT = `${NAV_LINK} text-[var(--muted)] hover:text-[var(--fg)] hover:bg-[var(--bg-secondary)]`;
@@ -134,6 +159,14 @@ export function NavBar() {
           {context === "aerospec" && <AeroSpecNav pathname={pathname} />}
           {context === "spenser" && <SpenserNav pathname={pathname} />}
 
+          {/* Marketing links inside product contexts */}
+          {context !== "home" && (
+            <>
+              <span className="mx-2 h-4 w-px bg-[var(--border)]" />
+              <MarketingLinks />
+            </>
+          )}
+
           {/* Product switcher — visible inside product contexts */}
           {context !== "home" && (
             <>
@@ -158,22 +191,17 @@ export function NavBar() {
             </>
           )}
 
-          {/* Home: prominent product entry points */}
+          {/* Home: marketing links + primary product entry */}
           {context === "home" && (
             <div className="flex items-center gap-2">
+              <MarketingLinks />
+              <span className="mx-1 h-4 w-px bg-[var(--border)]" />
               <Link
-                href="/catalog"
+                href="/configure"
                 className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-4 py-1.5 text-xs font-medium text-[var(--accent)] no-underline transition-all hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                AeroSpec
-              </Link>
-              <Link
-                href="/spenser"
-                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent-secondary)]/20 bg-[var(--accent-secondary)]/5 px-4 py-1.5 text-xs font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/10 hover:border-[var(--accent-secondary)]/40"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-secondary)]" />
-                Spenser SFP
+                Configure
               </Link>
             </div>
           )}
