@@ -23,25 +23,24 @@ function getContext(pathname: string): NavContext {
 }
 
 function MarketingLinks() {
+  const linkCls =
+    "px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]";
   return (
     <>
-      <Link
-        href="/graph"
-        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
-      >
+      <Link href="/graph" className={linkCls}>
         Graph
       </Link>
-      <Link
-        href="/pricing"
-        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
-      >
+      <Link href="/pricing" className={linkCls}>
         Pricing
       </Link>
-      <Link
-        href="/trust"
-        className="px-3 py-1.5 text-xs font-medium no-underline text-[var(--muted)] transition-colors hover:text-[var(--fg)]"
-      >
+      <Link href="/trust" className={linkCls}>
         Trust
+      </Link>
+      <Link href="/about" className={linkCls}>
+        About
+      </Link>
+      <Link href="/contact" className={linkCls}>
+        Contact
       </Link>
     </>
   );

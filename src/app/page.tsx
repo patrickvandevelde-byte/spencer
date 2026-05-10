@@ -100,6 +100,54 @@ export default function Home() {
         ))}
       </section>
 
+      {/* Capability spotlight — surfaces underused features so they aren't buried in /configure */}
+      <section>
+        <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+          What the configurator already does
+        </p>
+        <h2 className="mb-5 text-2xl font-semibold tracking-tight text-[var(--fg-bright)]">
+          Underused features other tools don&rsquo;t surface
+        </h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              label: "Ergonomics & ADA",
+              body: "Per-actuator actuation force in newtons, with an ADA 22.2 N compliance pill. Persona P4: 'I have nowhere else to get that.'",
+              href: "/configure",
+              cta: "See it on a result",
+            },
+            {
+              label: "Non-Newtonian rheology",
+              body: "Shear-thinning serums and gels fool simple atomization models. We compute apparent viscosity at orifice (power-law + Carreau).",
+              href: "/configure?intent=non-newtonian",
+              cta: "Demo with a serum",
+            },
+            {
+              label: "AVL filter",
+              body: "Pre-screen rankings against your approved-supplier list. Persona P1's single most-wanted feature; works on every tier.",
+              href: "/settings/avl",
+              cta: "Set up your AVL",
+            },
+          ].map((c) => (
+            <Link
+              key={c.label}
+              href={c.href}
+              className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 no-underline hover:border-[var(--border-hover)]"
+            >
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+                {c.label}
+              </p>
+              <p className="mb-3 text-xs leading-relaxed text-[var(--fg-secondary)]">
+                {c.body}
+              </p>
+              <p className="text-[11px] font-medium text-[var(--accent)]">
+                {c.cta} &rarr;
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* AeroSpec SFP — gas-free dispensing surface, same fitment graph */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

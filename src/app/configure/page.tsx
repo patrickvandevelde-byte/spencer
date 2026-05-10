@@ -6,8 +6,9 @@ import { FLUIDS, ACTUATORS as ALL_ACTUATORS, SOLVENT_CLASS_LABELS } from "@/lib/
 import type { Actuator, Fluid, PredictionResult, SolventClass, RheologyType } from "@/lib/data";
 import Link from "next/link";
 import { ActuatorIllustration, SprayPatternIllustration, ACTUATOR_COLORS } from "@/components/ActuatorIllustrations";
-import { getSavedConfigs, saveConfig, deleteConfig, trackEvent } from "@/lib/store";
-import type { SavedConfiguration } from "@/lib/store";
+import { getSavedConfigs, saveConfig, deleteConfig, trackEvent, getAvl, isSkuAllowed } from "@/lib/store";
+import type { SavedConfiguration, AvlState } from "@/lib/store";
+import { AvlFilter } from "@/components/AvlFilter";
 
 interface ResultRow {
   actuator: Actuator;
@@ -91,8 +92,12 @@ function ConfigureContent() {
   const [showSaved, setShowSaved] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
+  // Approved Vendor List — Persona P1's #1 ask.
+  const [avl, setAvlState] = useState<AvlState | null>(null);
+
   useEffect(() => {
     setSavedConfigs(getSavedConfigs());
+    setAvlState(getAvl());
   }, []);
 
   function handleSave() {
@@ -609,11 +614,29 @@ function ConfigureContent() {
       )}
 
       {/* ===== RESULTS ===== */}
-      {results && (
+      {results && (() => {
+        const allManufacturers = Array.from(
+          new Set(ALL_ACTUATORS.map((a) => a.manufacturer))
+        ).sort();
+        const visibleResults = avl
+          ? results.filter((r) =>
+              isSkuAllowed(avl, r.actuator.sku, r.actuator.manufacturer)
+            )
+          : results;
+        return (
         <div className="animate-in">
+          <div className="mb-4">
+            <AvlFilter
+              manufacturers={allManufacturers}
+              totalSkus={results.length}
+              visibleSkus={visibleResults.length}
+              onChange={(next) => setAvlState(next)}
+            />
+          </div>
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[var(--fg-bright)]">
-              Predicted Configurations ({results.length} actuators ranked)
+              Predicted Configurations ({visibleResults.length} of{" "}
+              {results.length} actuators ranked)
             </h2>
             {compareIds.length >= 2 && compareUrl && (
               <Link
@@ -634,7 +657,18 @@ function ConfigureContent() {
           </div>
 
           <div className="space-y-4">
-            {results.map((r, i) => {
+            {visibleResults.length === 0 && (
+              <div className="rounded-2xl border border-[var(--warning)]/30 bg-[var(--warning)]/[0.05] p-6 text-center">
+                <p className="text-sm text-[var(--fg-bright)]">
+                  No actuators match your AVL.
+                </p>
+                <p className="mt-1 text-xs text-[var(--muted)]">
+                  Loosen the filter above or switch back to &ldquo;Show all&rdquo;
+                  to see the full ranked list.
+                </p>
+              </div>
+            )}
+            {visibleResults.map((r, i) => {
               const color = ACTUATOR_COLORS[r.actuator.type] || "#06b6d4";
               const hasWarnings = r.prediction.safetyWarnings.length > 0;
               const dist = r.prediction.dropletDistribution;
@@ -746,7 +780,8 @@ function ConfigureContent() {
             })}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* Floating compare bar */}
       {compareIds.length >= 1 && results && (

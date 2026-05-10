@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { BetaBanner } from "@/components/BetaBanner";
-
-// TODO(prod): replace placeholder with the team calendly handle
-const CALENDLY_URL = "https://calendly.com/{{calendly_handle}}/30min";
+import { CALENDLY_URL } from "@/components/CalendlyButton";
 
 const TIERS = [
   {
@@ -107,6 +105,28 @@ const TIERS = [
       "GMP-friendly export · no procurement attach",
     ],
     accent: "var(--accent-secondary)",
+  },
+  {
+    id: "consultant",
+    name: "Consultant / Affiliate",
+    price: "$249",
+    cadence: "/ month + rev-share",
+    tagline: "Independent consultants, ex-supplier R&D, advisory firms",
+    cta: { label: "Apply to partner program", href: "/contact?topic=partners" },
+    graphAccess: "+ White-label branding",
+    graphAccessSub: "Re-skin the configurator under your firm's domain",
+    procurement: "20–30% rev-share on client-converted subscriptions",
+    highlights: [
+      "Everything in Professional, on your domain",
+      "White-label theming: logo, colors, custom subdomain",
+      "Client workspaces (multi-client, billed-through-you)",
+      "20% rev-share on Indie/Starter; 30% on Pro/Pharma; 10% on Enterprise",
+      "Co-branded compliance + screening reports",
+      "Office hours w/ Spencer team (monthly)",
+      "Listed on AeroSpec's certified-consultant directory",
+    ],
+    accent: "var(--accent-secondary)",
+    note: "Designed for consultants whose clients need self-serve between engagements",
   },
   {
     id: "enterprise",

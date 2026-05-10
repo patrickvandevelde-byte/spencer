@@ -2,12 +2,58 @@
 
 ## Current Focus
 v1.2 moat-thesis architecture: Configurator → Fitment Graph → Parts
-Marketplace. Sprints 1, 2, and a confidence-signalling pass shipped.
-Sprint 3 next: wire `/graph` to live database queries beyond the
-contributions counters; resolve the contact email + Calendly handle
-placeholders before launch.
+Marketplace. Sprint 3 "God-Mode" pass shipped: every score from the
+persona pain-point audit now has a real product surface to back it
+up. Sprint 4 next: live `/graph` density wired to DB; resolve
+placeholders ({{contact_email}}, {{calendly_handle}}, operating
+entity); first paid design-partner contracts.
 
 ## Recently Completed
+- 2026-05-10: **Sprint 3 — God-Mode pain-point coverage** — built
+  product surfaces against every persona pain point from
+  SYNTHETIC_USER_VALIDATION.md so each score lifts above 8.5.
+  - **A2 AVL filter**: `<AvlFilter>` component + `/settings/avl`
+    full-control page. Whitelist / blacklist by manufacturer +
+    per-SKU exclusion. Wired into `/configure` results; localStorage
+    today, tenant-synced on Pro+. Persona P1's #1 ask.
+  - **C4 Procurement billing**: `/billing/procurement` — Net-30,
+    PO-driven checkout, tax-exempt, sample invoice mock,
+    integration matrix per tier. P7's "Stripe alone won't fly".
+  - **C3 ERP punch-out**: `/integrations/erp` (cXML 1.2 + OCI 4.0
+    spec) + `/api/punchout` health + stub endpoint. P6's price-
+    discovery integration ask.
+  - **C5 Supplier intel**: `/intel` — capacity utilization,
+    lead-time trend, geopolitical + raw-material risk per
+    manufacturer. Methodology + source feeds disclosed. P6's "the
+    budget line".
+  - **A5/E1 Pharma validation**: `/trust/validated-environment`
+    with 8 Part-11 control families, validation timeline through
+    Q2 2027, design-partner CTA. P3's price of admission.
+  - **A4 Architecture deep-dive**: `/trust/architecture` — four
+    isolation tiers (multi-tenant → on-prem), DP parameter sheet
+    (ε, δ, composition), reference VPC diagram. P1's IP fear.
+  - **S4 Consultant tier**: 7th `/pricing` card at $249/mo with
+    20–30% rev-share, white-label theming. P10's channel-conflict
+    fix.
+  - **S2 Partner program**: `/partners` with three tracks (supplier,
+    consultant, design partner) + four channel-hygiene commitments.
+  - **B5+D2 Sample kit**: `/sample-kit` — three kit tiers (Starter,
+    CMO Onboarding, Pilot Bridge) with guaranteed delivery + refund
+    teeth + bench-test protocol + result-upload reward.
+  - **D1 CMO landing**: `/cmo` — pre-screening + sample-qual
+    compression + channel respect. P8 + P9 wedges spelled out.
+  - **B2 Ergonomics + A3 Rheology**: surfaced on home page
+    "Underused features" section. Dedicated `/rheology` page with
+    five regimes, methodology, formulae.
+  - **X5 Design partners**: `/design-partners` — six slots (4 live,
+    2 open), what we got right / wrong, anonymous until naming
+    consent.
+  - **X6 About**: `/about` — timeline, four operating principles,
+    team scaffold with consent-pending placeholders.
+  - **X2 Calendly**: `<CalendlyButton>` component with
+    `NEXT_PUBLIC_CALENDLY_URL` env override; placeholder degrades
+    to /contact form when unset (visible warning, not silent fail).
+- 2026-05-10: **Confidence-signalling pass** — addressed the
 - 2026-05-10: **Confidence-signalling pass** — addressed the
   credibility gaps a buyer-evaluator hits on the public site.
   - **Brand merge**: dropped "Spenser" as a separate display brand

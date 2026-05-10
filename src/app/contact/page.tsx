@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { CALENDLY_URL } from "@/components/CalendlyButton";
 
 type Topic =
   | "sales"
@@ -26,10 +27,6 @@ const TOPIC_LABELS: Record<Topic, string> = {
 };
 
 const VALID_TOPICS = Object.keys(TOPIC_LABELS) as Topic[];
-
-const CALENDLY_URL =
-  // TODO(prod): replace placeholder with the team calendly handle
-  "https://calendly.com/{{calendly_handle}}/30min";
 
 function ContactForm() {
   const params = useSearchParams();
