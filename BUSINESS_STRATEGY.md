@@ -1,10 +1,86 @@
 # AeroSpec Business Strategy & Product Roadmap
 
-> **v1.1 (2026-05-10):** Revised after the synthetic-user validation pass
-> in `SYNTHETIC_USER_VALIDATION.md`. Several quantitative claims (screening
-> time-savings, RFQ cycle, BOM reduction, ML adoption, accuracy ramp, CAC,
-> Year-1 revenue mix) were tightened. Inline changes are tagged
-> **[v1.1]**; the full changelog is in §11.
+> **v1.2 (2026-05-10):** Strategic architecture commits to a three-pillar
+> model — **Configurator → Fitment Graph → Parts Marketplace** — closely
+> patterned on TVH (parts distributor whose moat is the fitment graph,
+> not the storefront). Pricing flips: configurations become unmetered
+> on every tier; revenue ladders by graph access depth + procurement
+> margin. ML accuracy claim recast as graph-density KPI. Full v1.2
+> changelog in §12.
+>
+> **v1.1 (2026-05-10):** Tightened time-savings, BOM, ML, and CAC claims
+> based on synthetic-user validation. ICP narrowed to mid-market CPG +
+> regional CMOs; Indie tier and Pharma SaaS vertical added; procurement
+> model split into three transparent take-rates. v1.1 changelog in §11.
+
+## 0. Moat Thesis & Strategic Architecture **[v1.2]**
+
+**The asset is the fitment graph, not the configurator.**
+
+A configurator UI can be cloned in two quarters by Coster, Spencer, or any
+CAD vendor. A *cross-reference graph* — the curated, growing dataset of
+**fluid rheology → actuator geometry → spray outcome → material
+compatibility → regulatory flag** — cannot be cloned without a decade of
+data acquisition or a customer base contributing back. TVH built a
+$2B/yr parts-distribution business on exactly this primitive: their moat
+is the fitment data, the catalog and the storefront are downstream.
+
+### The three pillars
+
+1. **Configurator (the funnel).** Best-in-class spray-physics calculator.
+   **Free / unmetered for everyone.** Each session is a deposit into the
+   graph (the fluid the user tried, the actuator they picked, the outcome
+   they reported back). Optimized for **contribution rate**, not for
+   per-seat revenue.
+
+2. **Fitment Graph (the moat).** Proprietary, growing cross-reference
+   asset. Density and quality compound with every configurator session
+   and every customer-reported bench / field outcome. Surfaced publicly
+   at `/graph` so buyers, partners, and investors can see the asset
+   getting denser week-over-week. **Graph density is the headline
+   company KPI** — replacing "configurations / month" from v1.0.
+
+3. **Parts Marketplace (the monetization).** The graph is what makes the
+   parts business defensible: customers come for the answer ("which
+   actuator fits my fluid?") and stay for the one-click sample order.
+   Revenue stack:
+   - Sample / pilot orders: **10–15% take-rate** baked into list price
+     (intact from v1.1)
+   - Production POs: **2–4% transparent marketplace fee** shown line-item
+   - Graph access tiers: SaaS subscription priced by *what slice of the
+     graph you can read* (community / validated / supplier-qualified /
+     private)
+   - Enterprise: SaaS + implementation fee, no procurement margin
+     (Ariba / Coupa / SAP punch-out, channel-conflict-free)
+
+### What this changes vs. v1.1
+
+| Dimension | v1.1 | v1.2 |
+|---|---|---|
+| Headline KPI | Configurations / month | **Graph density** (validated fluid-actuator-outcome triples) |
+| Configurator pricing | Metered (10 / 50 / unlimited) | **Free / unmetered everywhere** |
+| Tier ladder | Configs + features | **Graph access depth + procurement perks** |
+| ML claim | "70% → 85% accuracy in 18mo" | **"Graph density → predictive confidence"** (accuracy is a downstream consequence of density, not a directly-pursued metric) |
+| Catalog target | 27 actuators × 25 fluids (sufficient for demo) | **27 → 200 in 6mo → 2,000+ in 18mo** via supplier partnerships and crowd-curated long-tail |
+| Defensibility narrative | "We have a configurator + procurement attach" | **"We are the fitment graph for spray actuators"** |
+
+### Year-3+ optionality (not committed)
+
+The graph naturally enables a second moat — **outcome-as-a-service** in
+the Rolls-Royce TotalCare mold: once predictive density is high enough,
+package "guaranteed actuation cycles" as a per-million-spray SLA,
+underwriting actuator failure in pharma MDI / luxury fragrance / industrial
+dispensing where failure cost is highest. **Not built into Year-1 plan;
+held as future option.**
+
+### Spenser SFP under v1.2
+
+Spenser is reframed as a **second fitment graph** on shared infrastructure
+(gas-free dispensing parts, same monetization model, same graph schema)
+rather than a co-equal twin product. Homepage no longer gives equal
+billing; Spenser is reached via a sub-nav under "Other graphs."
+
+---
 
 ## Executive Summary
 
@@ -270,63 +346,79 @@ Formulation Chemist / Packaging Engineer / Procurement Lead
 
 ## 4. Pricing & Monetization Strategy
 
-### 4.1 Tier-Based SaaS Pricing Model
+### 4.1 Tier-Based SaaS Pricing Model **[v1.2]**
 
-#### **[v1.1] Indie / Maker Plan: $99/month**
+> **v1.2 pricing flip:** Configurator is **free and unmetered on every
+> tier**. Tiers ladder by *graph access depth* + *procurement perks*.
+> Configurations are inputs to the moat, not products sold to users.
+
+#### **Free Configurator: $0**
+- **Target:** Anyone — students, researchers, curious engineers, indie
+  founders evaluating fit
+- **Includes:**
+  - Unlimited configurations (forever)
+  - Read access to the **community-validated subgraph** (only triples
+    where ≥3 customers have reported consistent outcomes)
+  - Sample marketplace access (10–15% take-rate baked into list price)
+  - 1 user seat · community support
+- **Why this exists (v1.2):** Configurations are the data-acquisition
+  instrument. A paywall on configs is a paywall on the moat. Free is
+  correct.
+
+#### **Indie / Maker Plan: $99/month**
 - **Target:** Indie DTC brands (haircare, clean beauty, fragrance), 5–50
   FTE, ordering 5–25k units per launch
 - **Includes:**
-  - Up to 10 configurations / month (metered credits, top-ups available)
-  - Curated catalog (top 12 actuator SKUs)
-  - 1 user seat
-  - Community support
-  - Sample-procurement marketplace access (10–15% take-rate baked into
-    sample price)
-- **Why it exists (v1.1):** Validation interview P5 (Okafor) flagged
-  ~2,000+ indie shops priced out of $500/mo today and currently buying
-  blind from Alibaba. Product-led growth wedge that funnels into Starter.
+  - Everything in Free
+  - Saved configurations + project workspace (cloud)
+  - Read access to the **full validated graph** (single-customer reports
+    included with confidence flagging)
+  - Indie procurement perks: bundled sample kits, MOQ-flexible pilot
+    runs, 10% off catalog
+  - 1 user seat · email support (48h)
 
 #### **Starter Plan: $500/month**
-- **Target:** Individual R&D teams, SMB packaging companies
+- **Target:** Single-product R&D teams, SMB packaging shops
 - **Includes:**
-  - Up to 50 configurations/month
-  - Access to 25 actuator catalog
-  - Basic fluid property input (manual entry only)
-  - 1 user seat
-  - Email support (24-hour response)
-  - Monthly performance report
-- **Procurement Discount:** 10% off actuator orders placed through platform
+  - Everything in Indie
+  - **Supplier-qualified filter** (only show actuators from your
+    qualified-vendor list)
+  - Manual MSDS entry + Ohnesorge classification + safety warnings
+  - Audit trail per configuration
+  - 1 user seat · email support (24h)
+  - **15% off** actuator orders placed through platform
 
 #### **Professional Plan: $2,000/month**
-- **Target:** Mid-market packaging companies, larger R&D teams
+- **Target:** Mid-market CPG + regional CMOs (the v1.1 sweet spot)
 - **Includes:**
-  - Unlimited configurations
-  - Full actuator catalog (25+ SKUs)
-  - MSDS parsing (automated hazard extraction)
-  - Regulatory compliance flags (EPA, CPSIA, CE)
-  - Up to 5 user seats
-  - Priority email + Slack support (4-hour response)
-  - Weekly performance & insights reports
-  - API access (basic; 10k calls/month)
-- **Procurement Discount:** 15% off actuator orders; preferred pricing from Spencer
+  - Everything in Starter
+  - **Graph API access** (10k calls / month — read fitment data
+    programmatically)
+  - MSDS OCR + automated hazard extraction
+  - Regulatory compliance flags (EPA / CPSIA / CE / RoHS)
+  - Up to 5 user seats · Slack + email priority (4h)
+  - PDF / CSV / BOM export · scheduled reports
+  - **Preferred Spencer pricing** + 15% catalog discount
 
-#### **[v1.1] Pharma SaaS Plan: $4,000–$8,000/month**
+#### **Pharma SaaS Plan: $4,000–$8,000/month** *(v1.1, refined v1.2)*
 - **Target:** Inhalation pharma / nasal spray CDMOs (MDI, DPI, nasal); 200–
   2,000 FTE
 - **Includes:**
   - Everything in Professional, **plus**:
   - 21 CFR Part 11 compliant audit trail + e-signature
   - Validated environment (IQ/OQ documentation provided)
-  - GMP-friendly export (no procurement attach — pharma will not buy
-    actuators through a third-party platform)
+  - **Private graph contributions** — your bench results stay in your
+    tenant; aggregated only with explicit opt-in via differential privacy
   - Candidate-ranking-only mode for early-phase formulation screening
-- **Why it exists (v1.1):** Validation interview P3 (Tanaka) — pharma
-  CDMOs explicitly do not want procurement features but pay materially
-  more for validated SaaS.
+  - GMP-friendly export · no procurement attach (by design)
+- **Why it exists:** Pharma CDMOs explicitly do not want procurement
+  features but pay materially more for validated SaaS + graph access
+  without IP exposure (validation P3, Tanaka).
 
-#### **Enterprise Plan: Custom Pricing (typically $8,000–$25,000/month)**
-> **[v1.1]** Floor raised from $5k to $8k; ceiling honest at $25k
-> (was $20k). Implementation fee unchanged.
+#### **Enterprise Plan: Custom Pricing (typically $8,000–$25,000/month)** *(v1.1, refined v1.2)*
+> v1.2 framing: Enterprise is **graph access at maximum depth + on-prem
+> tenancy + ERP punch-out**. No transactional procurement margin (channel-
+> conflict-free). Implementation fee $10–50k one-time.
 - **Target:** Large OEMs, contract manufacturers, supply chain leaders
 - **Includes:**
   - Everything in Professional
@@ -617,15 +709,24 @@ Formulation Chemist / Packaging Engineer / Procurement Lead
 
 ## 10. Success Metrics & KPIs
 
-### Product Metrics
-- **Configuration generation:** Target 1,000+ per month by end of Year 1
-- **[v1.1] Feedback loop adoption:** **20%** of Professional+ customers
-  submitting field data (was 40%; gated on on-prem / differential-privacy
-  options per Validation §5, row 7)
-- **[v1.1] Model accuracy:** Improve from 70% → **85% over 18 months**,
-  bootstrapped via synthetic CFD (was "70%→90% in 6 months" — judged
-  unrealistic by validation P10)
-- **System uptime:** 99.5%+ (track in dashboard)
+### Product Metrics **[v1.2 — graph-density-led]**
+- **Graph density (headline KPI):** target **5,000 validated triples**
+  by end of Year 1 (fluid-class × actuator × confirmed-outcome).
+  Current baseline: ~675 unvalidated potential pairs (27 actuators × 25
+  fluids); ~200 validated via internal seed data.
+- **Catalog depth:** **27 → 200 SKUs by month 6, 2,000+ by month 18**
+  via supplier partnerships (Spencer, Coster, Lindal, Aptar) +
+  crowd-curated long-tail.
+- **Contribution rate:** **35% of configurator sessions** end with a
+  feedback / outcome capture by end of Year 1. (Currently 0% — feedback
+  loop ships in Sprint 2.)
+- **Feedback loop adoption:** 20% of Professional+ customers submitting
+  field data (per v1.1 — gated on differential-privacy / on-prem).
+- **Predictive confidence:** downstream consequence of graph density.
+  Model accuracy 70% → 85% over 18 months remains the engineering
+  milestone; the *measured* customer-facing metric is **% of
+  recommendations with ≥3-source consensus in the graph**.
+- **System uptime:** 99.5%+
 
 ### Business Metrics
 - **Customer acquisition:** 50+ SaaS customers (all tiers) by end of Year 1
@@ -686,6 +787,47 @@ A–D plus pharma + consultant skeptics; 12-question structured script).
 - 3 pharma CDMO calls to size the validated-environment SaaS opportunity
 - Tier-1 CPG architecture review on VPC-isolated deployment economics
 - CFD synthetic-data build plan to validate the 18-month accuracy ramp
+
+---
+
+## 12. [v1.2] Changelog — Three-Pillar Architecture
+
+**Trigger:** Strategic critique that the v1.1 SaaS-plus-procurement framing
+was a revenue mix, not a moat. TVH (parts distributor whose moat is the
+fitment graph) and Rolls-Royce (outcome-as-a-service) reviewed as
+reference moats; the **TVH pattern was selected** as the Year-1 wedge,
+with Rolls-Royce-style outcome SLAs held as a Year-3+ option.
+
+**Headline changes:**
+
+1. **§0 Moat Thesis added.** Three-pillar architecture commits the
+   product to **Configurator → Fitment Graph → Parts Marketplace**.
+2. **Pricing flipped (§4.1).** Configurations are unmetered on every
+   tier including a new **$0 Free Configurator**. Tiers ladder by
+   *graph access depth* (community → validated → supplier-qualified →
+   private) plus *procurement perks*, not by config count.
+3. **Headline KPI changed (§10).** From "configurations / month" to
+   **graph density** (validated fluid-actuator-outcome triples). Target
+   5,000 by end of Year 1.
+4. **Catalog depth target added.** 27 SKUs → 200 in 6mo → 2,000+ in
+   18mo via supplier partnerships and crowd-curated long-tail.
+5. **Contribution rate KPI added.** 35% of configurator sessions
+   capturing feedback / outcomes by end of Year 1 (currently 0%;
+   feedback loop is Sprint 2 priority).
+6. **Predictive confidence reframed** as a downstream consequence of
+   graph density, not a directly-pursued metric.
+7. **Spenser SFP reframed** as a second fitment graph on shared
+   infrastructure, not a co-equal twin product.
+8. **Year-3+ optionality named.** Outcome-as-a-service SLA tier (per-
+   million-actuations pricing for pharma / luxury / industrial) held
+   as a future option, not in the Year-1 plan.
+
+**Open questions deferred to v1.3:**
+- Supplier-partnership economics for catalog expansion (sample-marketplace
+  margin split with Spencer / Coster / Lindal / Aptar)
+- Graph-access tiering for partners and consultants (white-label / API
+  reseller SKU)
+- Spenser's branding consolidation (sub-brand vs. integrated graph view)
 
 ---
 

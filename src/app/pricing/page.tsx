@@ -2,23 +2,40 @@ import Link from "next/link";
 
 const TIERS = [
   {
+    id: "free",
+    name: "Free Configurator",
+    price: "$0",
+    cadence: "forever",
+    tagline: "Anyone — students, researchers, indie founders evaluating fit",
+    cta: { label: "Start configuring", href: "/configure" },
+    graphAccess: "Community-validated subgraph",
+    graphAccessSub: "Triples confirmed by ≥3 customers",
+    procurement: "Sample marketplace · 10–15% take baked into list",
+    highlights: [
+      "Unlimited configurations · forever",
+      "Read access to the community-validated subgraph",
+      "27+ actuator catalog · 25+ fluid library",
+      "Sample marketplace access",
+      "1 user seat · community support",
+    ],
+    accent: "var(--accent)",
+  },
+  {
     id: "indie",
     name: "Indie / Maker",
     price: "$99",
     cadence: "/ month",
-    tagline: "DTC brands buying their first 5–25k units",
-    cta: { label: "Start Indie", href: "/catalog" },
+    tagline: "Indie DTC brands, 5–50 FTE, 5–25k unit launches",
+    cta: { label: "Start Indie", href: "/configure" },
+    graphAccess: "Full validated graph",
+    graphAccessSub: "Single-customer reports w/ confidence flags",
+    procurement: "Bundled sample kits · 10% off catalog",
     highlights: [
-      "10 configurations / month (metered credits)",
-      "Curated catalog: top 12 actuator SKUs",
-      "Sample marketplace access (10–15% take-rate baked into sample price)",
-      "1 user seat",
-      "Community + email support",
-    ],
-    notIncluded: [
-      "MSDS auto-parsing",
-      "Regulatory flags",
-      "API access",
+      "Everything in Free",
+      "Saved configurations + project workspace",
+      "Read access to the full validated graph",
+      "Indie procurement perks: bundled sample kits, MOQ-flexible pilots",
+      "1 user seat · email support (48h)",
     ],
     accent: "var(--accent)",
   },
@@ -27,20 +44,18 @@ const TIERS = [
     name: "Starter",
     price: "$500",
     cadence: "/ month",
-    tagline: "Single-product R&D teams + small packaging shops",
-    cta: { label: "Start Starter", href: "/catalog" },
+    tagline: "Single-product R&D teams, SMB packaging shops",
+    cta: { label: "Start Starter", href: "/configure" },
+    graphAccess: "+ Supplier-qualified filter",
+    graphAccessSub: "Show only your AVL suppliers",
+    procurement: "15% off catalog orders",
     highlights: [
-      "50 configurations / month",
-      "Full 27-actuator catalog + 25-fluid library",
-      "Manual MSDS entry + Ohnesorge classification",
-      "Saved configurations (cloud)",
+      "Everything in Indie",
+      "Supplier-qualified filter (your AVL only)",
+      "Manual MSDS entry · Ohnesorge classification · safety warnings",
+      "Audit trail per configuration",
       "1 user seat · email support (24h)",
-      "10% off actuator orders placed through platform",
-    ],
-    notIncluded: [
-      "MSDS OCR",
-      "Multi-seat",
-      "API access",
+      "15% off actuator orders",
     ],
     accent: "var(--accent)",
   },
@@ -52,19 +67,17 @@ const TIERS = [
     tagline: "Mid-market CPG + regional CMOs (the v1.1 sweet spot)",
     badge: "Most Popular",
     cta: { label: "Talk to Sales", href: "mailto:sales@aerospec.example" },
+    graphAccess: "+ Graph API (10k calls/mo)",
+    graphAccessSub: "Read fitment data programmatically",
+    procurement: "15% + preferred Spencer pricing",
     highlights: [
-      "Unlimited configurations",
-      "Automated MSDS parsing (OCR + hazard extraction)",
-      "EPA / CPSIA / CE / RoHS compliance flags",
-      "Up to 5 user seats · Slack + email priority support",
-      "API access (10k calls / month)",
-      "15% off actuator orders + preferred Spencer pricing",
-      "PDF / CSV / BOM export, audit trail",
-    ],
-    notIncluded: [
-      "21 CFR Part 11",
-      "On-prem / VPC-isolated tenancy",
-      "Custom ML training",
+      "Everything in Starter",
+      "Graph API access (10k calls / month)",
+      "MSDS OCR + automated hazard extraction",
+      "Regulatory compliance flags (EPA / CPSIA / CE / RoHS)",
+      "Up to 5 user seats · Slack + email priority (4h)",
+      "PDF / CSV / BOM export · scheduled reports",
+      "Preferred Spencer pricing + 15% catalog discount",
     ],
     accent: "var(--accent)",
     featured: true,
@@ -76,17 +89,16 @@ const TIERS = [
     cadence: "/ month",
     tagline: "Inhalation / nasal CDMOs (MDI, DPI, nasal sprays)",
     cta: { label: "Request Validation Pack", href: "mailto:pharma@aerospec.example" },
+    graphAccess: "Private graph contributions",
+    graphAccessSub: "Differential-privacy aggregation, opt-in only",
+    procurement: "No procurement attach (by design)",
     highlights: [
       "Everything in Professional",
       "21 CFR Part 11 audit trail + e-signature",
       "Validated environment (IQ / OQ documentation)",
-      "GMP-friendly export · candidate-ranking-only mode",
-      "Approved Vendor List integration",
-      "No procurement attach (by design)",
-    ],
-    notIncluded: [
-      "Production procurement",
-      "Sample marketplace (regulatory exclusion)",
+      "Private graph contributions (DP-aggregated, opt-in)",
+      "Candidate-ranking-only mode for early-phase screening",
+      "GMP-friendly export · no procurement attach",
     ],
     accent: "var(--accent-secondary)",
   },
@@ -97,6 +109,9 @@ const TIERS = [
     cadence: "/ month",
     tagline: "Tier-1 CPG + global CMOs · Year-2 motion",
     cta: { label: "Talk to Sales", href: "mailto:sales@aerospec.example" },
+    graphAccess: "Maximum graph depth + on-prem",
+    graphAccessSub: "VPC-isolated tenancy · custom training",
+    procurement: "ERP punch-out · no transactional margin",
     highlights: [
       "Everything in Professional",
       "SOC 2 Type II · on-prem / VPC-isolated tenancy",
@@ -107,7 +122,6 @@ const TIERS = [
       "Volume procurement discounts (20%+ at qualified volume)",
       "99.9% uptime SLA",
     ],
-    notIncluded: [],
     accent: "var(--accent-secondary)",
     note: "Implementation fee $10–50k (one-time)",
   },
@@ -118,13 +132,13 @@ const PROCUREMENT_TIERS = [
     label: "Sample & Pilot Marketplace",
     take: "10–15%",
     pricing: "Margin baked into list price · transparent per-unit",
-    body: "Where the historical $0.50–$2.00 / unit margin actually survives. Designed for qualification orders, indie pilot runs, and bench validation — 5–500 unit quantities.",
+    body: "Where the original $0.50–$2.00 / unit margin actually survives. Designed for qualification orders, indie pilot runs, and bench validation — 5–500 unit quantities.",
   },
   {
     label: "Production Price-Discovery",
     take: "2–4%",
     pricing: "Pass-through pricing · marketplace fee capped per PO",
-    body: "Transparent supplier quotes. Suppliers (or buyer + supplier 50/50) pay the fee. No hidden margin on production volume — sourcing teams get full price visibility.",
+    body: "Transparent supplier quotes. Marketplace fee shown line-item on the PO — never hidden in the unit price. Sourcing teams keep full visibility for procurement review.",
   },
   {
     label: "Enterprise ERP Integration",
@@ -142,18 +156,19 @@ export default function Pricing() {
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
           <span className="text-xs font-medium text-[var(--fg-secondary)]">
-            v1.1 pricing · revised May 2026
+            v1.2 pricing · configurations are free, the graph is the product
           </span>
         </div>
         <h1 className="mb-5 text-5xl font-semibold leading-tight tracking-tight text-[var(--fg-bright)]">
-          Pay for outcomes,
+          Configurations are free.
           <br />
-          <span className="gradient-text">not for screen-time.</span>
+          <span className="gradient-text">Graph access is the product.</span>
         </h1>
         <p className="mx-auto max-w-lg text-lg leading-relaxed text-[var(--fg-secondary)]">
-          Five tiers grounded in real customer-discovery: indie DTC,
-          mid-market CPG, regional CMOs, regulated pharma, and Tier-1
-          enterprise. No hidden procurement margin on production volume.
+          Every configuration is a deposit into the fitment graph — so we
+          don&rsquo;t paywall them. Tiers ladder by <em>how much of the graph
+          you can read</em> and <em>what procurement perks you get</em>, not
+          by how many configs you ran this month.
         </p>
       </section>
 
@@ -191,9 +206,32 @@ export default function Pricing() {
                 {tier.cadence}
               </span>
             </div>
-            <p className="mb-6 text-sm text-[var(--fg-secondary)]">
+            <p className="mb-5 text-sm text-[var(--fg-secondary)]">
               {tier.tagline}
             </p>
+
+            {/* Graph access + procurement summary — the new ladder dimensions */}
+            <div className="mb-5 space-y-3 rounded-lg bg-[var(--bg-secondary)] p-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+                  Graph access
+                </p>
+                <p className="text-xs font-medium text-[var(--fg-bright)]">
+                  {tier.graphAccess}
+                </p>
+                <p className="text-[11px] text-[var(--muted)]">
+                  {tier.graphAccessSub}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+                  Procurement
+                </p>
+                <p className="text-[11px] text-[var(--fg-secondary)]">
+                  {tier.procurement}
+                </p>
+              </div>
+            </div>
 
             <ul className="mb-6 space-y-2">
               {tier.highlights.map((h) => (
@@ -209,17 +247,6 @@ export default function Pricing() {
                 </li>
               ))}
             </ul>
-
-            {tier.notIncluded.length > 0 && (
-              <div className="mb-6 rounded-lg bg-[var(--bg-secondary)] px-3 py-2">
-                <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-                  Not included
-                </p>
-                <p className="text-[11px] text-[var(--muted)]">
-                  {tier.notIncluded.join(" · ")}
-                </p>
-              </div>
-            )}
 
             {tier.note && (
               <p className="mb-4 text-[11px] italic text-[var(--muted)]">
@@ -290,24 +317,28 @@ export default function Pricing() {
         <div className="space-y-4">
           {[
             {
+              q: "Why is the configurator free?",
+              a: "Because configurations are inputs to our moat (the fitment graph), not outputs we sell. Every session you run — including the free ones — makes the graph denser and the next user's recommendation better. Paywalling configs would paywall the moat.",
+            },
+            {
               q: "Will my formulation data train your shared models?",
-              a: "Only if you opt in. Professional and Enterprise customers can route field data through differential-privacy aggregation; Enterprise can deploy on-prem / VPC-isolated tenancy where data never leaves their environment. Default is no.",
+              a: "Only if you opt in. Professional and Enterprise customers can route field data through differential-privacy aggregation; Pharma and Enterprise tenants can deploy on-prem / VPC-isolated where data never leaves their environment. Default is no.",
+            },
+            {
+              q: "What does \"graph access depth\" actually mean per tier?",
+              a: "Free sees triples confirmed by ≥3 customers (community-validated). Indie sees the full validated graph including single-source reports with confidence flags. Starter adds a supplier-qualified filter (your AVL only). Pro adds a programmatic API. Pharma adds private contributions. Enterprise adds maximum depth + on-prem.",
             },
             {
               q: "Is the procurement margin really transparent on production POs?",
               a: "Yes. Production orders use pass-through supplier pricing with a 2–4% marketplace fee shown line-item on the PO. The 10–15% margin only applies to sample / pilot marketplace orders, where it's baked into the catalog price.",
             },
             {
-              q: "What about pharma / GMP environments?",
-              a: "The Pharma SaaS tier ships 21 CFR Part 11 e-signatures and a validated audit trail. We do not attach procurement to pharma — your Approved Vendor List + change-control process stays in charge.",
-            },
-            {
               q: "How accurate are the spray predictions?",
-              a: "Today: ~70% directional accuracy on shortlist ranking, validated against bench testing. Roadmap: 85% over 18 months via synthetic-CFD bootstrapping. Use predictions to compress shortlists from 2–3 weeks to 2–3 days; physical validation stays required.",
+              a: "Today: 62% of recommendations have ≥3-source consensus in the graph; we expect that to rise as graph density grows. Use predictions to compress shortlists from 2–3 weeks to 2–3 days; physical bench validation stays required for regulatory / QA sign-off.",
             },
             {
               q: "Can independent consultants resell or white-label?",
-              a: "Yes. Affiliate / white-label SKU available with 20–30% revenue share. Designed for consultants whose clients need a self-serve tool between engagements.",
+              a: "Yes — Affiliate / white-label SKU available with 20–30% revenue share. Designed for consultants whose clients need a self-serve tool between engagements.",
             },
           ].map((item) => (
             <details
@@ -336,8 +367,15 @@ export default function Pricing() {
             Trust &amp; Compliance
           </Link>
           {" · "}
-          v1.1 pricing reflects synthetic-user validation findings. See
-          BUSINESS_STRATEGY.md §11 changelog.
+          <Link
+            href="/graph"
+            className="text-[var(--accent)] no-underline hover:underline"
+          >
+            Live graph density
+          </Link>
+          {" · "}
+          v1.2 pricing reflects the moat-thesis architecture. See
+          BUSINESS_STRATEGY.md §0 + §12.
         </p>
       </section>
     </div>
