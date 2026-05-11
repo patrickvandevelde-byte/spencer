@@ -1,11 +1,17 @@
 import Link from "next/link";
+import { BetaBanner } from "@/components/BetaBanner";
 
+// Status taxonomy — explicit about what's shipping vs. what's
+// architecturally ready vs. what's roadmap. Synthetic-user
+// validation flagged "controls listed as Available with no
+// production tenants" as a credibility risk; pills now disclose
+// the real state.
 const PILLARS = [
   {
     title: "Data Isolation",
-    status: "Available",
-    statusColor: "var(--success)",
-    body: "Enterprise tenants can deploy in a VPC-isolated environment (AWS / Azure / GCP). Formulation data never leaves the tenant boundary; ML training is opt-in only.",
+    status: "Architecture ready",
+    statusColor: "var(--accent)",
+    body: "Enterprise tenants will deploy in a VPC-isolated environment (AWS / Azure / GCP). Formulation data never leaves the tenant boundary; ML training is opt-in only. Awaiting first production tenant before status moves to Available.",
     bullets: [
       "Single-tenant VPC isolation (Enterprise)",
       "Differential-privacy aggregation (Professional, opt-in)",
@@ -14,9 +20,9 @@ const PILLARS = [
   },
   {
     title: "Pharma / 21 CFR Part 11",
-    status: "Available — Pharma SaaS tier",
-    statusColor: "var(--success)",
-    body: "Validated environment for inhalation / nasal CDMOs. IQ / OQ documentation provided; audit trail and e-signature shipped.",
+    status: "Roadmap · Q1 2027",
+    statusColor: "var(--warning)",
+    body: "Validated environment for inhalation / nasal CDMOs. IQ / OQ documentation, audit trail, and e-signature are scoped on the Pharma SaaS tier. First validated deployment targeted Q1 2027 — timeline is contingent on lead-customer partnership.",
     bullets: [
       "Tamper-evident audit log per configuration & order",
       "FDA 21 CFR Part 11 e-signature on screening decisions",
@@ -26,31 +32,31 @@ const PILLARS = [
   },
   {
     title: "SOC 2 Type II",
-    status: "In progress · Q3 2026",
+    status: "Roadmap · Type I Q4 2026 / Type II Q2 2027",
     statusColor: "var(--warning)",
-    body: "Type I attestation targeted Q2 2026; Type II by Q3 2026. Required before Tier-1 CPG enterprise rollout per validation findings.",
+    body: "Vanta engagement scoped; controls inventory under construction. Type I attestation targeted Q4 2026, Type II window Q2 2027. We will publish the report URL the moment it lands; pre-then, expect a security questionnaire turnaround within 5 business days.",
     bullets: [
       "Vanta-managed control evidence",
-      "Penetration test by external firm · annual cadence",
+      "Penetration test by external firm · annual cadence post-Type-I",
       "Customer-accessible trust portal at GA",
     ],
   },
   {
     title: "Supply-chain channel hygiene",
-    status: "Policy",
+    status: "Policy in force",
     statusColor: "var(--accent)",
-    body: "Production procurement is pass-through with a transparent 2–4% take rate visible line-item on the PO. No hidden margin on production volume.",
+    body: "Production procurement is pass-through with a transparent 2–4% take rate visible line-item on the PO. No hidden margin on production volume. Policy applies from day one of the marketplace, including the open-beta period.",
     bullets: [
       "Sample marketplace margin disclosed in catalog",
       "Production POs: marketplace fee on the line, not in the unit price",
-      "Suppliers (Spencer / Coster / Lindal) co-sell agreements; no channel-conflict on framework accounts",
+      "Coster / Lindal / Aptar co-sell agreements scoped; no channel-conflict on framework accounts",
     ],
   },
   {
     title: "Auth & access control",
-    status: "Available",
-    statusColor: "var(--success)",
-    body: "Email + password today; SAML 2.0 SSO and SCIM provisioning available on Enterprise.",
+    status: "Email/password live · SSO architecture ready",
+    statusColor: "var(--accent)",
+    body: "Email + password is live today. SAML 2.0 SSO and SCIM provisioning are wired in the Enterprise codepath; first paying tenant flips them on.",
     bullets: [
       "SAML 2.0 SSO (Okta / Azure AD / Google Workspace)",
       "SCIM provisioning · automated joiner / mover / leaver",
@@ -60,9 +66,9 @@ const PILLARS = [
   },
   {
     title: "Data residency",
-    status: "EU + US",
-    statusColor: "var(--success)",
-    body: "Customers choose primary region at provisioning. Backups remain in-region. Cross-border data flows require explicit per-tenant approval.",
+    status: "EU + US (Enterprise · architecture ready)",
+    statusColor: "var(--accent)",
+    body: "Region selection is part of the Enterprise provisioning contract. Backups remain in-region. Cross-border data flows require explicit per-tenant approval. Beta tenants currently run in eu-central-1 only.",
     bullets: [
       "EU residency: Frankfurt + Dublin",
       "US residency: us-east-1 + us-west-2",
@@ -86,13 +92,19 @@ const FAQ = [
   },
   {
     q: "How do you handle DSARs / GDPR / CCPA?",
-    a: "DSAR portal at /privacy/requests. 30-day SLA for access, deletion, portability. Sub-processor list maintained at /trust/subprocessors with 60-day change notice.",
+    a: "DSAR requests are handled via the contact form (topic = Trust). 30-day SLA for access, deletion, portability. Sub-processor list maintained at /trust/subprocessors with 60-day change notice; a dedicated DSAR portal lands with the SOC 2 Type I milestone.",
+  },
+  {
+    q: "Where can I see the methodology behind your buyer claims?",
+    a: "The synthetic-user validation pass that informs the v1.1 / v1.2 positioning is in SYNTHETIC_USER_VALIDATION.md (repo). Real-customer-discovery gaps from §7 are open and tracked publicly. We'd rather show you the methodology than wave a research-firm logo.",
   },
 ];
 
 export default function Trust() {
   return (
     <div className="space-y-16 py-8">
+      <BetaBanner />
+
       {/* Hero */}
       <section className="mx-auto max-w-2xl text-center animate-in">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
@@ -175,22 +187,33 @@ export default function Trust() {
         </div>
       </section>
 
-      <section className="text-center">
-        <p className="text-xs text-[var(--muted)]">
-          Need a security questionnaire, DPA, or sub-processor list?{" "}
-          <a
-            href="mailto:trust@aerospec.example"
-            className="text-[var(--accent)] no-underline hover:underline"
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center">
+        <p className="mb-3 text-sm text-[var(--fg-bright)]">
+          Need a security questionnaire, DPA, or the sub-processor list?
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/contact?topic=trust"
+            className="rounded-full bg-[var(--accent)] px-4 py-2 text-xs font-medium text-white no-underline hover:opacity-90"
           >
-            trust@aerospec.example
-          </a>
-          {" · "}
+            Open a Trust request
+          </Link>
+          <Link
+            href="/trust/subprocessors"
+            className="rounded-full border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--fg)] no-underline hover:border-[var(--border-hover)]"
+          >
+            View sub-processors
+          </Link>
           <Link
             href="/pricing"
-            className="text-[var(--accent)] no-underline hover:underline"
+            className="rounded-full border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--fg)] no-underline hover:border-[var(--border-hover)]"
           >
             Pricing
           </Link>
+        </div>
+        <p className="mt-4 text-[11px] text-[var(--muted)]">
+          {/* Last-updated stamp signals the page is maintained. */}
+          Last updated 2026-05-10 &middot; controls reviewed monthly during the open-beta period.
         </p>
       </section>
     </div>

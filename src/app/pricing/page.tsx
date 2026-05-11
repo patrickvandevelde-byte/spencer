@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { BetaBanner } from "@/components/BetaBanner";
+import { CALENDLY_URL } from "@/components/CalendlyButton";
 
 const TIERS = [
   {
@@ -66,7 +68,8 @@ const TIERS = [
     cadence: "/ month",
     tagline: "Mid-market CPG + regional CMOs (the v1.1 sweet spot)",
     badge: "Most Popular",
-    cta: { label: "Talk to Sales", href: "mailto:sales@aerospec.example" },
+    cta: { label: "Talk to Sales", href: "/contact?topic=sales" },
+    bookCall: true,
     graphAccess: "+ Graph API (10k calls/mo)",
     graphAccessSub: "Read fitment data programmatically",
     procurement: "15% + preferred Spencer pricing",
@@ -88,7 +91,8 @@ const TIERS = [
     price: "$4–8k",
     cadence: "/ month",
     tagline: "Inhalation / nasal CDMOs (MDI, DPI, nasal sprays)",
-    cta: { label: "Request Validation Pack", href: "mailto:pharma@aerospec.example" },
+    cta: { label: "Request Validation Pack", href: "/contact?topic=pharma" },
+    bookCall: true,
     graphAccess: "Private graph contributions",
     graphAccessSub: "Differential-privacy aggregation, opt-in only",
     procurement: "No procurement attach (by design)",
@@ -103,12 +107,35 @@ const TIERS = [
     accent: "var(--accent-secondary)",
   },
   {
+    id: "consultant",
+    name: "Consultant / Affiliate",
+    price: "$249",
+    cadence: "/ month + rev-share",
+    tagline: "Independent consultants, ex-supplier R&D, advisory firms",
+    cta: { label: "Apply to partner program", href: "/contact?topic=partners" },
+    graphAccess: "+ White-label branding",
+    graphAccessSub: "Re-skin the configurator under your firm's domain",
+    procurement: "20–30% rev-share on client-converted subscriptions",
+    highlights: [
+      "Everything in Professional, on your domain",
+      "White-label theming: logo, colors, custom subdomain",
+      "Client workspaces (multi-client, billed-through-you)",
+      "20% rev-share on Indie/Starter; 30% on Pro/Pharma; 10% on Enterprise",
+      "Co-branded compliance + screening reports",
+      "Office hours w/ Spencer team (monthly)",
+      "Listed on AeroSpec's certified-consultant directory",
+    ],
+    accent: "var(--accent-secondary)",
+    note: "Designed for consultants whose clients need self-serve between engagements",
+  },
+  {
     id: "enterprise",
     name: "Enterprise",
     price: "$8–25k",
     cadence: "/ month",
     tagline: "Tier-1 CPG + global CMOs · Year-2 motion",
-    cta: { label: "Talk to Sales", href: "mailto:sales@aerospec.example" },
+    cta: { label: "Talk to Sales", href: "/contact?topic=enterprise" },
+    bookCall: true,
     graphAccess: "Maximum graph depth + on-prem",
     graphAccessSub: "VPC-isolated tenancy · custom training",
     procurement: "ERP punch-out · no transactional margin",
@@ -151,6 +178,8 @@ const PROCUREMENT_TIERS = [
 export default function Pricing() {
   return (
     <div className="space-y-16 py-8">
+      <BetaBanner />
+
       {/* Hero */}
       <section className="mx-auto max-w-2xl text-center animate-in">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
@@ -254,7 +283,7 @@ export default function Pricing() {
               </p>
             )}
 
-            <div className="mt-auto">
+            <div className="mt-auto space-y-2">
               <Link
                 href={tier.cta.href}
                 className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium no-underline transition-all hover:opacity-90 active:scale-[0.98]"
@@ -267,6 +296,14 @@ export default function Pricing() {
               >
                 {tier.cta.label}
               </Link>
+              {tier.bookCall && (
+                <a
+                  href={CALENDLY_URL}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] px-5 py-2 text-xs font-medium text-[var(--fg-secondary)] no-underline transition-all hover:border-[var(--border-hover)] hover:text-[var(--fg)]"
+                >
+                  Or book 30 min &rarr;
+                </a>
+              )}
             </div>
           </div>
         ))}

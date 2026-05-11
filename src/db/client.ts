@@ -1,6 +1,9 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as schema from './schema';
+import * as coreSchema from './schema';
+import * as contributionsSchema from './contributions-schema';
+
+const schema = { ...coreSchema, ...contributionsSchema };
 
 // Lazy initialization — only connects when a SaaS route actually
 // queries the database.  The core prediction app never touches the

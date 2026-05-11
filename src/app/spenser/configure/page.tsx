@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { FormulaInput, PhysicsResult, PressureCurvePoint } from "@/lib/spenser-physics";
 import type { ITVSpec, LPVSpec } from "@/lib/kmd-data";
 import type { PPWRResult } from "@/lib/ppwr-compliance";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 type ViscosityCategory = FormulaInput["category"];
 
@@ -63,7 +64,7 @@ function PressureCurveChart({ curve }: { curve: PressureCurvePoint[] }) {
       <path d={makePath("spenser_bar")} fill="none" stroke="var(--success)" strokeWidth="2" />
       {/* Legend */}
       <line x1={pad} y1={12} x2={pad + 16} y2={12} stroke="var(--success)" strokeWidth="2" />
-      <text x={pad + 20} y={15} fill="var(--success)" fontSize="8">Spenser SFP</text>
+      <text x={pad + 20} y={15} fill="var(--success)" fontSize="8">AeroSpec SFP</text>
       <line x1={pad + 90} y1={12} x2={pad + 106} y2={12} stroke="var(--warning)" strokeWidth="1.5" strokeDasharray="6 3" />
       <text x={pad + 110} y={15} fill="var(--warning)" fontSize="8">BOV</text>
       <line x1={pad + 140} y1={12} x2={pad + 156} y2={12} stroke="var(--danger)" strokeWidth="1.5" strokeDasharray="4 2" />
@@ -135,7 +136,7 @@ export default function SpenserConfigurePage() {
       <div className="flex items-center justify-between">
         <div>
           <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
-            &larr; Spenser Dashboard
+            &larr; AeroSpec SFP Dashboard
           </Link>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Formula-to-Hardware Mapping</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">Enter your formula data to generate a complete SFP hardware specification.</p>
@@ -415,6 +416,25 @@ export default function SpenserConfigurePage() {
               </button>
             </div>
           </section>
+
+          {/* Sprint 2: feedback flywheel */}
+          <FeedbackWidget
+            source="spenser"
+            configKey={`${result.category}::v${Math.round(result.input.viscosity_cP)}::${result.physics.recommendedPiston.id}::${result.compatibleITVs[0]?.id ?? "no-itv"}`}
+            configSummary={{
+              category: result.category,
+              viscosity_cP: result.input.viscosity_cP,
+              density_g_cm3: result.input.density_g_cm3,
+              fillVolume_ml: result.input.fillVolume_ml,
+              gasSensitive: result.input.gasSensitive,
+              orientation360: result.input.orientation360,
+              piston: result.physics.recommendedPiston.id,
+              itv: result.compatibleITVs[0]?.id ?? null,
+              lpv: result.compatibleLPVs[0]?.id ?? null,
+              outputPressure_bar: result.physics.equilibrium.outputPressure_bar,
+              ppwrGrade: result.ppwr.grade,
+            }}
+          />
         </div>
       )}
     </div>

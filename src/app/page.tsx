@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { BetaBanner } from "@/components/BetaBanner";
 
 export default function Home() {
   return (
-    <div className="space-y-20 py-8">
+    <div className="space-y-12 py-8">
+      <BetaBanner />
+
       {/* Hero — three-pillar framing */}
       <section className="mx-auto max-w-2xl text-center animate-in">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-1.5">
@@ -97,20 +100,68 @@ export default function Home() {
         ))}
       </section>
 
-      {/* Other graphs — Spenser SFP de-emphasized to a sub-card */}
+      {/* Capability spotlight — surfaces underused features so they aren't buried in /configure */}
+      <section>
+        <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+          What the configurator already does
+        </p>
+        <h2 className="mb-5 text-2xl font-semibold tracking-tight text-[var(--fg-bright)]">
+          Underused features other tools don&rsquo;t surface
+        </h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              label: "Ergonomics & ADA",
+              body: "Per-actuator actuation force in newtons, with an ADA 22.2 N compliance pill. Persona P4: 'I have nowhere else to get that.'",
+              href: "/configure",
+              cta: "See it on a result",
+            },
+            {
+              label: "Non-Newtonian rheology",
+              body: "Shear-thinning serums and gels fool simple atomization models. We compute apparent viscosity at orifice (power-law + Carreau).",
+              href: "/configure?intent=non-newtonian",
+              cta: "Demo with a serum",
+            },
+            {
+              label: "AVL filter",
+              body: "Pre-screen rankings against your approved-supplier list. Persona P1's single most-wanted feature; works on every tier.",
+              href: "/settings/avl",
+              cta: "Set up your AVL",
+            },
+          ].map((c) => (
+            <Link
+              key={c.label}
+              href={c.href}
+              className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 no-underline hover:border-[var(--border-hover)]"
+            >
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+                {c.label}
+              </p>
+              <p className="mb-3 text-xs leading-relaxed text-[var(--fg-secondary)]">
+                {c.body}
+              </p>
+              <p className="text-[11px] font-medium text-[var(--accent)]">
+                {c.cta} &rarr;
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* AeroSpec SFP — gas-free dispensing surface, same fitment graph */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-xl">
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-              Other graphs · same infrastructure
+              Same graph · second hardware surface
             </p>
             <h3 className="mb-1 text-base font-semibold text-[var(--fg-bright)]">
-              Spenser SFP — gas-free dispensing fitment
+              AeroSpec SFP — gas-free dispensing fitment
             </h3>
             <p className="text-sm leading-relaxed text-[var(--fg-secondary)]">
-              A second fitment graph on the same schema: formula viscosity &rarr;
-              piston / spring / ITV hardware. PPWR compliance grading and
-              line-CAPEX modelling. Useful if you&rsquo;re moving away from
+              Same fitment-graph schema, second hardware target: formula
+              viscosity &rarr; piston / spring / ITV. Adds PPWR compliance
+              grading and line-CAPEX modelling. For teams moving away from
               compressed-gas aerosol formats.
             </p>
           </div>
@@ -119,7 +170,7 @@ export default function Home() {
             className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--accent-secondary)]/30 bg-[var(--surface)] px-4 py-2 text-xs font-medium text-[var(--accent-secondary)] no-underline transition-all hover:bg-[var(--accent-secondary)]/8"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-secondary)]" />
-            Open Spenser SFP
+            Open AeroSpec SFP
             <span className="text-[10px] opacity-60">&rarr;</span>
           </Link>
         </div>

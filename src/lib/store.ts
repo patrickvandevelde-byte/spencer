@@ -196,6 +196,56 @@ export function getAnalyticsEvents(): AnalyticsEvent[] {
   return getItem<AnalyticsEvent[]>(ANALYTICS_KEY, []);
 }
 
+// ---- Approved Vendor List (AVL) ----
+// Persona P1 (Tier-1 CPG R&D, Priya Raman) flagged this as the single
+// feature that matters: "filter results to suppliers we already buy
+// from." Stored locally so the free configurator can demo it without
+// auth; Pro+ tiers persist server-side once /api/avl is wired.
+const AVL_KEY = "aerospec_avl";
+
+export type AvlMode = "all" | "whitelist" | "blacklist";
+
+export interface AvlState {
+  mode: AvlMode;
+  manufacturers: string[]; // whitelist/blacklist members
+  excludedSkus: string[];   // per-SKU exclusions (always honored)
+  notes: string;
+  updatedAt: string;
+}
+
+const AVL_DEFAULT: AvlState = {
+  mode: "all",
+  manufacturers: [],
+  excludedSkus: [],
+  notes: "",
+  updatedAt: new Date(0).toISOString(),
+};
+
+export function getAvl(): AvlState {
+  return getItem<AvlState>(AVL_KEY, AVL_DEFAULT);
+}
+
+export function setAvl(next: Partial<AvlState>): AvlState {
+  const merged: AvlState = {
+    ...getAvl(),
+    ...next,
+    updatedAt: new Date().toISOString(),
+  };
+  setItem(AVL_KEY, merged);
+  return merged;
+}
+
+export function isSkuAllowed(
+  avl: AvlState,
+  sku: string,
+  manufacturer: string
+): boolean {
+  if (avl.excludedSkus.includes(sku)) return false;
+  if (avl.mode === "all") return true;
+  const inList = avl.manufacturers.includes(manufacturer);
+  return avl.mode === "whitelist" ? inList : !inList;
+}
+
 // ---- Stock Simulation ----
 // Simulated inventory levels per actuator (seeded from SKU hash)
 export function getStockLevel(actuatorId: string): { inStock: number; status: "in_stock" | "low_stock" | "out_of_stock" | "made_to_order" } {

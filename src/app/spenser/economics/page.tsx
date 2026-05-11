@@ -59,7 +59,7 @@ function ROIChart({ timeline }: { timeline: ROITimeline }) {
       <text x={pad - 4} y={toY(maxVal) + 3} fill="var(--muted)" fontSize="8" textAnchor="end">{formatEur(maxVal)}</text>
       {/* Legend */}
       <line x1={pad} y1={10} x2={pad + 16} y2={10} stroke="var(--success)" strokeWidth="2" />
-      <text x={pad + 20} y={13} fill="var(--success)" fontSize="8">Spenser SFP</text>
+      <text x={pad + 20} y={13} fill="var(--success)" fontSize="8">AeroSpec SFP</text>
       <line x1={pad + 100} y1={10} x2={pad + 116} y2={10} stroke="var(--danger)" strokeWidth="1.5" strokeDasharray="4 2" />
       <text x={pad + 120} y={13} fill="var(--danger)" fontSize="8">Traditional Aerosol</text>
     </svg>
@@ -103,7 +103,7 @@ export default function SpenserEconomicsPage() {
       <div className="flex items-center justify-between">
         <div>
           <Link href="/spenser" className="text-xs text-[var(--muted)] no-underline hover:text-[var(--accent)]">
-            &larr; Spenser Dashboard
+            &larr; AeroSpec SFP Dashboard
           </Link>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--fg-bright)]">Filler Economics</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
@@ -218,7 +218,7 @@ export default function SpenserEconomicsPage() {
                 <thead>
                   <tr className="border-b border-[var(--border)] text-left text-xs text-[var(--muted)]">
                     <th className="pb-2 pr-4">Cost Category</th>
-                    <th className="pb-2 pr-4 text-right">Spenser SFP</th>
+                    <th className="pb-2 pr-4 text-right">AeroSpec SFP</th>
                     <th className="pb-2 pr-4 text-right">Traditional</th>
                     <th className="pb-2 text-right">Delta</th>
                   </tr>
